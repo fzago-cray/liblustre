@@ -27,12 +27,9 @@
 		llapi_hsm_hai_first;
 		llapi_hsm_hai_next;
 		llapi_hsm_import;
-		llapi_hsm_log_error;
-		llapi_hsm_register_event_fifo;
 		llapi_hsm_request;
 		llapi_hsm_state_get;
 		llapi_hsm_state_set;
-		llapi_hsm_unregister_event_fifo;
 		llapi_hsm_user_request_alloc;
 		llapi_init;
 		llapi_initialized;

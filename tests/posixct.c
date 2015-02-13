@@ -127,7 +127,6 @@ struct options {
 	unsigned long long	 o_bandwidth;
 	size_t			 o_chunk_size;
 	enum ct_action		 o_action;
-	char			*o_event_fifo;
 	char			*o_mnt;
 	char			*o_hsm_root;
 	char			*o_src; /* for import, or rebind */
@@ -246,7 +245,6 @@ static void usage(const char *name, int rc)
 	"   --dry-run                 Don't run, just show what would be done\n"
 	"   -c, --chunk-size <sz>     I/O size used during data copy\n"
 	"                             (unit can be used, default is MB)\n"
-	"   -f, --event-fifo <path>   Write events stream to fifo\n"
 	"   -p, --hsm-root <path>     Target HSM mount point\n"
 	"   -q, --quiet               Produce less verbose output\n"
 	"   -u, --update-interval <s> Interval between progress reports sent\n"
@@ -267,8 +265,6 @@ static int ct_parseopts(int argc, char * const *argv)
 		{"chunk-size",	   required_argument, NULL,		   'c'},
 		{"chunk_size",	   required_argument, NULL,		   'c'},
 		{"daemon",	   no_argument,	      &opt.o_daemonize,	    1},
-		{"event-fifo",	   required_argument, NULL,		   'f'},
-		{"event_fifo",	   required_argument, NULL,		   'f'},
 		{"dry-run",	   no_argument,	      &opt.o_dry_run,	    1},
 		{"help",	   no_argument,	      NULL,		   'h'},
 		{"hsm-root",	   required_argument, NULL,		   'p'},
@@ -294,7 +290,7 @@ static int ct_parseopts(int argc, char * const *argv)
 	unsigned long long	 unit;
 
 	optind = 0;
-	while ((c = getopt_long(argc, argv, "A:b:c:f:hiMp:qru:v",
+	while ((c = getopt_long(argc, argv, "A:b:c:hiMp:qru:v",
 				long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'A':
@@ -321,9 +317,6 @@ static int ct_parseopts(int argc, char * const *argv)
 				opt.o_chunk_size = value;
 			else
 				opt.o_bandwidth = value;
-			break;
-		case 'f':
-			opt.o_event_fifo = optarg;
 			break;
 		case 'h':
 			usage(argv[0], 0);
@@ -1841,9 +1834,6 @@ static void handler(int signal)
 	 * mtab entry remains. So this just makes mtab happier. */
 	llapi_hsm_copytool_unregister(&ctdata);
 
-	/* Also remove fifo upon signal as during normal/error exit */
-	if (opt.o_event_fifo != NULL)
-		llapi_hsm_unregister_event_fifo(opt.o_event_fifo);
 	_exit(1);
 }
 
@@ -1862,14 +1852,6 @@ static int ct_run(void)
 	}
 
 	setbuf(stdout, NULL);
-
-	if (opt.o_event_fifo != NULL) {
-		rc = llapi_hsm_register_event_fifo(opt.o_event_fifo);
-		if (rc < 0) {
-			CT_ERROR(rc, "failed to register event fifo");
-			return rc;
-		}
-	}
 
 	rc = llapi_hsm_copytool_register(lfsh, &ctdata,
 					 opt.o_archive_cnt,
@@ -1949,8 +1931,6 @@ static int ct_run(void)
 	}
 
 	llapi_hsm_copytool_unregister(&ctdata);
-	if (opt.o_event_fifo != NULL)
-		llapi_hsm_unregister_event_fifo(opt.o_event_fifo);
 
 	return rc;
 }

@@ -7,7 +7,6 @@ liblustre_la_SOURCES = \
 	liblustre.c \
 	internal.h \
 	liblustreapi_hsm.c \
-	liblustreapi_json.c \
 	liblustreapi_layout.c \
 	logging.c \
 	misc.c \

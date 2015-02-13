@@ -340,10 +340,6 @@ int llapi_hsm_state_set_fd(int fd, __u64 setmask, __u64 clearmask,
 			   __u32 archive_id);
 int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
 			__u32 archive_id);
-int llapi_hsm_register_event_fifo(const char *path);
-int llapi_hsm_unregister_event_fifo(const char *path);
-void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
-			 const char *fmt, va_list args);
 
 /*
  * HSM copytool interface.

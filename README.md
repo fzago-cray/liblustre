@@ -116,7 +116,6 @@ TODO
 -   Fix all the "TODO"s
 -   Add a man page for every API.
 -   check each mention of lustreapi and fix
--   do something with llapi\_hsm\_log\_error; it doesn't fit.
 -   llapi\_path2parent should probably have an lfsh arg and discriminate
     between full path and relative paths. lfsh would be used only if a
     relative path is passed. Same with path2fid.
