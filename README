@@ -1,0 +1,40 @@
+An LGPL lustre API
+
+This is work in progress. NOT ALL FILES ARE UNDER LGPL YET.
+
+See https://jira.hpdd.intel.com/browse/LU-5969 for the rationale.
+
+Structure:
+
+- A user application only has to include <lustre/lustre.h>. This
+  header should only contains definitions that an application would
+  need.
+
+- lustre/lustre_user.h cannot be directly included by the user. It
+  contains copies of kernel structures needed by the API. May be
+  merged later within lustre.h
+
+- lib/liblustre_internal.h contains various definitions and helpers
+  that are needed for the library but need not be exported, such as
+  private strutures, ioctls definitions, ...
+
+This version adds the structure lustre_fs_h which represents a Lustre
+filesystem. An application has to open the filesystem first with
+lustre_open_fs, and an opaque handle is returned. This handle is then
+used by functions like llapi_fid2path(), which have been modified to
+require that handle. This avoids opening the filesystem for many
+operations.
+
+The posix copytool has been ported to thuis new API.
+
+
+TODO:
+- All exported API functions should be documented in lustre.h
+- Fix all the "TODO"s
+
+
+Changes:
+- LPU64 is gone. Use "%llu". Cast if necessary.
+- LPX64 is gone. Use "%#llx". Cast if necessary.
+- LPX64i is gone. Use "%llx". Cast if necessary.
+

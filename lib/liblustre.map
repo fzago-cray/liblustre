@@ -1,0 +1,59 @@
+{
+    global:
+		llapi_hsm_action_begin;
+		llapi_hsm_action_end;
+		llapi_hsm_action_get_dfid;
+		llapi_hsm_action_get_fd;
+		llapi_hsm_action_progress;
+		llapi_hsm_copytool_recv;
+		llapi_hsm_copytool_register;
+		llapi_hsm_copytool_unregister;
+#		llapi_hsm_current_action;
+		llapi_hsm_import;
+		llapi_hsm_log_error;
+		llapi_hsm_register_event_fifo;
+#		llapi_hsm_request;
+#		llapi_hsm_state_get;
+#		llapi_hsm_state_set;
+		llapi_hsm_unregister_event_fifo;
+#		llapi_hsm_user_request_alloc;
+#		llapi_layout_alloc;
+#		llapi_layout_file_create;
+#		llapi_layout_file_open;
+#		llapi_layout_free;
+#		llapi_layout_get_by_fd;
+#		llapi_layout_get_by_fid;
+#		llapi_layout_get_by_path;
+#		llapi_layout_ost_index_get;
+#		llapi_layout_ost_index_set;
+#		llapi_layout_pattern_get;
+#		llapi_layout_pattern_set;
+#		llapi_layout_pool_name_get;
+#		llapi_layout_pool_name_set;
+#		llapi_layout_stripe_count_get;
+#		llapi_layout_stripe_count_set;
+#		llapi_layout_stripe_size_get;
+#		llapi_layout_stripe_size_set;
+#		llapi_nodemap_exists;
+		lustre_open_fs;
+		lustre_close_fs;
+		llapi_get_fsname;
+
+		# NON-GPL yet
+#		llapi_create_volatile_idx;
+		llapi_error;
+		llapi_error_callback_set;
+#		llapi_fd2fid;
+		llapi_fid2path;
+#		llapi_file_open_pool;
+#		llapi_get_agent_uuid;
+		llapi_get_mdt_index_by_fid;
+		llapi_msg_set_level;
+#		llapi_open_by_fid;
+		llapi_parse_size;
+		fid_is_norm;
+		fid_is_igif;
+
+    local:
+        *;
+};
