@@ -381,10 +381,10 @@ retry_open:
 	return fd;
 }
 
-/* TODO: this should be rename to llapi_file_open() (replacing existing passthrough) */
-int llapi_file_open_pool(const char *name, int flags, int mode,
-			 unsigned long long stripe_size, int stripe_offset,
-			 int stripe_count, int stripe_pattern, char *pool_name)
+/* Passthrough for llapi_file_open_param() */
+int llapi_file_open(const char *name, int flags, int mode,
+		    unsigned long long stripe_size, int stripe_offset,
+		    int stripe_count, int stripe_pattern, char *pool_name)
 {
 	const struct llapi_stripe_param param = {
 		.lsp_stripe_size = stripe_size,

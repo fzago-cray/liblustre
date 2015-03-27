@@ -93,9 +93,9 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 int llapi_fd2fid(const int fd, lustre_fid *fid);
 int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, int open_flags);
-int llapi_file_open_pool(const char *name, int flags, int mode,
-			 unsigned long long stripe_size, int stripe_offset,
-			 int stripe_count, int stripe_pattern, char *pool_name);
+int llapi_file_open(const char *name, int flags, int mode,
+		    unsigned long long stripe_size, int stripe_offset,
+		    int stripe_count, int stripe_pattern, char *pool_name);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid, int *mdt_index);
 int llapi_create_volatile_idx(char *directory, int idx, int open_flags);

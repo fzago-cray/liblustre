@@ -1238,10 +1238,10 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		stripe_pattern = LOV_PATTERN_RAID0;
 
 	/* Create a non-striped file */
-	fd = llapi_file_open_pool(dst, O_CREAT | O_WRONLY, st->st_mode,
-				  stripe_size, stripe_offset, stripe_count,
-				  stripe_pattern | LOV_PATTERN_F_RELEASED,
-				  pool_name);
+	fd = llapi_file_open(dst, O_CREAT | O_WRONLY, st->st_mode,
+			     stripe_size, stripe_offset, stripe_count,
+			     stripe_pattern | LOV_PATTERN_F_RELEASED,
+			     pool_name);
 	if (fd < 0) {
 		llapi_error(LLAPI_MSG_ERROR, fd,
 			    "cannot create '%s' for import", dst);
