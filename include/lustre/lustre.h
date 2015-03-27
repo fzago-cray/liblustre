@@ -63,7 +63,7 @@ enum llapi_message_level {
 typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
                                      const char *fmt, va_list ap);
 llapi_log_callback_t llapi_error_callback_set(llapi_log_callback_t cb);
-void llapi_msg_set_level(int level);
+void llapi_msg_set_level(enum llapi_message_level level);
 
 /* TODO: should that really be exported. */
 void llapi_error(enum llapi_message_level level, int err, const char *fmt, ...);

@@ -54,7 +54,7 @@
 
 static int llapi_msg_level = LLAPI_MSG_MAX;
 
-void llapi_msg_set_level(int level)
+void llapi_msg_set_level(enum llapi_message_level level)
 {
 	/* ensure level is in the good range */
 	if (level < LLAPI_MSG_OFF)
