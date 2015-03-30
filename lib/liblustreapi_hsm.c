@@ -6,6 +6,8 @@
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
  *
+ * Copyright (c) 2013, 2014, Intel Corporation.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
  * (LGPL) version 2.1 or (at your discretion) any later version.
@@ -34,7 +36,6 @@
 #define _GNU_SOURCE
 #endif
 
-/* TODO: try to cut that list */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -80,7 +81,7 @@ struct hsm_copyaction_private {
 	__s32					 data_fd;
 	const struct hsm_copytool_private	*ct_priv;
 	struct hsm_copy				 copy;
-	struct stat				 stat;
+	lstat_t 				 stat;
 };
 
 enum ct_progress_type {
@@ -675,6 +676,13 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 		return -EINVAL;
 	}
 
+	if (archive_count > LL_HSM_MAX_ARCHIVE) {
+		llapi_err_noerrno(LLAPI_MSG_ERROR, "%d requested when maximum "
+				  "of %zu archives supported", archive_count,
+				  LL_HSM_MAX_ARCHIVE);
+		return -EINVAL;
+	}
+
 	ct = calloc(1, sizeof(*ct));
 	if (ct == NULL)
 		return -ENOMEM;
@@ -693,10 +701,10 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	/* no archives specified means "match all". */
 	ct->archives = 0;
 	for (rc = 0; rc < archive_count; rc++) {
-		if (archives[rc] > 8 * sizeof(ct->archives)) {
-			llapi_err_noerrno(LLAPI_MSG_ERROR,
-					  "maximum of %zu archives supported",
-					  8 * sizeof(ct->archives));
+		if ((archives[rc] > LL_HSM_MAX_ARCHIVE) || (archives[rc] < 0)) {
+			llapi_err_noerrno(LLAPI_MSG_ERROR, "%d requested when "
+					  "archive id [0 - %zu] is supported",
+					  archives[rc], LL_HSM_MAX_ARCHIVE);
 			rc = -EINVAL;
 			goto out_err;
 		}
@@ -873,9 +881,9 @@ out_err:
 	return rc;
 }
 
-/** Get parent path of fid.
+/** Get parent path from mount point and fid.
  *
- * \param lfsh       Filesystem handle.
+ * \param lfsh	     Filesystem handle.
  * \param fid        Object FID.
  * \param parent     Destination buffer.
  * \param parent_len Destination buffer size.
@@ -910,17 +918,53 @@ static int fid_parent(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	return rc;
 }
 
-static int ct_stat_by_fid(const struct lustre_fs_h *lfsh,
-			  const struct lu_fid *fid,
-			  struct stat *buf)
+/**
+ * Get metadata attributes of file by FID.
+ *
+ * Use the IOC_MDC_GETFILEINFO ioctl (to send a MDS_GETATTR_NAME RPC)
+ * to get the attributes of the file identified by \a fid. This
+ * returns only the attributes stored on the MDT and avoids taking
+ * layout locks or accessing OST objects. It also bypasses the inode
+ * cache. Attributes are returned in \a st.
+ */
+/* TODO: move to liblustre_ioctls.c */
+static int ct_md_getattr(const struct lustre_fs_h *lfsh,
+			 const struct lu_fid *fid,
+			 lstat_t *st)
 {
-	char fid_name[FID_NOBRACE_LEN + 1];
+	struct lov_user_mds_data *lmd;
+	size_t lmd_size;
 	int rc;
 
-	snprintf(fid_name, sizeof(fid_name), DFID_NOBRACE, PFID(fid));
+	lmd_size = sizeof(lmd->lmd_st) +
+		lov_user_md_size(LOV_MAX_STRIPE_COUNT, LOV_USER_MAGIC_V3);
 
-	rc = fstatat(lfsh->fid_fd, fid_name, buf, 0);
-	return rc ? -errno : 0;
+	if (lmd_size < sizeof(lmd->lmd_st) + XATTR_SIZE_MAX)
+		lmd_size = sizeof(lmd->lmd_st) + XATTR_SIZE_MAX;
+
+	if (lmd_size < FID_NOBRACE_LEN + 1)
+		lmd_size = FID_NOBRACE_LEN + 1;
+
+	lmd = malloc(lmd_size);
+	if (lmd == NULL)
+		return -ENOMEM;
+
+	snprintf((char *)lmd, lmd_size, DFID_NOBRACE, PFID(fid));
+
+	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, lmd);
+	if (rc != 0) {
+		rc = -errno;
+		llapi_error(LLAPI_MSG_ERROR, rc,
+			    "cannot get metadata attributes of "DFID" in '%s'",
+			    PFID(fid), lfsh->mount_path);
+		goto out;
+	}
+
+	*st = lmd->lmd_st;
+out:
+	free(lmd);
+
+	return rc;
 }
 
 /** Create the destination volatile file for a restore operation.
@@ -1012,8 +1056,7 @@ int llapi_hsm_action_begin(struct hsm_copyaction_private **phcp,
 		goto ok_out;
 
 	if (hai->hai_action == HSMA_RESTORE) {
-		rc = ct_stat_by_fid(hcp->ct_priv->lfsh,
-				    &hai->hai_fid, &hcp->stat);
+		rc = ct_md_getattr(ct->lfsh, &hai->hai_fid, &hcp->stat);
 		if (rc < 0)
 			goto err_out;
 
@@ -1201,9 +1244,7 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
 	if (hai->hai_action == HSMA_ARCHIVE) {
 		fd = llapi_open_by_fid(hcp->ct_priv->lfsh, &hai->hai_dfid,
 				O_RDONLY | O_NOATIME | O_NOFOLLOW | O_NONBLOCK);
-		if (fd == -1)
-			fd = -errno;
-		return fd;
+		return fd < 0 ? -errno : fd;
 	} else if (hai->hai_action == HSMA_RESTORE) {
 		fd = dup(hcp->data_fd);
 		return fd < 0 ? -errno : fd;

@@ -76,6 +76,28 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 			stripes * sizeof(struct lov_user_ost_data_v1);
 }
 
+/* TODO: isn't everything stat64 these days? Remove and use stat
+ * instead? */
+#if defined(__x86_64__) || defined(__ia64__) || defined(__ppc64__) || \
+    defined(__craynv) || defined(__mips64__) || defined(__powerpc64__)
+typedef struct stat     lstat_t;
+# define lstat_f        lstat
+#elif defined(__USE_LARGEFILE64) || defined(__KERNEL__)
+typedef struct stat64   lstat_t;
+# define lstat_f        lstat64
+#endif
+
+#define lov_user_mds_data lov_user_mds_data_v1
+struct lov_user_mds_data_v1 {
+        lstat_t lmd_st;                 /* MDS stat struct */
+        struct lov_user_md_v1 lmd_lmm;  /* LOV EA V1 user data */
+} __attribute__((packed));
+
+struct lov_user_mds_data_v3 {
+        lstat_t lmd_st;                 /* MDS stat struct */
+        struct lov_user_md_v3 lmd_lmm;  /* LOV EA V3 user data */
+} __attribute__((packed));
+
 /* 
  * Misc
  */
@@ -298,5 +320,8 @@ static inline const char *llapi_msg_level2str(enum llapi_message_level level)
 #define LL_IOC_HSM_ACTION	_IOR ('f', 220, struct hsm_current_action)
 #define LL_IOC_HSM_IMPORT	_IOWR('f', 245, struct hsm_user_import)
 #define LL_IOC_FID2MDTIDX	_IOWR('f', 248, struct lu_fid)
+
+#define IOC_MDC_TYPE            'i'
+#define IOC_MDC_GETFILEINFO     _IOWR(IOC_MDC_TYPE, 22, struct lov_user_mds_data *)
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
