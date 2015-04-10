@@ -23,6 +23,12 @@ AC_CONFIG_HEADERS([include/config.h])
 
 CC_OPT="-Wall -Werror -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-align -Wwrite-strings -Wformat=2 -std=gnu99 -Wold-style-declaration -Wold-style-definition -Wmissing-parameter-type -D_GNU_SOURCE -include config.h"
 
+AC_CHECK_PROGS(RST2MAN, [rst2man rst2man.py], [])
+if test "x$RST2MAN" = "x"; then
+  AC_MSG_ERROR(
+    [rst2man is needed to build the man pages. Install python-docutils.])
+fi
+
 # Output files
-AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile man/Makefile tests/Makefile])
 AC_OUTPUT

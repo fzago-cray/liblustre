@@ -2,4 +2,4 @@ ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = Changelog
 
-SUBDIRS = include lib tests
+SUBDIRS = include lib man tests
