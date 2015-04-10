@@ -39,8 +39,8 @@
 		lustre_close_fs;
 		llapi_get_fsname;
 
-		# NON-GPL yet
-#		llapi_create_volatile_idx;
+		# NON-LGPL yet
+#		llapi_create_volatile;
 		llapi_error;
 		llapi_error_callback_set;
 #		llapi_fd2fid;

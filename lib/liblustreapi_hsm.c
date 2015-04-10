@@ -993,7 +993,8 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 		snprintf(parent, sizeof(parent), "%s", mnt);
 	}
 
-	fd = llapi_create_volatile_idx(parent, mdt_index, open_flags);
+	fd = llapi_create_volatile(parent, mdt_index, open_flags,
+				   S_IRUSR | S_IWUSR, NULL);
 	if (fd < 0)
 		return fd;
 

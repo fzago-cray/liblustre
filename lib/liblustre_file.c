@@ -53,55 +53,65 @@
 #include "liblustre_internal.h"
 
 /*
- * Create a file without any name open it for read/write
+ * Create a file without any name and open it for read/write
  *
  * - file is created as if it were a standard file in the given \a directory
  * - file does not appear in \a directory and mtime does not change because
  *   the filename is handled specially by the Lustre MDS.
  * - file is removed at final close
- * - file modes are rw------- since it doesn't make sense to have a read-only
- *   or write-only file that cannot be opened again.
- * - if user wants another mode it must use fchmod() on the open file, no
- *   security problems arise because it cannot be opened by another process.
  *
  * \param[in]	directory	directory from which to inherit layout/MDT idx
- * \param[in]	idx		MDT index on which the file is created,
+ * \param[in]	mdt_idx		MDT index on which the file is created,
  *				\a idx == -1 means no specific MDT is requested
  * \param[in]	open_flags	standard open(2) flags
+ * \param[in]	mode		standard open(2) mode
+ * \param[in]	stripe_param	stripe parameters. May be NULL.
  *
- * \retval	0 on success.
+ * \retval	a file descriptor on success.
  * \retval	-errno on error.
  */
-int llapi_create_volatile_idx(char *directory, int idx, int open_flags)
+int llapi_create_volatile(const char *directory, int mdt_idx,
+			  int open_flags, mode_t mode,
+			  const struct llapi_stripe_param *stripe_param)
 {
 	char	file_path[PATH_MAX];
-	char	filename[PATH_MAX];
 	int	fd;
 	int	rnumber;
 	int	rc;
 
 	rnumber = random();
-	if (idx == -1)
-		snprintf(filename, sizeof(filename),
-			 LUSTRE_VOLATILE_HDR"::%.4X", rnumber);
+	if (mdt_idx == -1)
+		rc = snprintf(file_path, sizeof(file_path),
+			      "%s/" LUSTRE_VOLATILE_HDR "::%.4X",
+			      directory, rnumber);
 	else
-		snprintf(filename, sizeof(filename),
-			 LUSTRE_VOLATILE_HDR":%.4X:%.4X", idx, rnumber);
+		rc = snprintf(file_path, sizeof(file_path),
+			      "%s/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
+			      directory, mdt_idx, rnumber);
+	if (rc == -1 || rc >= sizeof(file_path))
+		return -ENAMETOOLONG;
 
-	rc = snprintf(file_path, sizeof(file_path),
-		      "%s/%s", directory, filename);
-	if (rc >= sizeof(file_path))
-		return -E2BIG;
-
-	fd = open(file_path, O_RDWR | O_CREAT | open_flags, S_IRUSR | S_IWUSR);
-	if (fd < 0) {
-		llapi_error(LLAPI_MSG_ERROR, errno,
-			    "Cannot create volatile file '%s' in '%s'",
-			    filename + LUSTRE_VOLATILE_HDR_LEN,
-			    directory);
-		return -errno;
+	open_flags |= O_RDWR | O_CREAT;
+	if (stripe_param != NULL) {
+		fd = llapi_file_open(file_path, open_flags, mode, stripe_param);
+		if (fd < 0)
+			rc = fd;
+	} else {
+		fd = open(file_path, open_flags, mode);
+		if (fd < 0)
+			rc = -errno;
 	}
-	/* unlink file in case this wasn't a Lustre filesystem, and the
+
+	if (fd < 0) {
+		llapi_error(LLAPI_MSG_ERROR, rc,
+			    "Cannot create volatile file '%s' in '%s'",
+			    file_path + strlen(directory) + 1 +
+			    LUSTRE_VOLATILE_HDR_LEN,
+			    directory);
+		return rc;
+	}
+
+	/* Unlink file in case this wasn't a Lustre filesystem, and the
 	 * magic volatile filename wasn't handled as intended.  The effect
 	 * is the same. */
 	unlink(file_path);

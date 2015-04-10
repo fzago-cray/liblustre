@@ -127,8 +127,6 @@ TODO
 * All exported API functions should have at least a small test.
 * Fix all the "TODO"s
 * Add a man page for every API.
-* all the llapi_create_volatile_* function should go, and
-  llapi_create_volatile_param should be renamed llapi_create_volatile.
 * Provide some pkg-config files to ease applications configuration.
 * Provide an rpm specfile
 * check each mention of lustreapi and fix
@@ -145,3 +143,5 @@ section should help porting.
 * llapi_file_open_pool is gone. Use llapi_file_open and set the pool
   name in the extra parameter.
 * llapi_file_open_param is gone. Use llapi_file_open.
+* llapi_create_volatile_idx is gone, and is replaced with
+  llapi_create_volatile and extra parameters.
