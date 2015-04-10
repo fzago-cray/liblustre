@@ -43,7 +43,7 @@
  * Logging 
  */
 
-/* lustreapi message severity level */
+/* Message severity level */
 enum llapi_message_level {
         LLAPI_MSG_OFF    = 0,
         LLAPI_MSG_FATAL  = 1,

@@ -131,6 +131,7 @@ TODO
   llapi_create_volatile_param should be renamed llapi_create_volatile.
 * Provide some pkg-config files to ease applications configuration.
 * Provide an rpm specfile
+* check each mention of lustreapi and fix
 
 Changes from liblustreapi
 -------------------------
