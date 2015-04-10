@@ -1,22 +1,42 @@
-An LGPL lustre API
+======================================
+liblustre: A (not yet LGPL) lustre API
+======================================
 
 This is work in progress. NOT ALL FILES ARE UNDER LGPL YET.
 
 See https://jira.hpdd.intel.com/browse/LU-5969 for the rationale.
 
-Structure:
+Organization
+------------
 
-- A user application only has to include <lustre/lustre.h>. This
-  header should only contains definitions that an application would
-  need.
+The directory structure is as follow::
 
-- lustre/lustre_user.h cannot be directly included by the user. It
-  contains copies of kernel structures needed by the API. May be
-  merged later within lustre.h
+  * include/lustre/: exported headers API. They will be installed in
+    /usr/include/lustre
 
-- lib/liblustre_internal.h contains various definitions and helpers
-  that are needed for the library but need not be exported, such as
-  private strutures, ioctls definitions, ...
+  * lib/: the library source code.
+
+  * man/: the man pages. These are written in ReST format and converted
+    to nroff by rst2man from python-docutils.
+
+  * tests: test programs for the library. They are run with make
+    check.
+
+The new header to include by applications is <lustre/lustre.h>. No
+other file need to be included. <lustre/lustre.h> will itself include
+<lustre/lustre_user.h>, but that file cannot be included directly.
+
+The library itself includes <lustre/lustre.h>, but also
+"lustre_internal.h" which contains various definitions and helpers
+that are needed for the library but need not be exported, such as
+private structures, ioctls definitions, ...
+
+No application should communicate directly with lustre, through ioctls
+for instance. Instead simple functions must be provided.
+
+Only the functions that are part of the API must appear in
+liblustre.map.
+
 
 This version adds the structure lustre_fs_h which represents a Lustre
 filesystem. An application has to open the filesystem first with
@@ -25,16 +45,101 @@ used by functions like llapi_fid2path(), which have been modified to
 require that handle. This avoids opening the filesystem for many
 operations.
 
-The posix copytool has been ported to thuis new API.
+An updated API
+--------------
 
+The current liblustreapi has some shortcomings. For instance many
+function will search for the mountpoint of a lustre filesystem, open
+it, issue an ioctl, then close the it. This is not always
+necessary. For instanmce when using the copytool, we already know
+everything we need about the filesystem, thus we should be able to
+open it once.
 
-TODO:
-- All exported API functions should be documented in lustre.h
-- Fix all the "TODO"s
+struct lustre_fs_h
+~~~~~~~~~~~~~~~~~~
 
+This is a new structure meant to keep the information os an existing
+filesystem (mountpoint, name, ...) so the information doesn't have to
+be retrieved more than once. Thus we open and close a filesystem
+with::
 
-Changes:
-- LPU64 is gone. Use "%llu". Cast if necessary.
-- LPX64 is gone. Use "%#llx". Cast if necessary.
-- LPX64i is gone. Use "%llx". Cast if necessary.
-- llapi_file_open_pool is gone. Use llapi_file_open.
+  void lustre_close_fs(struct lustre_fs_h *lfsh)
+  int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
+
+lfsh is an opaque handle that can then be passed to various functions::
+
+  int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct
+  lu_fid *fid, char *path, int path_len, long long *recno, int
+  *linkno)
+
+  int llapi_open_by_fid(const struct lustre_fs_h *lfsh, const
+  lustre_fid *fid, int open_flags)
+
+  int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
+  struct hsm_copytool_private **priv, int archive_count, int
+  *archives, int rfd_flags)
+
+posix copytool
+~~~~~~~~~~~~~~
+
+As an example, and to validate this solution, the posix copytool has
+been ported to this new API, in the tests/ directory.
+
+Here's an strace difference for an archiving operation. Similar traces
+are not shown.
+
+copytool based on liblustreapi::
+
+    ....
+    [pid 14694] open("/etc/mtab", O_RDONLY) = 8
+    [pid 14694] fstat(8, {st_mode=S_IFREG|0644, st_size=627, ...}) = 0
+    [pid 14694] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fa1bbe14000
+    [pid 14694] read(8, <unfinished ...>
+    [pid 14694] <... read resumed> "/dev/mapper/vg_c65l251intel-lv_r"..., 4096) = 627
+    [pid 14694] read(8, "", 4096) = 0
+    [pid 14694] close(8) = 0
+    [pid 14694] munmap(0x7fa1bbe14000, 4096) = 0
+    [pid 14694] open("/mnt/lustre", O_RDONLY|O_NONBLOCK|O_DIRECTORY) = 8
+    [pid 14694] ioctl(8, 0xffffffffc0086696, 0x7fa1b40008c0) = 0
+    [pid 14694] close(8) = 0
+    ....
+
+copytool under liblustre::
+
+    ...
+    [pid 14756] ioctl(4, 0xc0086696, 0x7ffdf80008c0) = 0
+    ...
+
+The restore operation shows similar savings.
+
+Future direction
+~~~~~~~~~~~~~~~~
+
+Robinhood should benefit a lot too from this updated API, since a lot
+of its interaction with Lustre is similar to the copytool.
+
+TODO
+----
+
+* All exported API functions should be documented in lustre.h, not in
+  the C file. Format should be the same as lustre (doxygen) and
+  conformity enforced during build.
+* All exported API functions should have at least a small test.
+* Fix all the "TODO"s
+* Add a man page for every API.
+* all the llapi_create_volatile_* function should go, and
+  llapi_create_volatile_param should be renamed llapi_create_volatile.
+* Provide some pkg-config files to ease applications configuration.
+* Provide an rpm specfile
+
+Changes from liblustreapi
+-------------------------
+
+Some function have disappeared and other have been renamed. This
+section should help porting.
+
+* LPU64 is gone. Use "%llu". Cast if necessary.
+* LPX64 is gone. Use "%#llx". Cast if necessary.
+* LPX64i is gone. Use "%llx". Cast if necessary.
+* llapi_file_open_pool is gone. Use llapi_file_open with an extra NULL
+  parameter.
