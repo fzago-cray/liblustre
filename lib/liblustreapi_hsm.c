@@ -1268,21 +1268,26 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
  */
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     unsigned long long stripe_size, int stripe_offset,
-		     int stripe_count, int stripe_pattern, char *pool_name,
-		     lustre_fid *newfid)
+		     int stripe_count, int stripe_pattern,
+		     const char *pool_name, lustre_fid *newfid)
 {
 	struct hsm_user_import	 hui;
 	int			 fd;
 	int			 rc = 0;
+	struct llapi_stripe_param param = {
+		.lsp_stripe_size = stripe_size,
+		.lsp_stripe_count = stripe_count,
+		.lsp_stripe_pattern = stripe_pattern,
+		.lsp_stripe_offset = stripe_offset,
+		.lsp_pool = pool_name
+	};
 
 	if (stripe_pattern == 0)
 		stripe_pattern = LOV_PATTERN_RAID0;
+	stripe_pattern |= LOV_PATTERN_F_RELEASED;
 
 	/* Create a non-striped file */
-	fd = llapi_file_open(dst, O_CREAT | O_WRONLY, st->st_mode,
-			     stripe_size, stripe_offset, stripe_count,
-			     stripe_pattern | LOV_PATTERN_F_RELEASED,
-			     pool_name);
+	fd = llapi_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, &param);
 	if (fd < 0) {
 		llapi_error(LLAPI_MSG_ERROR, fd,
 			    "cannot create '%s' for import", dst);

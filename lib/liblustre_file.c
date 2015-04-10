@@ -116,7 +116,7 @@ int llapi_search_fsname(const char *pathname, char *fsname)
 	return 0;
 }
 
-static int find_target_obdpath(char *fsname, char *path)
+static int find_target_obdpath(const char *fsname, char *path)
 {
         glob_t glob_info;
         char pattern[PATH_MAX + 1];
@@ -136,7 +136,8 @@ static int find_target_obdpath(char *fsname, char *path)
         return 0;
 }
 
-static int find_poolpath(char *fsname, char *poolname, char *poolpath)
+static int find_poolpath(const char *fsname, const char *poolname,
+			 char *poolpath)
 {
         glob_t glob_info;
         char pattern[PATH_MAX + 1];
@@ -165,7 +166,8 @@ static int find_poolpath(char *fsname, char *poolname, char *poolpath)
  *  if ostname is NULL, returns 1 if pool is not empty and 0 if pool empty
  *  if ostname is not NULL, returns 1 if OST is in pool and 0 if not
  */
-int llapi_search_ost(char *fsname, char *poolname, char *ostname)
+int llapi_search_ost(const char *fsname, const char *poolname,
+		     const char *ostname)
 {
         FILE *fd;
         char buffer[PATH_MAX + 1];
@@ -218,11 +220,11 @@ int llapi_search_ost(char *fsname, char *poolname, char *ostname)
  * \retval         file descriptor of opened file
  * \retval         negative errno on failure
  */
-int llapi_file_open_param(const char *name, int flags, mode_t mode,
-			  const struct llapi_stripe_param *param)
+int llapi_file_open(const char *name, int flags, mode_t mode,
+		    const struct llapi_stripe_param *param)
 {
 	char fsname[MAX_OBD_NAME + 1] = { 0 };
-	char *pool_name = param->lsp_pool;
+	const char *pool_name = param->lsp_pool;
 	struct lov_user_md *lum = NULL;
 	size_t lum_size = sizeof(*lum);
 	int fd, rc;
@@ -379,21 +381,6 @@ retry_open:
 	free(lum);
 
 	return fd;
-}
-
-/* Passthrough for llapi_file_open_param() */
-int llapi_file_open(const char *name, int flags, int mode,
-		    unsigned long long stripe_size, int stripe_offset,
-		    int stripe_count, int stripe_pattern, char *pool_name)
-{
-	const struct llapi_stripe_param param = {
-		.lsp_stripe_size = stripe_size,
-		.lsp_stripe_count = stripe_count,
-		.lsp_stripe_pattern = stripe_pattern,
-		.lsp_stripe_offset = stripe_offset,
-		.lsp_pool = pool_name
-	};
-	return llapi_file_open_param(name, flags, mode, &param);
 }
 
 /**

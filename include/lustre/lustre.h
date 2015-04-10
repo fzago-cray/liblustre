@@ -81,7 +81,7 @@ const char *llapi_get_fsname(const struct lustre_fs_h *lfsh);
  */
 struct llapi_stripe_param {
         unsigned long long      lsp_stripe_size;
-        char                    *lsp_pool;
+        const char             *lsp_pool;
         int                     lsp_stripe_offset;
         int                     lsp_stripe_pattern;
         int                     lsp_stripe_count;
@@ -93,9 +93,8 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 int llapi_fd2fid(const int fd, lustre_fid *fid);
 int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, int open_flags);
-int llapi_file_open(const char *name, int flags, int mode,
-		    unsigned long long stripe_size, int stripe_offset,
-		    int stripe_count, int stripe_pattern, char *pool_name);
+int llapi_file_open(const char *name, int flags, mode_t mode,
+		    const struct llapi_stripe_param *param);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid, int *mdt_index);
 int llapi_create_volatile_idx(char *directory, int idx, int open_flags);
@@ -181,6 +180,6 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp);
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     unsigned long long stripe_size, int stripe_offset,
 		     int stripe_count, int stripe_pattern,
-		     char *pool_name, lustre_fid *newfid);
+		     const char *pool_name, lustre_fid *newfid);
 
 #endif

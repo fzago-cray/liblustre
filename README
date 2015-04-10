@@ -142,5 +142,6 @@ section should help porting.
 * LPU64 is gone. Use "%llu". Cast if necessary.
 * LPX64 is gone. Use "%#llx". Cast if necessary.
 * LPX64i is gone. Use "%llx". Cast if necessary.
-* llapi_file_open_pool is gone. Use llapi_file_open with an extra NULL
-  parameter.
+* llapi_file_open_pool is gone. Use llapi_file_open and set the pool
+  name in the extra parameter.
+* llapi_file_open_param is gone. Use llapi_file_open.
