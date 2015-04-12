@@ -103,7 +103,7 @@ int llapi_create_volatile(const char *directory, int mdt_idx,
 	}
 
 	if (fd < 0) {
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "Cannot create volatile file '%s' in '%s'",
 			    file_path + strlen(directory) + 1 +
 			    LUSTRE_VOLATILE_HDR_LEN,
@@ -242,7 +242,7 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 	/* Make sure we are on a Lustre file system */
 	rc = llapi_search_fsname(name, fsname);
 	if (rc) {
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "'%s' is not on a Lustre filesystem",
 			    name);
 		return rc;
@@ -265,7 +265,7 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 			*ptr = '\0';
 			if (strcmp(pool_name, fsname) != 0) {
 				*ptr = '.';
-				llapi_err_noerrno(LLAPI_MSG_ERROR,
+				log_msg(LLAPI_MSG_ERROR, 0,
 					"Pool '%s' is not on filesystem '%s'",
 					pool_name, fsname);
 				return -EINVAL;
@@ -278,8 +278,8 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 		if (rc < 1) {
 			char *err = rc == 0 ? "has no OSTs" : "does not exist";
 
-			llapi_err_noerrno(LLAPI_MSG_ERROR, "pool '%s.%s' %s",
-					  fsname, pool_name, err);
+			log_msg(LLAPI_MSG_ERROR, 0, "pool '%s.%s' %s",
+				fsname, pool_name, err);
 			return -EINVAL;
 		}
 
@@ -300,7 +300,7 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 				if (rc == 0)
 					rc = -ENODEV;
 
-				llapi_error(LLAPI_MSG_ERROR, rc,
+				log_msg(LLAPI_MSG_ERROR, rc,
 					    "%s: cannot find OST %s in %s",
 					    __func__, ostname,
 					    pool_name != NULL ?
@@ -313,7 +313,7 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 				found = true;
 		}
 		if (!found) {
-			llapi_error(LLAPI_MSG_ERROR, -EINVAL,
+			log_msg(LLAPI_MSG_ERROR, -EINVAL,
 				    "%s: stripe offset '%d' is not in the "
 				    "target list",
 				    __func__, param->lsp_stripe_offset);
@@ -339,7 +339,7 @@ retry_open:
 
 	if (fd < 0) {
 		rc = -errno;
-		llapi_error(LLAPI_MSG_ERROR, rc, "unable to open '%s'", name);
+		log_msg(LLAPI_MSG_ERROR, rc, "unable to open '%s'", name);
 		free(lum);
 		return rc;
 	}
@@ -379,10 +379,9 @@ retry_open:
 		if (errno != EEXIST && errno != EALREADY)
 			errmsg = strerror(errno);
 
-		llapi_err_noerrno(LLAPI_MSG_ERROR,
-				  "error on ioctl %#x for '%s' (%d): %s",
-				  LL_IOC_LOV_SETSTRIPE, name, fd,
-				  errmsg);
+		log_msg(LLAPI_MSG_ERROR, 0,
+			"error on ioctl %#x for '%s' (%d): %s",
+			LL_IOC_LOV_SETSTRIPE, name, fd, errmsg);
 
 		close(fd);
 		fd = rc;

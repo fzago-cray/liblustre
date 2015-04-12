@@ -125,7 +125,7 @@ int llapi_json_write_list(struct llapi_json_item_list **json_items, FILE *fp)
 	fprintf(fp, "{");
 	for (i = 0; i < list->ljil_item_count; i++) {
 		if (item == NULL) {
-			llapi_err_noerrno(LLAPI_MSG_ERROR,
+			log_msg(LLAPI_MSG_ERROR, 0,
 					  "%d json items but %d is NULL!",
 					  list->ljil_item_count, i);
 			/* Don't bomb out here so that we still emit
@@ -158,8 +158,8 @@ int llapi_json_write_list(struct llapi_json_item_list **json_items, FILE *fp)
 				free(escaped_string);
 			break;
 		default:
-			llapi_err_noerrno(LLAPI_MSG_ERROR,
-				    "Invalid item type: %d", item->lji_type);
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"Invalid item type: %d", item->lji_type);
 			/* Ensure valid JSON */
 			fprintf(fp, "\"\"");
 			break;
@@ -217,9 +217,9 @@ int llapi_json_destroy_list(struct llapi_json_item_list **json_items)
 
 	for (i = 0; i < list->ljil_item_count; i++) {
 		if (cur_item == NULL) {
-			llapi_err_noerrno(LLAPI_MSG_ERROR,
-					  "%d json items but %d is NULL!",
-					  list->ljil_item_count, i);
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"%d json items but %d is NULL!",
+				list->ljil_item_count, i);
 			return -EINVAL;
 		}
 
@@ -296,8 +296,8 @@ int llapi_json_add_item(struct llapi_json_item_list **json_items,
 		strlcpy(new_item->lji_string, (const char *)val, len);
 		break;
 	default:
-		llapi_err_noerrno(LLAPI_MSG_ERROR, "Unknown JSON type: %d",
-				  new_item->lji_type);
+		log_msg(LLAPI_MSG_ERROR, 0, "Unknown JSON type: %d",
+			new_item->lji_type);
 		return -EINVAL;
 	}
 

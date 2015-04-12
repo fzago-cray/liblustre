@@ -155,8 +155,8 @@ static inline const char *llapi_hsm_ct_ev2str(int type)
 	case CT_REMOVE_ERROR:
 		return "REMOVE_ERROR";
 	default:
-		llapi_err_noerrno(LLAPI_MSG_ERROR,
-				  "Unknown event type: %d", type);
+		log_msg(LLAPI_MSG_ERROR, 0,
+			"Unknown event type: %d", type);
 		return NULL;
 	}
 }
@@ -195,14 +195,14 @@ static int llapi_hsm_write_json_event(struct llapi_json_item_list **event)
 	if (strftime(time_string, sizeof(time_string), "%Y-%m-%d %T %z",
 		     &time_components) == 0) {
 		rc = -EINVAL;
-		llapi_error(LLAPI_MSG_ERROR, rc, "strftime() failed");
+		log_msg(LLAPI_MSG_ERROR, rc, "strftime() failed");
 		return rc;
 	}
 
 	rc = llapi_json_add_item(&json_items, "event_time", LLAPI_JSON_STRING,
 				 time_string);
 	if (rc < 0) {
-		llapi_error(LLAPI_MSG_ERROR, -rc, "error in "
+		log_msg(LLAPI_MSG_ERROR, -rc, "error in "
 			    "llapi_json_add_item()");
 		return rc;
 	}
@@ -295,7 +295,7 @@ static int llapi_hsm_log_ct_registration(struct hsm_copytool_private *ct,
 	goto out_free;
 
 err:
-	llapi_error(LLAPI_MSG_ERROR, rc, "error in "
+	log_msg(LLAPI_MSG_ERROR, rc, "error in "
 		    "llapi_hsm_log_ct_registration()");
 
 out_free:
@@ -445,7 +445,7 @@ cancel:
 	goto out_free;
 
 err:
-	llapi_error(LLAPI_MSG_ERROR, rc, "error in "
+	log_msg(LLAPI_MSG_ERROR, rc, "error in "
 		    "llapi_hsm_log_ct_progress()");
 
 out_free:
@@ -473,18 +473,18 @@ int llapi_hsm_register_event_fifo(const char *path)
 
 	/* Create the FIFO if necessary. */
 	if ((mkfifo(path, 0644) < 0) && (errno != EEXIST)) {
-		llapi_error(LLAPI_MSG_ERROR, errno, "mkfifo(%s) failed", path);
+		log_msg(LLAPI_MSG_ERROR, errno, "mkfifo(%s) failed", path);
 		return -errno;
 	}
 	if (errno == EEXIST) {
 		if (stat(path, &statbuf) < 0) {
-			llapi_error(LLAPI_MSG_ERROR, errno, "mkfifo(%s) failed",
+			log_msg(LLAPI_MSG_ERROR, errno, "mkfifo(%s) failed",
 				    path);
 			return -errno;
 		}
 		if (!S_ISFIFO(statbuf.st_mode) ||
 		    ((statbuf.st_mode & 0777) != 0644)) {
-			llapi_error(LLAPI_MSG_ERROR, errno, "%s exists but is "
+			log_msg(LLAPI_MSG_ERROR, errno, "%s exists but is "
 				    "not a pipe or has a wrong mode", path);
 			return -errno;
 		}
@@ -496,7 +496,7 @@ int llapi_hsm_register_event_fifo(const char *path)
 	 * doesn't immediately fail. */
 	read_fd = open(path, O_RDONLY | O_NONBLOCK);
 	if (read_fd < 0) {
-		llapi_error(LLAPI_MSG_ERROR, errno,
+		log_msg(LLAPI_MSG_ERROR, errno,
 			    "cannot open(%s) for read", path);
 		return -errno;
 	}
@@ -505,7 +505,7 @@ int llapi_hsm_register_event_fifo(const char *path)
 	 * for a reader. */
 	llapi_hsm_event_fd = open(path, O_WRONLY | O_NONBLOCK);
 	if (llapi_hsm_event_fd < 0) {
-		llapi_error(LLAPI_MSG_ERROR, errno,
+		log_msg(LLAPI_MSG_ERROR, errno,
 			    "cannot open(%s) for write", path);
 		return -errno;
 	}
@@ -548,6 +548,20 @@ int llapi_hsm_unregister_event_fifo(const char *path)
 	return 0;
 }
 
+static const char *log_level2str(enum llapi_message_level level)
+{
+	static const char *levels[] = {
+		[LLAPI_MSG_OFF] = "OFF",
+		[LLAPI_MSG_FATAL] = "FATAL",
+		[LLAPI_MSG_ERROR] = "ERROR",
+		[LLAPI_MSG_WARN] = "WARNING",
+		[LLAPI_MSG_NORMAL] = "NORMAL",
+		[LLAPI_MSG_INFO] = "INFO",
+		[LLAPI_MSG_DEBUG] = "DEBUG",
+	};
+	return levels[level];
+}
+
 /**
  * Custom logging callback to be used when a monitoring FIFO has been
  * registered. Formats log entries as JSON events suitable for
@@ -565,7 +579,6 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 {
 	int				rc;
 	int				msg_len;
-	int				real_level;
 	char				*msg = NULL;
 	va_list				args2;
 	struct llapi_json_item_list	*json_items;
@@ -578,7 +591,7 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 	if (rc < 0)
 		goto err;
 
-	if ((level & LLAPI_MSG_NO_ERRNO) == 0) {
+	if (_rc != 0) {
 		rc = llapi_json_add_item(&json_items, "errno",
 					 LLAPI_JSON_INTEGER,
 					 &_rc);
@@ -619,11 +632,8 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 			goto err;
 	}
 
-	real_level = level & LLAPI_MSG_NO_ERRNO;
-	real_level = real_level > 0 ? level - LLAPI_MSG_NO_ERRNO : level;
-
 	rc = llapi_json_add_item(&json_items, "level", LLAPI_JSON_STRING,
-				 (void *)llapi_msg_level2str(real_level));
+				 (void *)log_level2str(level));
 	if (rc < 0)
 		goto err;
 
@@ -671,13 +681,13 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	int				 rc;
 
 	if (archive_count > 0 && archives == NULL) {
-		llapi_err_noerrno(LLAPI_MSG_ERROR,
+		log_msg(LLAPI_MSG_ERROR, 0,
 				  "NULL archive numbers");
 		return -EINVAL;
 	}
 
 	if (archive_count > LL_HSM_MAX_ARCHIVE) {
-		llapi_err_noerrno(LLAPI_MSG_ERROR, "%d requested when maximum "
+		log_msg(LLAPI_MSG_ERROR, 0, "%d requested when maximum "
 				  "of %zu archives supported", archive_count,
 				  LL_HSM_MAX_ARCHIVE);
 		return -EINVAL;
@@ -702,7 +712,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	ct->archives = 0;
 	for (rc = 0; rc < archive_count; rc++) {
 		if ((archives[rc] > LL_HSM_MAX_ARCHIVE) || (archives[rc] < 0)) {
-			llapi_err_noerrno(LLAPI_MSG_ERROR, "%d requested when "
+			log_msg(LLAPI_MSG_ERROR, 0, "%d requested when "
 					  "archive id [0 - %zu] is supported",
 					  archives[rc], LL_HSM_MAX_ARCHIVE);
 			rc = -EINVAL;
@@ -728,7 +738,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	rc = ioctl(lfsh->mount_fd, LL_IOC_HSM_CT_START, &ct->kuc);
 	if (rc < 0) {
 		rc = -errno;
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "cannot start copytool on '%s'", lfsh->mount_path);
 		goto out_kuc;
 	}
@@ -839,7 +849,7 @@ repeat:
 
 	if (kuch->kuc_transport != KUC_TRANSPORT_HSM ||
 	    kuch->kuc_msgtype != HMT_ACTION_LIST) {
-		llapi_err_noerrno(LLAPI_MSG_ERROR,
+		log_msg(LLAPI_MSG_ERROR, 0,
 				  "Unknown HSM message type %d:%d\n",
 				  kuch->kuc_transport, kuch->kuc_msgtype);
 		rc = -EPROTO;
@@ -847,7 +857,7 @@ repeat:
 	}
 
 	if (kuch->kuc_msglen < sizeof(*kuch) + sizeof(*hal)) {
-		llapi_err_noerrno(LLAPI_MSG_ERROR, "Short HSM message %d",
+		log_msg(LLAPI_MSG_ERROR, 0, "Short HSM message %d",
 				  kuch->kuc_msglen);
 		rc = -EPROTO;
 		goto out_err;
@@ -862,11 +872,11 @@ repeat:
 	 * if 0 registered, we serve any archive */
 	if (ct->archives &&
 	    ((1 << (hal->hal_archive_id - 1)) & ct->archives) == 0) {
-		llapi_err_noerrno(LLAPI_MSG_INFO,
-				  "This copytool does not service archive #%d,"
-				  " ignoring this request."
-				  " Mask of served archive is 0x%.8X",
-				  hal->hal_archive_id, ct->archives);
+		log_msg(LLAPI_MSG_INFO, 0,
+			"This copytool does not service archive #%d,"
+			" ignoring this request."
+			" Mask of served archive is 0x%.8X",
+			hal->hal_archive_id, ct->archives);
 
 		goto repeat;
 	}
@@ -954,7 +964,7 @@ static int ct_md_getattr(const struct lustre_fs_h *lfsh,
 	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, lmd);
 	if (rc != 0) {
 		rc = -errno;
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "cannot get metadata attributes of "DFID" in '%s'",
 			    PFID(fid), lfsh->mount_path);
 		goto out;
@@ -987,7 +997,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 	rc = fid_parent(lfsh, &hai->hai_fid, parent, sizeof(parent));
 	if (rc < 0) {
 		/* fid_parent() failed, try to keep on going */
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "cannot get parent path to restore "DFID" "
 			    "using '%s'", PFID(&hai->hai_fid), mnt);
 		snprintf(parent, sizeof(parent), "%s", mnt);
@@ -1290,7 +1300,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	/* Create a non-striped file */
 	fd = llapi_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, &param);
 	if (fd < 0) {
-		llapi_error(LLAPI_MSG_ERROR, fd,
+		log_msg(LLAPI_MSG_ERROR, fd,
 			    "cannot create '%s' for import", dst);
 		return fd;
 	}
@@ -1299,7 +1309,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	   from now on. */
 	rc = llapi_fd2fid(fd, newfid);
 	if (rc != 0) {
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 			    "cannot get fid of '%s' for import", dst);
 		goto out_unlink;
 	}
@@ -1316,7 +1326,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	rc = ioctl(fd, LL_IOC_HSM_IMPORT, &hui);
 	if (rc != 0) {
 		rc = -errno;
-		llapi_error(LLAPI_MSG_ERROR, rc, "cannot import '%s'", dst);
+		log_msg(LLAPI_MSG_ERROR, rc, "cannot import '%s'", dst);
 		goto out_unlink;
 	}
 
@@ -1490,4 +1500,3 @@ int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 
 	return rc;
 }
-

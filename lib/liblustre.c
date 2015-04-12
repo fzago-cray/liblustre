@@ -28,7 +28,7 @@
 
 #include "liblustre_internal.h"
 
-/** 
+/**
  * Removes trailing newlines from a string
  * \param buf  the string to modify
  */
@@ -89,7 +89,7 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 
 	mylfsh->mount_fd = -1;
 	mylfsh->fid_fd = -1;
-	
+
 	mylfsh->mount_path = strdup(mount_path);
 	if (mylfsh->mount_path == NULL) {
 		rc = -errno;
@@ -206,37 +206,36 @@ int llapi_stripe_limit_check(unsigned long long stripe_size, int stripe_offset,
 	page_size = LOV_MIN_STRIPE_SIZE;
 	if (getpagesize() > page_size) {
 		page_size = getpagesize();
-		llapi_err_noerrno(LLAPI_MSG_WARN,
-				"warning: your page size (%u) is "
-				"larger than expected (%u)", page_size,
-				LOV_MIN_STRIPE_SIZE);
+		log_msg(LLAPI_MSG_WARN, 0,
+			"warning: your page size (%u) is "
+			"larger than expected (%u)", page_size,
+			LOV_MIN_STRIPE_SIZE);
 	}
 	if (!llapi_stripe_size_is_aligned(stripe_size)) {
 		rc = -EINVAL;
-		llapi_error(LLAPI_MSG_ERROR, rc, "error: bad stripe_size %llu, "
+		log_msg(LLAPI_MSG_ERROR, rc, "error: bad stripe_size %llu, "
 				"must be an even multiple of %d bytes",
 				stripe_size, page_size);
 		return rc;
 	}
 	if (!llapi_stripe_offset_is_valid(stripe_offset)) {
 		rc = -EINVAL;
-		llapi_error(LLAPI_MSG_ERROR, rc, "error: bad stripe offset %d",
+		log_msg(LLAPI_MSG_ERROR, rc, "error: bad stripe offset %d",
 				stripe_offset);
 		return rc;
 	}
 	if (!llapi_stripe_count_is_valid(stripe_count)) {
 		rc = -EINVAL;
-		llapi_error(LLAPI_MSG_ERROR, rc, "error: bad stripe count %d",
+		log_msg(LLAPI_MSG_ERROR, rc, "error: bad stripe count %d",
 				stripe_count);
 		return rc;
 	}
 	if (llapi_stripe_size_is_too_big(stripe_size)) {
 		rc = -EINVAL;
-		llapi_error(LLAPI_MSG_ERROR, rc,
+		log_msg(LLAPI_MSG_ERROR, rc,
 				"warning: stripe size 4G or larger "
 				"is not currently supported and would wrap");
 		return rc;
 	}
 	return 0;
 }
-

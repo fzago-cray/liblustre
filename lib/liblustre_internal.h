@@ -38,7 +38,23 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 
-/* 
+/*
+ * Logging
+ */
+unsigned int log_level;
+llapi_log_callback_t log_msg_callback;
+
+void
+log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...);
+
+/* We don't want to evaluate arguments if the output is not used */
+#define log_msg(level, err, fmt, ...)					\
+	do {								\
+		if (level <= log_level && log_msg_callback != NULL)	\
+			log_msg_internal(level, err, fmt, ## __VA_ARGS__); \
+	} while(0)
+
+/*
  * LOV
  */
 #define LOV_PATTERN_RAID0	0x001
@@ -52,12 +68,12 @@
 
 #define LOV_MAXPOOLNAME 15
 
-struct lov_user_md_v3 {           
-        __u32 lmm_magic;          
-        __u32 lmm_pattern;        
-        struct ost_id lmm_oi;     
-        __u32 lmm_stripe_size;    
-        __u16 lmm_stripe_count;   
+struct lov_user_md_v3 {
+        __u32 lmm_magic;
+        __u32 lmm_pattern;
+        struct ost_id lmm_oi;
+        __u32 lmm_stripe_size;
+        __u16 lmm_stripe_count;
         union {
                 __u16 lmm_stripe_offset;
                 __u16 lmm_layout_gen;
@@ -98,7 +114,7 @@ struct lov_user_mds_data_v3 {
         struct lov_user_md_v3 lmd_lmm;  /* LOV EA V3 user data */
 } __attribute__((packed));
 
-/* 
+/*
  * Misc
  */
 
@@ -173,7 +189,7 @@ struct hsm_copy {
 	__u32			padding;
 	struct hsm_action_item	hc_hai;
 };
- 
+
 enum hss_valid {
 	HSS_SETMASK	= 0x01,
 	HSS_CLEARMASK   = 0x02,
@@ -280,7 +296,7 @@ enum kuc_generic_message_type {
 #define KUC_GRP_HSM	   0x02
 
 #define LK_FLG_STOP 0x01
-#define LK_NOFD -1U		
+#define LK_NOFD -1U
 
 int libcfs_ukuc_start(lustre_kernelcomm *l, int groups, int rfd_flags);
 int libcfs_ukuc_stop(lustre_kernelcomm *l);
@@ -289,22 +305,6 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
 			int transport);
 
 /*
- * Logging 
- */
-/* TODO: rewrite or move to lib/liblustreapi_hsm.c */
-static inline const char *llapi_msg_level2str(enum llapi_message_level level)
-{
-	static const char *levels[LLAPI_MSG_MAX] = {"OFF", "FATAL", "ERROR",
-						    "WARNING", "NORMAL",
-						    "INFO", "DEBUG"};
-
-	if (level >= LLAPI_MSG_MAX)
-		return NULL;
-
-	return levels[level];
-}
-
-/* 
  * IOCTLs
  */
 #define OBD_IOC_FID2PATH	_IOWR('f', 150, long)

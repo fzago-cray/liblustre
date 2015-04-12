@@ -43,31 +43,40 @@
  * Logging
  */
 
-/* Message severity level */
+/* Logging levels. The default is LLAPI_MSG_OFF. */
 enum llapi_message_level {
         LLAPI_MSG_OFF    = 0,
-        LLAPI_MSG_FATAL  = 1,
-        LLAPI_MSG_ERROR  = 2,
-        LLAPI_MSG_WARN   = 3,
-        LLAPI_MSG_NORMAL = 4,
-        LLAPI_MSG_INFO   = 5,
-        LLAPI_MSG_DEBUG  = 6,
-        LLAPI_MSG_MAX
+        LLAPI_MSG_FATAL,
+        LLAPI_MSG_ERROR,
+        LLAPI_MSG_WARN,
+        LLAPI_MSG_NORMAL,
+        LLAPI_MSG_INFO,
+        LLAPI_MSG_DEBUG
 };
-#define llapi_err_noerrno(level, fmt, a...)			\
-	llapi_error((level) | LLAPI_MSG_NO_ERRNO, 0, fmt, ## a)
 
-#define LLAPI_MSG_MASK          0x00000007
-#define LLAPI_MSG_NO_ERRNO      0x00000010
-
-typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
-                                     const char *fmt, va_list ap);
-llapi_log_callback_t llapi_error_callback_set(llapi_log_callback_t cb);
+/**
+ * Set the log level.
+ *
+ * \param[in]   level    new logging level
+ */
 void llapi_msg_set_level(enum llapi_message_level level);
-int llapi_msg_get_level(void);
 
-/* TODO: should that really be exported. */
-void llapi_error(enum llapi_message_level level, int err, const char *fmt, ...);
+/**
+ * Return the currently set log level
+ *
+ * \retval      the current log level
+ */
+enum llapi_message_level llapi_msg_get_level(void);
+
+/**
+ * An application would set a callback to retrieve logging message from
+ * the library. It can be set to NULL to stop receiving.
+ *
+ * \param[in]   cb    new logging callback
+ */
+typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
+                                     const char *fmt, ...);
+void llapi_msg_callback_set(llapi_log_callback_t cb);
 
 /*
  * Open / close a filesystem

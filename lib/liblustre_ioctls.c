@@ -108,7 +108,7 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 	if (rc == -1) {
 		rc = errno;
 		if (rc != -ENOENT)
-			llapi_error(LLAPI_MSG_ERROR, rc, "ioctl err %d", rc);
+			log_msg(LLAPI_MSG_ERROR, rc, "ioctl err %d", rc);
 	} else {
 		memcpy(path, gf->gf_path, gf->gf_pathlen);
 		if (path[0] == '\0') { /* ROOT path */

@@ -140,25 +140,32 @@ static inline double ct_now(void)
 	return tv.tv_sec + 0.000001 * tv.tv_usec;
 }
 
-#define CT_ERROR(_rc, _format, ...)					\
-	llapi_error(LLAPI_MSG_ERROR, _rc,				\
-		    "%f %s[%ld]: "_format,				\
-		    ct_now(), cmd_name, syscall(SYS_gettid), ## __VA_ARGS__)
+static void log_fn(enum llapi_message_level level, int err,
+		   const char *fmt, ...)
+{
+	va_list args;
 
-#define CT_DEBUG(_format, ...)						\
-	llapi_error(LLAPI_MSG_DEBUG | LLAPI_MSG_NO_ERRNO, 0,		\
-		    "%f %s[%ld]: "_format,				\
-		    ct_now(), cmd_name, syscall(SYS_gettid), ## __VA_ARGS__)
+	va_start(args, fmt);
+	fprintf(stdout, "%f %s[%ld]: ", ct_now(), cmd_name, syscall(SYS_gettid));
+	vfprintf(stdout, fmt, args);
+	if (err != 0)
+		fprintf(stdout, ": %s (%d)\n", strerror(err), err);
+	else
+		fprintf(stdout, "\n");
+	va_end(args);
+}
 
-#define CT_WARN(_format, ...) \
-	llapi_error(LLAPI_MSG_WARN | LLAPI_MSG_NO_ERRNO, 0,		\
-		    "%f %s[%ld]: "_format,				\
-		    ct_now(), cmd_name, syscall(SYS_gettid), ## __VA_ARGS__)
+#define CT_ERROR(_rc, _format, ...)				\
+	log_fn(LLAPI_MSG_ERROR, _rc, _format, ## __VA_ARGS__)
 
-#define CT_TRACE(_format, ...)						\
-	llapi_error(LLAPI_MSG_INFO | LLAPI_MSG_NO_ERRNO, 0,		\
-		    "%f %s[%ld]: "_format,				\
-		    ct_now(), cmd_name, syscall(SYS_gettid), ## __VA_ARGS__)
+#define CT_DEBUG(_format, ...)					\
+	log_fn(LLAPI_MSG_DEBUG, 0, _format, ## __VA_ARGS__)
+
+#define CT_WARN(_format, ...)					\
+	log_fn(LLAPI_MSG_WARN, 0, _format, ## __VA_ARGS__)
+
+#define CT_TRACE(_format, ...)					\
+	log_fn(LLAPI_MSG_INFO, 0, _format, ## __VA_ARGS__)
 
 static void usage(const char *name, int rc)
 {
@@ -196,7 +203,7 @@ static void usage(const char *name, int rc)
 	"       return the max fid sequence of archived files\n"
 	"   --abort-on-error          Abort operation on major error\n"
 	"   -A, --archive <#>         Archive number (repeatable)\n"
-	"   -b, --bandwidth <bw>      Limit I/O bandwidth (unit can be used\n,"
+	"   -b, --bandwidth <bw>      Limit I/O bandwidth (unit can be used,\n"
 	"                             default is MB)\n"
 	"   --dry-run                 Don't run, just show what would be done\n"
 	"   -c, --chunk-size <sz>     I/O size used during data copy\n"
@@ -1822,7 +1829,6 @@ static int ct_run(void)
 			CT_ERROR(rc, "failed to register event fifo");
 			return rc;
 		}
-		llapi_error_callback_set(llapi_hsm_log_error);
 	}
 
 	rc = llapi_hsm_copytool_register(lfsh, &ctdata,
@@ -1907,6 +1913,7 @@ static int ct_setup(void)
 	int	rc;
 
 	/* set llapi message level */
+	llapi_msg_callback_set(log_fn);
 	llapi_msg_set_level(opt.o_verbose);
 
 	arc_fd = open(opt.o_hsm_root, O_RDONLY);
@@ -1973,4 +1980,3 @@ error_cleanup:
 
 	return -rc;
 }
-

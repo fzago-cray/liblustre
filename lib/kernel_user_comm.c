@@ -130,9 +130,9 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *link, char *buf, int maxsize,
                 kuch = (struct kuc_hdr *)buf;
 
                 if (kuch->kuc_magic != KUC_MAGIC) {
-                        llapi_err_noerrno(LLAPI_MSG_ERROR,
-					  "bad message magic %x != %x\n",
-					  kuch->kuc_magic, KUC_MAGIC);
+                        log_msg(LLAPI_MSG_ERROR, 0,
+				"bad message magic %x != %x",
+				kuch->kuc_magic, KUC_MAGIC);
                         rc = -EPROTO;
                         break;
                 }
@@ -149,9 +149,9 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *link, char *buf, int maxsize,
                         break;
                 }
                 if (rc < (kuch->kuc_msglen - lhsz)) {
-			llapi_err_noerrno(LLAPI_MSG_ERROR,
-					  "short read: got %d of %d bytes\n",
-					  rc, kuch->kuc_msglen);
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"short read: got %d of %d bytes",
+				rc, kuch->kuc_msglen);
                         rc = -EPROTO;
                         break;
                 }

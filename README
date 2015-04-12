@@ -130,6 +130,7 @@ TODO
 * Provide some pkg-config files to ease applications configuration.
 * Provide an rpm specfile
 * check each mention of lustreapi and fix
+* do something with llapi_hsm_log_error; it doesn't fit.
 
 Changes from liblustreapi
 -------------------------
@@ -145,3 +146,15 @@ section should help porting.
 * llapi_file_open_param is gone. Use llapi_file_open.
 * llapi_create_volatile_idx is gone, and is replaced with
   llapi_create_volatile and extra parameters.
+
+logging
+~~~~~~~
+
+liblustre doesn't provide an API to log messages. It is the job of the
+application to emit these logs. By default no logs are evaluated. To
+retrieve the log messages, the application has to set a callback with
+llapi_msg_callback_set() and set a log level with
+llapi_msg_set_level(). When the callback is called, the application
+can then emit the messages if it wishes. lhsmtool_posix.c has been
+modified to use that interface. The posix copytool will output all its
+messages on stdout.
