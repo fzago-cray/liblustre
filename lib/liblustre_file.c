@@ -176,8 +176,8 @@ static int find_poolpath(const char *fsname, const char *poolname,
  *  if ostname is NULL, returns 1 if pool is not empty and 0 if pool empty
  *  if ostname is not NULL, returns 1 if OST is in pool and 0 if not
  */
-int llapi_search_ost(const char *fsname, const char *poolname,
-		     const char *ostname)
+static int llapi_search_ost(const char *fsname, const char *poolname,
+			    const char *ostname)
 {
         FILE *fd;
         char buffer[PATH_MAX + 1];

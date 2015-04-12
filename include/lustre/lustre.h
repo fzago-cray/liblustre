@@ -40,7 +40,7 @@
 #define XATTR_LUSTRE_LOV	XATTR_LUSTRE_PREFIX"lov"
 
 /*
- * Logging 
+ * Logging
  */
 
 /* Message severity level */
@@ -64,6 +64,7 @@ typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
                                      const char *fmt, va_list ap);
 llapi_log_callback_t llapi_error_callback_set(llapi_log_callback_t cb);
 void llapi_msg_set_level(enum llapi_message_level level);
+int llapi_msg_get_level(void);
 
 /* TODO: should that really be exported. */
 void llapi_error(enum llapi_message_level level, int err, const char *fmt, ...);
@@ -149,7 +150,7 @@ static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
 		((char *)hai + llapi_roundup8(hai->hai_len));
 }
 
-/* 
+/*
  * HSM copytool interface.
  * priv is private state, managed internally by these functions
  */
