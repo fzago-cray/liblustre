@@ -141,23 +141,21 @@ int llapi_hsm_unregister_event_fifo(const char *path);
 void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 			 const char *fmt, va_list args);
 
-/* TODO - is there a standard function to do that? */
-static inline int llapi_roundup8(int val)
-{
-        return (val + 7) & (~0x7);
-}
+#define LLAPI_ROUNDUP8(val) (((val) + 7) & (~0x7))
 
 static inline struct hsm_action_item *hai_first(struct hsm_action_list *hal)
 {
         return (struct hsm_action_item *)
-		(hal->hal_fsname + llapi_roundup8(strlen(hal->hal_fsname) + 1));
+		(hal->hal_fsname + LLAPI_ROUNDUP8(strlen(hal->hal_fsname) + 1));
 }
 
 static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
 {
         return (struct hsm_action_item *)
-		((char *)hai + llapi_roundup8(hai->hai_len));
+		((char *)hai + LLAPI_ROUNDUP8(hai->hai_len));
 }
+
+#undef LLAPI_ROUNDUP8
 
 /*
  * HSM copytool interface.
