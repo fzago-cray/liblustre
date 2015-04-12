@@ -36,7 +36,7 @@ if test "x$RST2MAN" = "x"; then
 fi
 
 # Output files
-AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile man/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile lib/liblustre.pc man/Makefile tests/Makefile])
 AC_OUTPUT
 
 AC_MSG_RESULT([

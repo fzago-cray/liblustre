@@ -127,7 +127,6 @@ TODO
 * All exported API functions should have at least a small test.
 * Fix all the "TODO"s
 * Add a man page for every API.
-* Provide some pkg-config files to ease applications configuration.
 * Provide an rpm specfile
 * check each mention of lustreapi and fix
 * do something with llapi_hsm_log_error; it doesn't fit.
