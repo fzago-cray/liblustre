@@ -5,7 +5,10 @@ MANFILES = liblustre.7 llapi_hsm_action_begin.3 \
 	llapi_hsm_copytool_register.3 llapi_hsm_copytool_unregister.3 \
 	llapi_create_volatile.3
 
-.rst.3 .rst.7:
+.rst.3:
+	@RST2MAN@ $? $@
+
+.rst.7:
 	@RST2MAN@ $? $@
 
 man_MANS = $(MANFILES)
