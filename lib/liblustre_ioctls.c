@@ -106,7 +106,7 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, gf);
 	if (rc == -1) {
-		rc = errno;
+		rc = -errno;
 		if (rc != -ENOENT)
 			log_msg(LLAPI_MSG_ERROR, rc, "ioctl err %d", rc);
 	} else {
