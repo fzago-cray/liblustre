@@ -25,6 +25,7 @@
 START_TEST(ost1) { unittest_ost1(); } END_TEST
 START_TEST(ost2) { unittest_ost2(); } END_TEST
 START_TEST(fid1) { unittest_fid1(); } END_TEST
+START_TEST(fid2) { unittest_fid2(); } END_TEST
 
 static Suite *ost_suite(void)
 {
@@ -39,6 +40,7 @@ static Suite *ost_suite(void)
 
 	tc = tcase_create("FID");
 	tcase_add_test(tc, fid1);
+	tcase_add_test(tc, fid2);
 	suite_add_tcase(s, tc);
 
 	return s;

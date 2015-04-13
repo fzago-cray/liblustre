@@ -167,6 +167,19 @@ struct getinfo_fid2path {
 	char		gf_path[0];
 } __attribute__((packed));
 
+struct getparent {
+        struct lu_fid   gp_fid;
+        __u32           gp_linkno;
+        __u32           gp_name_size;
+        char            gp_name[0];
+} __attribute__((packed));
+
+int fid2parent(const struct lustre_fs_h *lfsh,
+	       const lustre_fid *fid,
+	       unsigned int linkno,
+	       lustre_fid *parent_fid,
+	       char *name, size_t name_size);
+
 /* Helper functions for testing validity of stripe attributes. */
 static inline bool llapi_stripe_size_is_aligned(uint64_t size)
 {
@@ -335,6 +348,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
 #define LL_IOC_HSM_ACTION	_IOR ('f', 220, struct hsm_current_action)
 #define LL_IOC_HSM_IMPORT	_IOWR('f', 245, struct hsm_user_import)
 #define LL_IOC_FID2MDTIDX	_IOWR('f', 248, struct lu_fid)
+#define LL_IOC_GETPARENT	_IOWR('f', 249, struct getparent)
 
 #define IOC_MDC_TYPE            'i'
 #define IOC_MDC_GETFILEINFO     _IOWR(IOC_MDC_TYPE, 22, struct lov_user_mds_data *)
@@ -345,6 +359,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
 void unittest_ost1(void);
 void unittest_ost2(void);
 void unittest_fid1(void);
+void unittest_fid2(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 

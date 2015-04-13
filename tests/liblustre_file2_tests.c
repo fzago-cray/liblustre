@@ -39,7 +39,9 @@
 #define ck_assert_int_gt(X, Y) _ck_assert_int(X, >, Y)
 #endif
 
-#define FNAME "/mnt/lustre/unittest_fid1"
+#define FNAME "/mnt/lustre/unittest_fid"
+#define FNAME_OTHER "/mnt/lustre/unittest_fid_other"
+
 /* Test FID functions. */
 void unittest_fid1(void)
 {
@@ -68,6 +70,63 @@ void unittest_fid1(void)
 	fd = llapi_open_by_fid(lfsh, &fid, O_RDONLY);
 	ck_assert_int_eq(fd, -1);
 	ck_assert_int_eq(errno, ENOENT);
+
+	lustre_close_fs(lfsh);
+}
+
+/* Test fid2parent */
+/* Test FID functions. */
+void unittest_fid2(void)
+{
+	struct lustre_fs_h *lfsh;
+	int fd;
+	lustre_fid fid;
+	lustre_fid parent_fid;
+	int rc;
+	char name[PATH_MAX];
+
+	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	ck_assert_int_eq(rc, 0);
+
+	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	ck_assert_int_gt(fd, 0);
+
+	rc = llapi_fd2fid(fd, &fid);
+	ck_assert_int_eq(rc, 0);
+
+	close(fd);
+
+	/* Several times the same request, with varying arguments. */
+	rc = fid2parent(lfsh, &fid, 0, &parent_fid, NULL, 0);
+	ck_assert_int_eq(rc, 0);
+
+	rc = fid2parent(lfsh, &fid, 0, NULL, NULL, 0);
+	ck_assert_int_eq(rc, 0);
+
+	rc = fid2parent(lfsh, &fid, 0, NULL, name, 5);
+	ck_assert_int_eq(rc, -EOVERFLOW);
+
+	rc = fid2parent(lfsh, &fid, 0, NULL, name, sizeof(name));
+	ck_assert_int_eq(rc, 0);
+
+	rc = fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
+	ck_assert_int_eq(rc, 0);
+
+	if (0) {
+		/* Try with a symlink */
+		/* TODO? this is not supported. */
+		rc = unlink(FNAME);
+		ck_assert(rc == 0 || errno == ENOENT);
+
+		rc = unlink(FNAME_OTHER);
+		ck_assert(rc == 0 || errno == ENOENT);
+
+		rc = symlink(FNAME_OTHER, FNAME);
+		ck_assert_int_eq(rc, 0);
+
+		rc = fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
+		ck_assert_int_eq(rc, 0);
+	}
 
 	lustre_close_fs(lfsh);
 }
