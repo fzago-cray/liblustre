@@ -391,23 +391,3 @@ retry_open:
 
 	return fd;
 }
-
-/**
- * Attempt to open a file with Lustre file identifier \a fid
- * and return an open file descriptor.
- *
- * \param[in] lustre_dir        path within Lustre filesystem containing \a fid
- * \param[in] fid               Lustre file identifier of file to open
- * \param[in] flags             open() flags
- *
- * \retval                      non-negative file descriptor on successful open
- * \retval                      -1 if an error occurred and errno set
- */
-int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
-		      const lustre_fid *fid, int open_flags)
-{
-        char fidstr[FID_NOBRACE_LEN + 1];
-
-        snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(fid));
-        return openat(lfsh->fid_fd, fidstr, open_flags);
-}
