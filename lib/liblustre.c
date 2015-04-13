@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <mntent.h>
 #include <limits.h>
+#include <sys/vfs.h>
 
 #include <lustre/lustre.h>
 
@@ -78,6 +79,7 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 	FILE *f = NULL;
 	struct mntent *ent;
 	char *p;
+	struct statfs stfsbuf;
 
 	*lfsh = NULL;
 
@@ -102,10 +104,58 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 	while(p != mylfsh->mount_path && *p == '/')
 		*p = '\0';
 
+	/* Retrieve the lustre filesystem name from /etc/mtab. */
+	f = setmntent(_PATH_MOUNTED, "r");
+	if (f == NULL) {
+		rc = -EINVAL;
+		goto fail;
+	}
+
+	while ((ent = getmntent(f))) {
+		size_t len;
+
+		if ((strcmp(ent->mnt_dir, mylfsh->mount_path) != 0) ||
+		    (strcmp(ent->mnt_type, "lustre") != 0))
+			continue;
+		
+		/* Found it. The Lustre fsname is part of the fsname
+		 * (ie. nodename@tcp:/lustre) so extract it. */
+		p = strstr(ent->mnt_fsname, ":/");
+		if (p == NULL)
+			break;
+
+		/* Skip :/ */
+		p += 2;
+		
+		len = strlen(p);
+		if (len >= 1 && len <= 8)
+			strcpy(mylfsh->fs_name, p);
+
+		break;
+	}
+
+	endmntent(f);
+
+	if (mylfsh->fs_name[0] == '\0') {
+		rc = -ENOENT;
+		goto fail;
+	}
+
 	/* Open the mount point */
 	mylfsh->mount_fd = open(mylfsh->mount_path, O_RDONLY | O_DIRECTORY);
 	if (mylfsh->mount_fd == -1) {
 		rc = -errno;
+		goto fail;
+	}
+
+	/* Check it's indeed on Lustre */
+	rc = fstatfs(mylfsh->mount_fd, &stfsbuf);
+	if (rc == -1) {
+		rc = -errno;
+		goto fail;
+	}
+	if (stfsbuf.f_type != 0xbd00bd0) {
+		rc = -EINVAL;
 		goto fail;
 	}
 
@@ -116,51 +166,6 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 		rc = -errno;
 		goto fail;
 	}
-
-	/* Retrieve the lustre filesystem name from /etc/mtab. */
-	f = setmntent(_PATH_MOUNTED, "r");
-	if (f == NULL) {
-		rc = -EINVAL;
-		goto fail;
-	}
-
-	while ((ent = getmntent(f))) {
-		if (strcmp(ent->mnt_type, "lustre") == 0 &&
-		    strcmp(ent->mnt_dir, mylfsh->mount_path) == 0) {
-			size_t len;
-
-			p = strstr(ent->mnt_fsname, ":/");
-			if (p == NULL) {
-				rc = -ENOENT;
-				goto fail;
-			}
-
-			/* Skip :/ */
-			p += 2;
-
-			len = strlen(p);
-			if (len < 1 || len > 8) {
-				rc = -ENOENT;
-				goto fail;
-			}
-
-			strcpy(mylfsh->fs_name, p);
-			break;
-		}
-	}
-
-	endmntent(f);
-
-	if (mylfsh->fs_name[0] == '\0') {
-		rc = -ENOENT;
-		goto fail;
-	}
-
-        rc = llapi_search_fsname(mount_path, mylfsh->fs_name);
-        if (rc < 0)
-                return rc;
-
-
 
 	*lfsh = mylfsh;
 
