@@ -344,6 +344,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
  */
 void unittest_ost1(void);
 void unittest_ost2(void);
+void unittest_fid1(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 

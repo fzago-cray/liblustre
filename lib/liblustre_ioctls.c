@@ -76,7 +76,7 @@ static int fid_from_lma(const char *path, const int fd, lustre_fid *fid)
 }
 
 /* Return a FID from an open file descriptor. */
-int llapi_fd2fid(const int fd, lustre_fid *fid)
+int llapi_fd2fid(int fd, lustre_fid *fid)
 {
         int rc;
 

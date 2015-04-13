@@ -100,7 +100,7 @@ struct llapi_stripe_param {
 };
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 		   char *path, int path_len, long long *recno, int *linkno);
-int llapi_fd2fid(const int fd, lustre_fid *fid);
+int llapi_fd2fid(int fd, lustre_fid *fid);
 int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, int open_flags);
 int llapi_file_open(const char *name, int flags, mode_t mode,

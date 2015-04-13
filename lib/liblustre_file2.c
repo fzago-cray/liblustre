@@ -39,3 +39,7 @@ int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
         snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(fid));
         return openat(lfsh->fid_fd, fidstr, open_flags);
 }
+
+#ifdef UNIT_TEST
+#include "../tests/liblustre_file2_tests.c"
+#endif
