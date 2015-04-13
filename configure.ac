@@ -35,6 +35,8 @@ if test "x$RST2MAN" = "x"; then
     [rst2man is needed to build the man pages. Install python-docutils.])
 fi
 
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+
 # Output files
 AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile lib/liblustre.pc man/Makefile tests/Makefile])
 AC_OUTPUT

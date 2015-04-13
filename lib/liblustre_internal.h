@@ -92,6 +92,21 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 			stripes * sizeof(struct lov_user_ost_data_v1);
 }
 
+/*
+ * OSTs lists
+ */
+struct lustre_ost_info {
+	/* How many OSTs are store */
+	size_t count;
+
+	/* Array of OST names */
+	char *osts[0];
+};
+
+void free_ost_info(struct lustre_ost_info *info);
+int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
+		   struct lustre_ost_info **info);
+
 /* TODO: isn't everything stat64 these days? Remove and use stat
  * instead? */
 #if defined(__x86_64__) || defined(__ia64__) || defined(__ppc64__) || \
@@ -324,4 +339,11 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
 #define IOC_MDC_TYPE            'i'
 #define IOC_MDC_GETFILEINFO     _IOWR(IOC_MDC_TYPE, 22, struct lov_user_mds_data *)
 
+/*
+ * Unit testing
+ */
+void unittest_ost1(void);
+void unittest_ost2(void);
+
 #endif /* _LUSTREAPI_INTERNAL_H_ */
+

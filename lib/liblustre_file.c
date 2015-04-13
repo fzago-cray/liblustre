@@ -146,7 +146,7 @@ static int find_target_obdpath(const char *fsname, char *path)
         return 0;
 }
 
-static int find_poolpath(const char *fsname, const char *poolname,
+static int find_poolpath_org(const char *fsname, const char *poolname,
 			 char *poolpath)
 {
         glob_t glob_info;
@@ -186,7 +186,7 @@ static int llapi_search_ost(const char *fsname, const char *poolname,
         if (ostname != NULL)
                 len = strlen(ostname);
 
-	rc = find_poolpath(fsname, poolname, buffer);
+	rc = find_poolpath_org(fsname, poolname, buffer);
         if (rc)
                 return rc;
 

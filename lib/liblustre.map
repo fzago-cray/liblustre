@@ -40,6 +40,11 @@
 		llapi_get_fsname;
 		llapi_msg_callback_set;
 
+		# Export the unittest_* functions present in the version
+		# compiled with the unit tests. None of these symbols are
+		# present on the regular library.
+		unittest_*;
+
 		# NON-LGPL yet
 #		llapi_create_volatile;
 		llapi_error;
