@@ -47,7 +47,7 @@
 static int read_procfs_value(const char *type, const char *inst,
 			     const char *param, char *buf, size_t buf_size)
 {
-        char param_path[PATH_MAX + 1];
+        char param_path[PATH_MAX];
         FILE *param_file;
         int rc;
 

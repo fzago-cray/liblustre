@@ -989,7 +989,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 {
 	int			 rc;
 	int			 fd;
-	char			 parent[PATH_MAX + 1];
+	char			 parent[PATH_MAX];
 	const struct lustre_fs_h *lfsh = hcp->ct_priv->lfsh;
 	const char		*mnt = lfsh->mount_path;
 	struct hsm_action_item	*hai = &hcp->copy.hc_hai;

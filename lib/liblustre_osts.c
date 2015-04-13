@@ -84,7 +84,7 @@ void free_ost_info(struct lustre_ost_info *info)
 int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		   struct lustre_ost_info **info)
 {
-	char poolpath[PATH_MAX+1];
+	char poolpath[PATH_MAX];
 	struct lustre_ost_info *myinfo;
 	FILE *f = NULL;
 	int alloc_count;

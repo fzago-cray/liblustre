@@ -129,7 +129,7 @@ int llapi_search_fsname(const char *pathname, char *fsname)
 static int find_target_obdpath(const char *fsname, char *path)
 {
         glob_t glob_info;
-        char pattern[PATH_MAX + 1];
+        char pattern[PATH_MAX];
         int rc;
 
         snprintf(pattern, PATH_MAX,
@@ -150,7 +150,7 @@ static int find_poolpath_org(const char *fsname, const char *poolname,
 			 char *poolpath)
 {
         glob_t glob_info;
-        char pattern[PATH_MAX + 1];
+        char pattern[PATH_MAX];
         int rc;
 
         snprintf(pattern, PATH_MAX,
@@ -180,7 +180,7 @@ static int llapi_search_ost(const char *fsname, const char *poolname,
 			    const char *ostname)
 {
         FILE *fd;
-        char buffer[PATH_MAX + 1];
+        char buffer[PATH_MAX];
         int len = 0, rc;
 
         if (ostname != NULL)
