@@ -33,10 +33,11 @@
 #include <errno.h>
 #include <limits.h>
 #include <sys/xattr.h>
+#include <endian.h>
 
-#include <lustre/lustreapi.h>
-#include <lustre/lustre_idl.h>
-#include "lustreapi_internal.h"
+#include <lustre/lustre.h>
+
+#include "liblustre_internal.h"
 
 /**
  * An Opaque data type abstracting the layout of a Lustre file.
@@ -65,6 +66,8 @@ struct llapi_layout {
  * refactor the needed functions in lustre/ptlrpc/pack_generic.c
  * into a library that can be shared between kernel and user code.
  */
+#define __swab16s(x) do { *(x) = __bswap_16(*(x)); } while (0)
+#define __swab32s(x) do { *(x) = __bswap_32(*(x)); } while (0)
 static void
 llapi_layout_swab_lov_user_md(struct lov_user_md *lum, int object_count)
 {
@@ -338,9 +341,9 @@ static bool llapi_layout_lum_truncated(struct lov_user_md *lum, size_t lum_size)
 	if (lum_size < lov_user_md_size(0, LOV_MAGIC_V1))
 		return false;
 
-	if (lum->lmm_magic == __swab32(LOV_MAGIC_V1) ||
-	    lum->lmm_magic == __swab32(LOV_MAGIC_V3))
-		magic = __swab32(lum->lmm_magic);
+	if (lum->lmm_magic == __bswap_32(LOV_MAGIC_V1) ||
+	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
+		magic = __bswap_32(lum->lmm_magic);
 	else
 		magic = lum->lmm_magic;
 
@@ -364,9 +367,9 @@ static int llapi_layout_objects_in_lum(struct lov_user_md *lum, size_t lum_size)
 	if (lum_size < lov_user_md_size(0, LOV_MAGIC_V1))
 		return 0;
 
-	if (lum->lmm_magic == __swab32(LOV_MAGIC_V1) ||
-	    lum->lmm_magic == __swab32(LOV_MAGIC_V3))
-		magic = __swab32(lum->lmm_magic);
+	if (lum->lmm_magic == __bswap_32(LOV_MAGIC_V1) ||
+	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
+		magic = __bswap_32(lum->lmm_magic);
 	else
 		magic = lum->lmm_magic;
 
@@ -438,8 +441,8 @@ struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 		goto out;
 	}
 
-	if (lum->lmm_magic == __swab32(LOV_MAGIC_V1) ||
-	    lum->lmm_magic == __swab32(LOV_MAGIC_V3))
+	if (lum->lmm_magic == __bswap_32(LOV_MAGIC_V1) ||
+	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
 		llapi_layout_swab_lov_user_md(lum, object_count);
 
 	layout = llapi_layout_from_lum(lum, object_count);
@@ -525,7 +528,10 @@ static struct llapi_layout *llapi_layout_expected(const char *path)
 	}
 
 	/* Inherit remaining unspecified attributes from the filesystem root. */
+#if 0
+	//TODO llapi_search_mounts not there yet
 	rc = llapi_search_mounts(path, 0, donor_path, NULL);
+#endif
 	if (rc < 0) {
 		llapi_layout_free(path_layout);
 		return NULL;
@@ -585,7 +591,7 @@ struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
  * \retval	valid llapi_layout pointer on success
  * \retval	NULL if an error occurs
  */
-struct llapi_layout *llapi_layout_get_by_fid(const char *lustre_dir,
+struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 					     const lustre_fid *fid,
 					     uint32_t flags)
 {
@@ -598,7 +604,7 @@ struct llapi_layout *llapi_layout_get_by_fid(const char *lustre_dir,
 	 * while executing this function, then restore previous message
 	 * level. */
 	llapi_msg_set_level(LLAPI_MSG_OFF);
-	fd = llapi_open_by_fid(lustre_dir, fid, O_RDONLY);
+	fd = llapi_open_by_fid(lfsh, fid, O_RDONLY);
 	llapi_msg_set_level(saved_msg_level);
 
 	if (fd < 0)

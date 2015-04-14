@@ -3,7 +3,10 @@ AM_CFLAGS= -I${top_srcdir}/include -I.
 lib_LTLIBRARIES = liblustre.la liblustre_unittest.la
 
 # LGPL
-liblustre_la_SOURCES = liblustreapi_json.c liblustreapi_hsm.c
+liblustre_la_SOURCES = \
+	liblustreapi_json.c \
+	liblustreapi_hsm.c \
+	liblustreapi_layout.c
 
 # Not LGPL yet
 liblustre_la_SOURCES += \

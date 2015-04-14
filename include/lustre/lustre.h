@@ -45,13 +45,13 @@
 
 /* Logging levels. The default is LLAPI_MSG_OFF. */
 enum llapi_message_level {
-        LLAPI_MSG_OFF    = 0,
-        LLAPI_MSG_FATAL,
-        LLAPI_MSG_ERROR,
-        LLAPI_MSG_WARN,
-        LLAPI_MSG_NORMAL,
-        LLAPI_MSG_INFO,
-        LLAPI_MSG_DEBUG
+	LLAPI_MSG_OFF    = 0,
+	LLAPI_MSG_FATAL,
+	LLAPI_MSG_ERROR,
+	LLAPI_MSG_WARN,
+	LLAPI_MSG_NORMAL,
+	LLAPI_MSG_INFO,
+	LLAPI_MSG_DEBUG
 };
 
 /**
@@ -75,7 +75,7 @@ enum llapi_message_level llapi_msg_get_level(void);
  * \param[in]   cb    new logging callback
  */
 typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
-                                     const char *fmt, va_list args);
+				     const char *fmt, va_list args);
 void llapi_msg_callback_set(llapi_log_callback_t cb);
 
 /*
@@ -86,17 +86,51 @@ void lustre_close_fs(struct lustre_fs_h *lfsh);
 int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
 const char *llapi_get_fsname(const struct lustre_fs_h *lfsh);
 
+
+/*
+ * Layouts
+ */
+struct llapi_layout;
+struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags);
+struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags);
+struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
+					     const lustre_fid *fid,
+					     uint32_t flags);
+struct llapi_layout *llapi_layout_alloc(void);
+void llapi_layout_free(struct llapi_layout *layout);
+int llapi_layout_stripe_count_get(const struct llapi_layout *layout,
+				  uint64_t *count);
+int llapi_layout_stripe_count_set(struct llapi_layout *layout, uint64_t count);
+int llapi_layout_stripe_size_get(const struct llapi_layout *layout,
+				 uint64_t *size);
+int llapi_layout_stripe_size_set(struct llapi_layout *layout, uint64_t size);
+int llapi_layout_pattern_get(const struct llapi_layout *layout,
+			     uint64_t *pattern);
+int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern);
+int llapi_layout_ost_index_get(const struct llapi_layout *layout,
+			       uint64_t stripe_number, uint64_t *index);
+int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
+			       uint64_t index);
+int llapi_layout_pool_name_get(const struct llapi_layout *layout,
+			       char *pool_name, size_t pool_name_len);
+int llapi_layout_pool_name_set(struct llapi_layout *layout,
+			       const char *pool_name);
+int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
+			   const struct llapi_layout *layout);
+int llapi_layout_file_create(const char *path, int open_flags, int mode,
+			     const struct llapi_layout *layout);
+
 /*
  * Misc
  */
 struct llapi_stripe_param {
-        unsigned long long      lsp_stripe_size;
-        const char             *lsp_pool;
-        int                     lsp_stripe_offset;
-        int                     lsp_stripe_pattern;
-        int                     lsp_stripe_count;
-        bool                    lsp_is_specific;
-        __u32                   lsp_osts[0];
+	unsigned long long	 lsp_stripe_size;
+	const char		*lsp_pool;
+	int			 lsp_stripe_offset;
+	int			 lsp_stripe_pattern;
+	int			 lsp_stripe_count;
+	bool			 lsp_is_specific;
+	__u32			 lsp_osts[0];
 };
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 		   char *path, int path_len, long long *recno, int *linkno);
@@ -145,13 +179,13 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 
 static inline struct hsm_action_item *hai_first(struct hsm_action_list *hal)
 {
-        return (struct hsm_action_item *)
+	return (struct hsm_action_item *)
 		(hal->hal_fsname + LLAPI_ROUNDUP8(strlen(hal->hal_fsname) + 1));
 }
 
 static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
 {
-        return (struct hsm_action_item *)
+	return (struct hsm_action_item *)
 		((char *)hai + LLAPI_ROUNDUP8(hai->hai_len));
 }
 

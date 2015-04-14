@@ -57,6 +57,10 @@ log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...);
 /*
  * LOV
  */
+#define LOV_MAGIC_MAGIC	0x0BD0
+#define LOV_MAGIC_V1	(0x0BD10000 | LOV_MAGIC_MAGIC)
+#define LOV_MAGIC_V3	(0x0BD30000 | LOV_MAGIC_MAGIC)
+
 #define LOV_PATTERN_RAID0	0x001
 #define LOV_PATTERN_RAID1	0x002
 #define LOV_PATTERN_FIRST	0x100
@@ -91,6 +95,17 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 		return sizeof(struct lov_user_md_v3) +
 			stripes * sizeof(struct lov_user_ost_data_v1);
 }
+
+/*
+ * Layouts
+ */
+#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
+#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
+#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
+
+#define LLAPI_LAYOUT_RAID0    0
+
+#define LAYOUT_GET_EXPECTED 0x1
 
 /*
  * OSTs lists
