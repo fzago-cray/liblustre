@@ -40,6 +40,7 @@
 		lustre_close_fs;
 		llapi_get_fsname;
 		llapi_msg_callback_set;
+		llapi_create_volatile_by_fid;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
@@ -47,7 +48,6 @@
 		unittest_*;
 
 		# NON-LGPL yet
-#		llapi_create_volatile;
 		llapi_error;
 #		llapi_fd2fid;
 		llapi_fid2path;

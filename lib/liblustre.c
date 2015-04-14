@@ -119,7 +119,7 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 		if ((strcmp(ent->mnt_dir, mylfsh->mount_path) != 0) ||
 		    (strcmp(ent->mnt_type, "lustre") != 0))
 			continue;
-		
+
 		/* Found it. The Lustre fsname is part of the fsname
 		 * (ie. nodename@tcp:/lustre) so extract it. */
 		p = strstr(ent->mnt_fsname, ":/");
@@ -128,7 +128,7 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 
 		/* Skip :/ */
 		p += 2;
-		
+
 		len = strlen(p);
 		if (len >= 1 && len <= 8)
 			strcpy(mylfsh->fs_name, p);

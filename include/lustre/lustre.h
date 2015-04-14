@@ -143,9 +143,10 @@ int llapi_file_open(const char *name, int flags, mode_t mode,
 		    const struct llapi_stripe_param *param);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid, int *mdt_index);
-int llapi_create_volatile(const char *directory, int mdt_idx,
-			  int open_flags, mode_t mode,
-			  const struct llapi_stripe_param *stripe_param);
+int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+				 const lustre_fid *parent_fid,
+				 int mdt_idx, int open_flags, mode_t mode,
+				 const struct llapi_layout *layout);
 int llapi_parse_size(const char *optarg, unsigned long long *size,
 		     unsigned long long *size_units, int bytes_spec);
 

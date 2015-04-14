@@ -1,13 +1,13 @@
-=====================
-llapi_create_volatile
-=====================
+============================
+llapi_create_volatile_by_fid
+============================
 
 -------------------------
 liblustre file management
 -------------------------
 
 :Author: Frank Zago for Cray Inc.
-:Date:   2015-04-10
+:Date:   2015-04-14
 :Manual section: 3
 :Manual group: liblustre
 
@@ -17,9 +17,10 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int llapi_create_volatile(const char \***\ directory\ **,
-int** mdt_idx\ **, int** open_flags\ **, mode_t** mode\ **, const
-struct llapi_stripe_param \***\ stripe_param\ **)**
+**int llapi_create_volatile_by_fid(const struct lustre_fs_h \***\
+lfsh\ **, const lustre_fid \***\ parent_fid\ **, int** mdt_idx\ **,
+int** open_flags\ **, mode_t** mode\ **, const struct llapi_layout
+\***\ layout\ **)**
 
 
 DESCRIPTION
@@ -30,29 +31,25 @@ Lustre filesystem. The created file is not visible with
 **ls(1)**. Once the file is closed, or the owning process dies, the
 file is permanently removed from the filesystem.
 
-This function will also work on a non-Lustre filesystem, where the
-file is created then deleted, leaving only the file descriptor to
-access the file. This is not strictly equivalent because there is a
-small window during which the file is visible to users (provided they
-have access to the *directory*).
+*lfsh* is an opaque Lustre fs handle returned by **lustre_open_fs(3)**.
 
-The *directory* parameter indicates where to create the file on the
-Lustre filesystem.
+*parent_fid* is the FID of a directory into which the file must be
+created.
 
 *mdt_idx* is the MDT index onto which create the file. To use a
 default MDT, set it to -1.
 
 *open_flags* and *mode* are the same as **open(2)**.
 
-*stripe_param* describes the striping information. If it is NULL, then
+*layout* describes the striping information. If it is NULL, then
 the default for the directory is used.
 
 
 RETURN VALUE
 ============
 
-**llapi_create_volatile** returns a file descriptor on success, or a
-negative errno on failure.
+**llapi_create_volatile_by_fid** returns a file descriptor on success,
+or a negative errno on failure.
 
 
 ERRORS

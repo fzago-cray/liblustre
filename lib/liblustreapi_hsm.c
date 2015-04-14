@@ -952,28 +952,25 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 {
 	int			 rc;
 	int			 fd;
-	char			 parent[PATH_MAX];
 	const struct lustre_fs_h *lfsh = hcp->ct_priv->lfsh;
 	const char		*mnt = lfsh->mount_path;
 	struct hsm_action_item	*hai = &hcp->copy.hc_hai;
 	lustre_fid		parent_fid;
 
+	/* TODO: original version would create volatile in root fs if
+	 * that failed. Is it correct? We should fail because that is
+	 * not correct. */
 	rc = fid2parent(hcp->ct_priv->lfsh, &hai->hai_fid, 0,
 			&parent_fid, NULL, 0);
 	if (rc < 0) {
-		/* fid2parent() failed, try to keep on going */
 		log_msg(LLAPI_MSG_ERROR, rc,
 			"cannot get parent fid to restore "DFID" using '%s'",
 			PFID(&hai->hai_fid), mnt);
-		snprintf(parent, sizeof(parent), "%s", mnt);
-	} else {
-		/* Create the file in the .lustre directory */
-		snprintf(parent, sizeof(parent), "%s/.lustre/fid/"DFID,
-			 mnt, PFID(&parent_fid));
+		return rc;
 	}
 
-	fd = llapi_create_volatile(parent, mdt_index, open_flags,
-				   S_IRUSR | S_IWUSR, NULL);
+	fd = llapi_create_volatile_by_fid(lfsh, &parent_fid, mdt_index,
+					  open_flags, S_IRUSR | S_IWUSR, NULL);
 	if (fd < 0)
 		return fd;
 

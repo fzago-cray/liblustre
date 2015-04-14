@@ -14,6 +14,7 @@
  * Lesser General Public License for more details.
  */
 
+#include <stdlib.h>
 #include <limits.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -43,9 +44,9 @@ int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
         return openat(lfsh->fid_fd, fidstr, open_flags);
 }
 
-/** 
- * Retrieve the parent FID from a FID 
- * 
+/**
+ * Retrieve the parent FID from a FID
+ *
  * Note: this won't work on a symbolic link.
  */
 int fid2parent(const struct lustre_fs_h *lfsh,
@@ -75,7 +76,7 @@ int fid2parent(const struct lustre_fs_h *lfsh,
         x.gp.gp_linkno = linkno;
 
 	fd = llapi_open_by_fid(lfsh, fid, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
-	if (fd == -1) 
+	if (fd == -1)
 		return -errno;
 
         rc = ioctl(fd, LL_IOC_GETPARENT, &x.gp);
@@ -93,6 +94,57 @@ int fid2parent(const struct lustre_fs_h *lfsh,
 	close(fd);
 
         return rc;
+}
+
+/*
+ * Open an anonymous file. That file will be destroyed by Lustre when
+ * the last reference to it is closed.
+ *
+ * \param lfsh          an opaque handle returned by lustre_open_fs()
+
+ * \param parent_fid    the FID of a directory into which the file must be
+ *                      created.
+ * \param mdt_idx              the MDT index onto which create the file. To use a
+ *                      default MDT, set it to -1.
+ * \param open_flags    open flags, see open(2)
+ * \param  mode         open mode, see open(2)
+ * \param layout        striping information. If it is NULL, then
+ *                      the default for the directory is used.
+ */
+int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+				 const lustre_fid *parent_fid,
+				 int mdt_idx, int open_flags, mode_t mode,
+				 const struct llapi_layout *layout)
+{
+	char path[PATH_MAX];
+	int fd;
+	int rc;
+	int rnumber;
+
+	rnumber = random();
+	if (mdt_idx == -1)
+		rc = snprintf(path, sizeof(path),
+			      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR "::%.4X",
+			      PFID(parent_fid), rnumber);
+	else
+		rc = snprintf(path, sizeof(path),
+			      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
+			      PFID(parent_fid), mdt_idx, rnumber);
+	if (rc == -1 || rc >= sizeof(path))
+		return -ENAMETOOLONG;
+
+	fd = llapi_layout_file_openat(lfsh->fid_fd, path,
+				      open_flags | O_RDWR | O_CREAT,
+				      mode, layout);
+	if (fd == -1) {
+		rc = -errno;
+		log_msg(LLAPI_MSG_ERROR, rc,
+			"Cannot create volatile file '%s' under '%s'",
+			path, lfsh->mount_path);
+		return rc;
+	}
+
+	return fd;
 }
 
 #ifdef UNIT_TEST
