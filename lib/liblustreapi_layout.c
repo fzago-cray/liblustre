@@ -917,23 +917,10 @@ int llapi_layout_pool_name_set(struct llapi_layout *layout,
 	return 0;
 }
 
-/**
- * Open and possibly create a file with a given \a layout.
- *
- * If \a layout is NULL this function acts as a simple wrapper for
- * open().  By convention, ENOTTY is returned in errno if \a path
- * refers to a non-Lustre file.
- *
- * \param[in] path		name of the file to open
- * \param[in] open_flags	open() flags
- * \param[in] mode		permissions to create new file with
- * \param[in] layout		layout to create new file with
- *
- * \retval		non-negative file descriptor on successful open
- * \retval		-1 if an error occurred
- */
-int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
-			   const struct llapi_layout *layout)
+/* Helper for llapi_layout_file_open and llapi_layout_file_openat. */
+static int layout_file_open_internal(int dir_fd, const char *path,
+				     int open_flags, mode_t mode,
+				     const struct llapi_layout *layout)
 {
 	int fd;
 	int rc;
@@ -952,7 +939,10 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 	if (layout != NULL && (open_flags & O_CREAT))
 		open_flags |= O_LOV_DELAY_CREATE;
 
-	fd = open(path, open_flags, mode);
+	if (dir_fd == -1)
+		fd = open(path, open_flags, mode);
+	else
+		fd = openat(dir_fd, path, open_flags, mode);
 
 	if (layout == NULL || fd < 0)
 		return fd;
@@ -983,6 +973,51 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 }
 
 /**
+ * Open and possibly create a file with a given \a layout.
+ *
+ * If \a layout is NULL this function acts as a simple wrapper for
+ * open().  By convention, ENOTTY is returned in errno if \a path
+ * refers to a non-Lustre file.
+ *
+ * \param[in] path		name of the file to open
+ * \param[in] open_flags	open() flags
+ * \param[in] mode		permissions to create new file with
+ * \param[in] layout		layout to create new file with
+ *
+ * \retval		non-negative file descriptor on successful open
+ * \retval		-1 if an error occurred
+ */
+int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
+			   const struct llapi_layout *layout)
+{
+	return layout_file_open_internal(-1, path, open_flags,
+					 mode, layout);
+}
+
+/**
+ * Open and possibly create a file with a given \a layout.
+ *
+ * If \a layout is NULL this function acts as a simple wrapper for
+ * open().  By convention, ENOTTY is returned in errno if \a path
+ * refers to a non-Lustre file.
+ *
+ * \param[in] dir_fd		open descriptor for a directory
+ * \param[in] path		relative name of the file to open
+ * \param[in] open_flags	open() flags
+ * \param[in] mode		permissions to create new file with
+ * \param[in] layout		layout to create new file with
+ *
+ * \retval		non-negative file descriptor on successful open
+ * \retval		-1 if an error occurred
+ */
+int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
+			     mode_t mode, const struct llapi_layout *layout)
+{
+	return layout_file_open_internal(dir_fd, path, open_flags,
+					 mode, layout);
+}
+
+/**
  * Create a file with a given \a layout.
  *
  * Force O_CREAT and O_EXCL flags on so caller is assured that file was
@@ -999,6 +1034,8 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 int llapi_layout_file_create(const char *path, int open_flags, int mode,
 			     const struct llapi_layout *layout)
 {
-	return llapi_layout_file_open(path, open_flags|O_CREAT|O_EXCL, mode,
-				      layout);
+	return layout_file_open_internal(-1, path,
+					 open_flags | O_CREAT | O_EXCL,
+					 mode, layout);
 }
+

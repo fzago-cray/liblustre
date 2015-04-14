@@ -20,6 +20,7 @@
 		llapi_layout_alloc;
 		llapi_layout_file_create;
 		llapi_layout_file_open;
+		llapi_layout_file_openat;
 		llapi_layout_free;
 		llapi_layout_get_by_fd;
 		llapi_layout_get_by_fid;

@@ -117,6 +117,8 @@ int llapi_layout_pool_name_set(struct llapi_layout *layout,
 			       const char *pool_name);
 int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 			   const struct llapi_layout *layout);
+int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
+			     mode_t mode, const struct llapi_layout *layout);
 int llapi_layout_file_create(const char *path, int open_flags, int mode,
 			     const struct llapi_layout *layout);
 
