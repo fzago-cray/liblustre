@@ -101,8 +101,10 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 	/* Remove extra slashes at the end of the mountpoint.
 	 * /mnt/lustre/ --> /mnt/lustre */
 	p = &mylfsh->mount_path[strlen(mylfsh->mount_path)-1];
-	while(p != mylfsh->mount_path && *p == '/')
+	while(p != mylfsh->mount_path && *p == '/') {
 		*p = '\0';
+		p --;
+	}
 
 	/* Retrieve the lustre filesystem name from /etc/mtab. */
 	f = setmntent(_PATH_MOUNTED, "r");
