@@ -156,7 +156,7 @@ struct lustre_fs_h {
 	int fid_fd;
 };
 
-void llapi_chomp_string(char *buf);
+void chomp_string(char *buf);
 
 #define LLAPI_LAYOUT_MAGIC 0x11AD1107
 
@@ -375,6 +375,7 @@ void unittest_ost1(void);
 void unittest_ost2(void);
 void unittest_fid1(void);
 void unittest_fid2(void);
+void unittest_chomp(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 

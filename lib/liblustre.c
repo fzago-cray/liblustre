@@ -30,22 +30,6 @@
 #include "liblustre_internal.h"
 
 /**
- * Removes trailing newlines from a string
- * \param buf  the string to modify
- */
-void llapi_chomp_string(char *buf)
-{
-	if (buf == NULL)
-		return;
-
-	while(*buf && *buf != '\n')
-		buf ++;
-
-	if (*buf)
-		*buf = '\0';
-}
-
-/**
  * Closes a Lustre filesystem opened with lustre_open_fs()
  *
  * \param lfsh	An opaque handle returned by lustre_open_fs()

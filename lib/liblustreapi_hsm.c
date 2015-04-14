@@ -266,7 +266,7 @@ static int llapi_hsm_log_ct_registration(struct hsm_copytool_private *ct,
 	rc = llapi_get_agent_uuid(ct->lfsh, agent_uuid, sizeof(agent_uuid));
 	if (rc < 0)
 		goto err;
-	llapi_chomp_string(agent_uuid);
+	chomp_string(agent_uuid);
 
 	rc = llapi_json_add_item(&json_items, "uuid", LLAPI_JSON_STRING,
 				 agent_uuid);
