@@ -140,18 +140,26 @@ static inline double ct_now(void)
 	return tv.tv_sec + 0.000001 * tv.tv_usec;
 }
 
-static void log_fn(enum llapi_message_level level, int err,
-		   const char *fmt, ...)
+/* Call back for liblustre. Also use to log the copytool's messages. */
+static void log_fn_cb(enum llapi_message_level level, int err,
+		      const char *fmt, va_list args)
 {
-	va_list args;
-
-	va_start(args, fmt);
 	fprintf(stdout, "%f %s[%ld]: ", ct_now(), cmd_name, syscall(SYS_gettid));
 	vfprintf(stdout, fmt, args);
 	if (err != 0)
 		fprintf(stdout, ": %s (%d)\n", strerror(err), err);
 	else
 		fprintf(stdout, "\n");
+}
+
+/* Reformat the copytool's messages to use log_fn_cb. */
+static void log_fn(enum llapi_message_level level, int err,
+		   const char *fmt, ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+	log_fn_cb(level, err, fmt, args);
 	va_end(args);
 }
 
@@ -1913,7 +1921,7 @@ static int ct_setup(void)
 	int	rc;
 
 	/* set llapi message level */
-	llapi_msg_callback_set(log_fn);
+	llapi_msg_callback_set(log_fn_cb);
 	llapi_msg_set_level(opt.o_verbose);
 
 	arc_fd = open(opt.o_hsm_root, O_RDONLY);

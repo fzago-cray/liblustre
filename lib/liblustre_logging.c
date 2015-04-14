@@ -45,7 +45,7 @@ enum llapi_message_level llapi_msg_get_level(void)
 void
 log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...)
 {
-	va_list  args;
+	va_list args;
 	int errno_org = errno;
 
 	va_start(args, fmt);

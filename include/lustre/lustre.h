@@ -75,7 +75,7 @@ enum llapi_message_level llapi_msg_get_level(void);
  * \param[in]   cb    new logging callback
  */
 typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
-                                     const char *fmt, ...);
+                                     const char *fmt, va_list args);
 void llapi_msg_callback_set(llapi_log_callback_t cb);
 
 /*
