@@ -891,43 +891,6 @@ out_err:
 	return rc;
 }
 
-/** Get parent path from mount point and fid.
- *
- * \param lfsh	     Filesystem handle.
- * \param fid        Object FID.
- * \param parent     Destination buffer.
- * \param parent_len Destination buffer size.
- * \return 0 on success.
- */
-static int fid_parent(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
-		      char *parent, size_t parent_len)
-{
-	int		 rc;
-	char		 file[PATH_MAX];
-	char		*ptr;
-
-	rc = llapi_fid2path(lfsh, fid, file, sizeof(file),
-			    NULL, NULL);
-	if (rc < 0)
-		return rc;
-
-	/* fid2path returns a relative path */
-	rc = snprintf(parent, parent_len, "%s/%s", lfsh->mount_path, file);
-	if (rc >= parent_len)
-		return -ENAMETOOLONG;
-
-	/* remove file name */
-	ptr = strrchr(parent, '/');
-	if (ptr == NULL || ptr == parent) {
-		rc = -EINVAL;
-	} else {
-		*ptr = '\0';
-		rc = 0;
-	}
-
-	return rc;
-}
-
 /**
  * Get metadata attributes of file by FID.
  *
@@ -993,14 +956,20 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 	const struct lustre_fs_h *lfsh = hcp->ct_priv->lfsh;
 	const char		*mnt = lfsh->mount_path;
 	struct hsm_action_item	*hai = &hcp->copy.hc_hai;
+	lustre_fid		parent_fid;
 
-	rc = fid_parent(lfsh, &hai->hai_fid, parent, sizeof(parent));
+	rc = fid2parent(hcp->ct_priv->lfsh, &hai->hai_fid, 0,
+			&parent_fid, NULL, 0);
 	if (rc < 0) {
-		/* fid_parent() failed, try to keep on going */
+		/* fid2parent() failed, try to keep on going */
 		log_msg(LLAPI_MSG_ERROR, rc,
-			    "cannot get parent path to restore "DFID" "
-			    "using '%s'", PFID(&hai->hai_fid), mnt);
+			"cannot get parent fid to restore "DFID" using '%s'",
+			PFID(&hai->hai_fid), mnt);
 		snprintf(parent, sizeof(parent), "%s", mnt);
+	} else {
+		/* Create the file in the .lustre directory */
+		snprintf(parent, sizeof(parent), "%s/.lustre/fid/"DFID,
+			 mnt, PFID(&parent_fid));
 	}
 
 	fd = llapi_create_volatile(parent, mdt_index, open_flags,
