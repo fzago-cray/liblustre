@@ -214,12 +214,6 @@ static inline bool llapi_stripe_index_is_valid(int64_t index)
 	return index >= -1 && index <= LOV_V1_INSANE_STRIPE_COUNT;
 }
 
-#define llapi_stripe_offset_is_valid(os) llapi_stripe_index_is_valid(os)
-
-int llapi_stripe_limit_check(unsigned long long stripe_size, int stripe_offset,
-			     int stripe_count, int stripe_pattern);
-
-
 /*
  * HSM
  */
