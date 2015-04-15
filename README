@@ -37,28 +37,19 @@ for instance. Instead simple functions must be provided.
 Only the functions that are part of the API must appear in
 liblustre.map.
 
-
-This version adds the structure lustre_fs_h which represents a Lustre
-filesystem. An application has to open the filesystem first with
-lustre_open_fs, and an opaque handle is returned. This handle is then
-used by functions like llapi_fid2path(), which have been modified to
-require that handle. This avoids opening the filesystem for many
-operations.
-
 An updated API
 --------------
 
 The current liblustreapi has some shortcomings. For instance many
 function will search for the mountpoint of a lustre filesystem, open
-it, issue an ioctl, then close the it. This is not always
-necessary. For instanmce when using the copytool, we already know
-everything we need about the filesystem, thus we should be able to
-open it once.
+it, issue an ioctl, then close it. This is not always necessary. For
+instance when using the copytool, we already know everything we need
+about the filesystem, thus we should be able to open it once.
 
 struct lustre_fs_h
 ~~~~~~~~~~~~~~~~~~
 
-This is a new structure meant to keep the information os an existing
+This is a new structure meant to keep the information of an existing
 filesystem (mountpoint, name, ...) so the information doesn't have to
 be retrieved more than once. Thus we open and close a filesystem
 with::
