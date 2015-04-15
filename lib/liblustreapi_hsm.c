@@ -579,7 +579,6 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 {
 	int				rc;
 	int				msg_len;
-	char				*msg = NULL;
 	va_list				args2;
 	struct llapi_json_item_list	*json_items;
 
@@ -609,11 +608,7 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 	msg_len = vsnprintf(NULL, 0, fmt, args2) + 1;
 	va_end(args2);
 	if (msg_len >= 0) {
-		msg = (char *) alloca(msg_len);
-		if (msg == NULL) {
-			rc = -ENOMEM;
-			goto err;
-		}
+		char msg[msg_len];
 
 		rc = vsnprintf(msg, msg_len, fmt, args);
 		if (rc < 0)
