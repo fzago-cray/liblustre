@@ -146,6 +146,7 @@ section should help porting.
   llapi_create_volatile_by_fid and a layout parameters.
 * llapi_chomp_string is not exported anymore.
 * llapi_stripe_limit_check is gone. Use llapi_layout_stripe_*_is_valid.
+* llapi_get_mdt_index_by_fid directly returns the MDT index.
 
 logging
 ~~~~~~~

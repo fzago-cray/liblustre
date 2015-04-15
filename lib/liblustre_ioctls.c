@@ -92,19 +92,3 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 
 	return rc;
 }
-
-/* return the MDT index for a file, given its FID. */
-int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
-			       const struct lu_fid *fid,
-			       int *mdt_index)
-{
-	int rc;
-
-	rc = ioctl(lfsh->mount_fd, LL_IOC_FID2MDTIDX, fid);
-	if (rc < 0)
-		return -errno;
-
-	*mdt_index = rc;
-
-	return rc;
-}

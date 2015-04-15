@@ -362,6 +362,7 @@ void unittest_ost2(void);
 void unittest_fid1(void);
 void unittest_fid2(void);
 void unittest_chomp(void);
+void unittest_mdt_index(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 

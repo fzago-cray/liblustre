@@ -1138,7 +1138,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 	int				 hp_flags = 0;
 	int				 src_fd = -1;
 	int				 dst_fd = -1;
-	int				 mdt_index = -1;
+	int				 mdt_index;
 	int				 open_flags = 0;
 	bool				 set_lovea;
 	struct lu_fid			 dfid;
@@ -1150,12 +1150,13 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 	/* build backend file name from released file FID */
 	ct_path_archive(src, sizeof(src), opt.o_hsm_root, &hai->hai_fid);
 
-	rc = llapi_get_mdt_index_by_fid(lfsh, &hai->hai_fid, &mdt_index);
-	if (rc < 0) {
-		CT_ERROR(rc, "cannot get mdt index "DFID"",
+	mdt_index = llapi_get_mdt_index_by_fid(lfsh, &hai->hai_fid);
+	if (mdt_index < 0) {
+		CT_ERROR(mdt_index, "cannot get mdt index "DFID"",
 			 PFID(&hai->hai_fid));
-		return rc;
+		return mdt_index;
 	}
+
 	/* restore loads and sets the LOVEA w/o interpreting it to avoid
 	 * dependency on the structure format. */
 	rc = ct_load_stripe(src, lov_buf, &lov_size);

@@ -46,6 +46,7 @@
 		llapi_fid2parent;
 		llapi_fd2parent;
 		llapi_get_mountpoint;
+		llapi_get_mdt_index_by_fid;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
@@ -58,7 +59,6 @@
 		llapi_path2fid;
 		llapi_fid2path;
 #		llapi_get_agent_uuid;
-		llapi_get_mdt_index_by_fid;
 		llapi_msg_set_level;
 		llapi_parse_size;
 		fid_is_norm;

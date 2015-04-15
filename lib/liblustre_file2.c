@@ -298,6 +298,27 @@ int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 	return fd;
 }
 
+/**
+ * Return the MDT index for a file, given its FID.
+ *
+ * \param[in]   lfsh          an opened Lustre fs opaque handle
+ * \param[in]   fid           the FID of which to find the parent
+ *
+ * \retval   0 or a positive MDT index
+ * \retval   a negative errno on error
+ */
+int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
+			       const struct lu_fid *fid)
+{
+	int rc;
+
+	rc = ioctl(lfsh->mount_fd, LL_IOC_FID2MDTIDX, fid);
+	if (rc < 0)
+		return -errno;
+
+	return rc;
+}
+
 #ifdef UNIT_TEST
 #include "../tests/liblustre_file2_tests.c"
 #endif

@@ -129,3 +129,28 @@ void unittest_fid2(void)
 
 	lustre_close_fs(lfsh);
 }
+
+/* Test llapi_get_mdt_index_by_fid */
+void unittest_mdt_index(void)
+{
+	struct lustre_fs_h *lfsh;
+	lustre_fid fid;
+	int rc;
+	int fd;
+
+	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	ck_assert_int_eq(rc, 0);
+
+	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	ck_assert_int_gt(fd, 0);
+
+	rc = llapi_fd2fid(fd, &fid);
+	ck_assert_int_eq(rc, 0);
+
+	close(fd);
+
+	rc = llapi_get_mdt_index_by_fid(lfsh, &fid);
+	ck_assert_int_eq(rc, 0);
+
+	lustre_close_fs(lfsh);
+}

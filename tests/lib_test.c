@@ -26,6 +26,7 @@ START_TEST(ost2) { unittest_ost2(); } END_TEST
 START_TEST(fid1) { unittest_fid1(); } END_TEST
 START_TEST(fid2) { unittest_fid2(); } END_TEST
 START_TEST(chomp) { unittest_chomp(); } END_TEST
+START_TEST(mdt_index) { unittest_mdt_index(); } END_TEST
 
 static Suite *ost_suite(void)
 {
@@ -43,8 +44,9 @@ static Suite *ost_suite(void)
 	tcase_add_test(tc, fid2);
 	suite_add_tcase(s, tc);
 
-	tc = tcase_create("CHOMP");
+	tc = tcase_create("MISC");
 	tcase_add_test(tc, chomp);
+	tcase_add_test(tc, mdt_index);
 	suite_add_tcase(s, tc);
 
 	return s;
