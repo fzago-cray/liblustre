@@ -169,8 +169,6 @@ void chomp_string(char *buf);
 #define LUSTRE_VOLATILE_HDR ".\x0c\x13\x14\x12:VOLATILE"
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
-int llapi_search_fsname(const char *pathname, char *fsname);
-
 /*
  * FID
  */

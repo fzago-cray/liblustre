@@ -12,7 +12,6 @@ liblustre_la_SOURCES = \
 liblustre_la_SOURCES += \
 	kernel_user_comm.c \
 	liblustre.c \
-	liblustre_file.c \
 	liblustre_file2.c \
 	liblustre_internal.h \
 	liblustre_ioctls.c \
