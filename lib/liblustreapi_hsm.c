@@ -1251,24 +1251,38 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	struct hsm_user_import	 hui;
 	int			 fd;
 	int			 rc = 0;
-	struct llapi_stripe_param param = {
-		.lsp_stripe_size = stripe_size,
-		.lsp_stripe_count = stripe_count,
-		.lsp_stripe_pattern = stripe_pattern,
-		.lsp_stripe_offset = stripe_offset,
-		.lsp_pool = pool_name
-	};
+	struct llapi_layout *layout;
 
 	if (stripe_pattern == 0)
 		stripe_pattern = LOV_PATTERN_RAID0;
 	stripe_pattern |= LOV_PATTERN_F_RELEASED;
 
 	/* Create a non-striped file */
-	fd = llapi_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, &param);
+	layout = llapi_layout_alloc();
+	if (layout == NULL) {
+		log_msg(LLAPI_MSG_ERROR, ENOMEM,
+			"cannot allocate a new layout for import");
+		return -1;
+	}
+
+	if (llapi_layout_stripe_size_set(layout, stripe_size) != 0 ||
+	    llapi_layout_stripe_count_set(layout, stripe_count) != 0 ||
+	    llapi_layout_pattern_set(layout, stripe_pattern) != 0 ||
+	    llapi_layout_ost_index_set(layout, 0, stripe_offset) != 0 ||
+	    llapi_layout_pool_name_set(layout, pool_name) != 0) {
+		log_msg(LLAPI_MSG_ERROR, EINVAL,
+			"invalid striping information for importing '%s'",
+			dst);
+		rc = -1;
+		goto free_layout;
+	}
+
+	fd = llapi_layout_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, layout);
 	if (fd < 0) {
 		log_msg(LLAPI_MSG_ERROR, fd,
 			    "cannot create '%s' for import", dst);
-		return fd;
+		rc = fd;
+		goto free_layout;
 	}
 
 	/* Get the new fid in Lustre. Caller needs to use this fid
@@ -1301,6 +1315,8 @@ out_unlink:
 		close(fd);
 	if (rc)
 		unlink(dst);
+free_layout:
+	llapi_layout_free(layout);
 	return rc;
 }
 

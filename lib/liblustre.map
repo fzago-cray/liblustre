@@ -51,7 +51,6 @@
 		llapi_error;
 #		llapi_fd2fid;
 		llapi_fid2path;
-		llapi_file_open;
 #		llapi_get_agent_uuid;
 		llapi_get_mdt_index_by_fid;
 		llapi_msg_set_level;

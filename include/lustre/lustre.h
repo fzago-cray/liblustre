@@ -139,8 +139,6 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 int llapi_fd2fid(int fd, lustre_fid *fid);
 int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, int open_flags);
-int llapi_file_open(const char *name, int flags, mode_t mode,
-		    const struct llapi_stripe_param *param);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid, int *mdt_index);
 int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,

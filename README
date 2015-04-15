@@ -140,11 +140,14 @@ section should help porting.
 * LPU64 is gone. Use "%llu". Cast if necessary.
 * LPX64 is gone. Use "%#llx". Cast if necessary.
 * LPX64i is gone. Use "%llx". Cast if necessary.
-* llapi_file_open_pool is gone. Use llapi_file_open and set the pool
-  name in the extra parameter.
+* llapi_file_open_pool and llapi_file_open_param are gone. Use
+  llapi_layout_file_open or llapi_layout_file_openat. Careful with the
+  return code. The former function returned negative errno, while the
+  new one return -1 and sets errno.
 * llapi_file_open_param is gone. Use llapi_file_open.
 * llapi_create_volatile_idx is gone, and is replaced with
   llapi_create_volatile_by_fid and a layout parameters.
+* llapi_chomp_string is not exported anymore.
 
 logging
 ~~~~~~~
