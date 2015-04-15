@@ -1,7 +1,6 @@
 /*
  * An alternate Lustre user library.
- *
- * Copyright Cray 2015, All rights reserved.
+ * Copyright 2015 Cray Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -117,7 +116,7 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		if (alloc_count == myinfo->count) {
 			struct lustre_ost_info *newinfo;
 			alloc_count += 10;
-			newinfo = realloc(myinfo, sizeof(*info) + 
+			newinfo = realloc(myinfo, sizeof(*info) +
 					  alloc_count * sizeof (char *));
 			if (newinfo == NULL) {
 				rc = -ENOMEM;
@@ -133,7 +132,7 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		myinfo->count ++;
 
 		line = NULL;
-	} 
+	}
 
 	rc = 0;
 

@@ -5,7 +5,7 @@
  *
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
- * Copyright 2015 Cray Inc., All rights reserved
+ * Copyright 2015 Cray Inc. All rights reserved
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
