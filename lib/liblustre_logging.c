@@ -23,6 +23,12 @@
 unsigned int log_level = LLAPI_MSG_OFF;
 llapi_log_callback_t log_msg_callback = NULL;
 
+/**
+ * Set the log level.
+ * If the level is invalid, it will be clipped to a valid value.
+ *
+ * \param[in]  level    new logging level
+ */
 void llapi_msg_set_level(enum llapi_message_level level)
 {
 	if (level < LLAPI_MSG_OFF)
@@ -33,6 +39,11 @@ void llapi_msg_set_level(enum llapi_message_level level)
 		log_level = level;
 }
 
+/**
+ * Return the currently set log level
+ *
+ * \retval      the current log level
+ */
 enum llapi_message_level llapi_msg_get_level(void)
 {
 	return log_level;
@@ -54,6 +65,12 @@ log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...)
 	errno = errno_org;
 }
 
+/**
+ * An application would set a callback to retrieve logging message from
+ * the library. It can be set to NULL to stop receiving.
+ *
+ * \param[in]  cb    new logging callback
+ */
 void llapi_msg_callback_set(llapi_log_callback_t cb)
 {
 	log_msg_callback = cb;

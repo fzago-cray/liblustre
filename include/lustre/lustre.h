@@ -54,26 +54,8 @@ enum llapi_message_level {
 	LLAPI_MSG_DEBUG
 };
 
-/**
- * Set the log level.
- *
- * \param[in]   level    new logging level
- */
 void llapi_msg_set_level(enum llapi_message_level level);
-
-/**
- * Return the currently set log level
- *
- * \retval      the current log level
- */
 enum llapi_message_level llapi_msg_get_level(void);
-
-/**
- * An application would set a callback to retrieve logging message from
- * the library. It can be set to NULL to stop receiving.
- *
- * \param[in]   cb    new logging callback
- */
 typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
 				     const char *fmt, va_list args);
 void llapi_msg_callback_set(llapi_log_callback_t cb);

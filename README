@@ -112,9 +112,9 @@ of its interaction with Lustre is similar to the copytool.
 TODO
 ----
 
-* All exported API functions should be documented in lustre.h, not in
-  the C file. Format should be the same as lustre (doxygen) and
-  conformity enforced during build.
+* All exported API functions should be documented in their sources,
+  not in the headers. Format should be the same as lustre (doxygen)
+  and conformity enforced during build.
 * All exported API functions should have at least a small test.
 * Fix all the "TODO"s
 * Add a man page for every API.
