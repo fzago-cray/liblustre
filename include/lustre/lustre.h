@@ -85,7 +85,7 @@ struct lustre_fs_h;
 void lustre_close_fs(struct lustre_fs_h *lfsh);
 int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
 const char *llapi_get_fsname(const struct lustre_fs_h *lfsh);
-
+const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh);
 
 /*
  * Layouts
@@ -137,6 +137,7 @@ struct llapi_stripe_param {
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 		   char *path, int path_len, long long *recno, int *linkno);
 int llapi_fd2fid(int fd, lustre_fid *fid);
+int llapi_path2fid(const char *path, lustre_fid *fid);
 int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, int open_flags);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
@@ -147,6 +148,17 @@ int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 				 const struct llapi_layout *layout);
 int llapi_parse_size(const char *optarg, unsigned long long *size,
 		     unsigned long long *size_units, int bytes_spec);
+
+int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
+		    char *parent_name, size_t parent_name_len);
+int llapi_fid2parent(const struct lustre_fs_h *lfsh,
+		     const lustre_fid *fid,
+		     unsigned int linkno,
+		     lustre_fid *parent_fid,
+		     char *parent_name, size_t parent_name_len);
+int llapi_path2parent(const char *path, unsigned int linkno,
+		      lustre_fid *parent_fid,
+		      char *parent_name, size_t parent_name_len);
 
 /* TODO */
 bool fid_is_norm(const struct lu_fid *fid);

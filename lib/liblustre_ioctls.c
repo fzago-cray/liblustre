@@ -48,53 +48,20 @@
 #include <endian.h>
 #include <sys/types.h>
 #include <attr/xattr.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <lustre/lustre.h>
 
 #include "liblustre_internal.h"
 
-/* Get the FID from an extended attribute */
-static int fid_from_lma(const char *path, const int fd, lustre_fid *fid)
-{
-        char                     buf[512];
-        const struct lustre_mdt_attrs *lma;
-        int                      rc;
-
-        if (path == NULL)
-                rc = fgetxattr(fd, XATTR_NAME_LMA, buf, sizeof(buf));
-        else
-                rc = lgetxattr(path, XATTR_NAME_LMA, buf, sizeof(buf));
-        if (rc < 0)
-                return -errno;
-
-        lma = (struct lustre_mdt_attrs *)buf;
-	fid->f_seq = le64toh(lma->lma_self_fid.f_seq);
-        fid->f_oid = le32toh(lma->lma_self_fid.f_oid);
-        fid->f_ver = le32toh(lma->lma_self_fid.f_ver);
-
-        return 0;
-}
-
-/* Return a FID from an open file descriptor. */
-int llapi_fd2fid(int fd, lustre_fid *fid)
-{
-        int rc;
-
-        memset(fid, 0, sizeof(*fid));
-
-        rc = ioctl(fd, LL_IOC_PATH2FID, fid) < 0 ? -errno : 0;
-        if (rc == -EINVAL || rc == -ENOTTY)
-                rc = fid_from_lma(NULL, fd, fid);
-
-        return rc;
-}
-
 /* Return a path given a FID. */
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 		   char *path, int path_len, long long *recno, int *linkno)
 {
-        struct getinfo_fid2path *gf;
-        int rc;
+	struct getinfo_fid2path *gf;
+	int rc;
 
 	gf = malloc(sizeof(*gf) + path_len);
 	if (gf == NULL)
@@ -129,15 +96,15 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
 /* return the MDT index for a file, given its FID. */
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid,
-                               int *mdt_index)
+			       int *mdt_index)
 {
-        int rc;
+	int rc;
 
-        rc = ioctl(lfsh->mount_fd, LL_IOC_FID2MDTIDX, fid);
-        if (rc < 0)
-                return -errno;
+	rc = ioctl(lfsh->mount_fd, LL_IOC_FID2MDTIDX, fid);
+	if (rc < 0)
+		return -errno;
 
-        *mdt_index = rc;
+	*mdt_index = rc;
 
-        return rc;
+	return rc;
 }

@@ -168,6 +168,19 @@ const char *llapi_get_fsname(const struct lustre_fs_h *lfsh)
 }
 
 /**
+ * Accessor to return the Lustre filesystem mountpoint.
+ * The returned mountpoint doesn't have trailing slashes.
+ *
+ * \param[in]  lfsh    an opened Lustre fs opaque handle
+ *
+ * \retval    the mountpoint
+ */
+const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh)
+{
+	return lfsh->mount_path;
+}
+
+/**
  * returns the HSM agent uuid
  */
 /* TODO - do we even need this in the library? */

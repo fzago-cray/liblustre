@@ -187,12 +187,6 @@ struct getparent {
         char            gp_name[0];
 } __attribute__((packed));
 
-int fid2parent(const struct lustre_fs_h *lfsh,
-	       const lustre_fid *fid,
-	       unsigned int linkno,
-	       lustre_fid *parent_fid,
-	       char *name, size_t name_size);
-
 /* Helper functions for testing validity of stripe attributes. */
 static inline bool llapi_stripe_size_is_aligned(uint64_t size)
 {

@@ -41,6 +41,11 @@
 		llapi_get_fsname;
 		llapi_msg_callback_set;
 		llapi_create_volatile_by_fid;
+		llapi_open_by_fid;
+		llapi_path2parent;
+		llapi_fid2parent;
+		llapi_fd2parent;
+		llapi_get_mountpoint;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
@@ -49,12 +54,12 @@
 
 		# NON-LGPL yet
 		llapi_error;
-#		llapi_fd2fid;
+		llapi_fd2fid;
+		llapi_path2fid;
 		llapi_fid2path;
 #		llapi_get_agent_uuid;
 		llapi_get_mdt_index_by_fid;
 		llapi_msg_set_level;
-#		llapi_open_by_fid;
 		llapi_parse_size;
 		fid_is_norm;
 		fid_is_igif;

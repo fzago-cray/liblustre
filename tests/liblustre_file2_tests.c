@@ -73,7 +73,7 @@ void unittest_fid1(void)
 	lustre_close_fs(lfsh);
 }
 
-/* Test fid2parent */
+/* Test llapi_fid2parent */
 /* Test FID functions. */
 void unittest_fid2(void)
 {
@@ -96,19 +96,19 @@ void unittest_fid2(void)
 	close(fd);
 
 	/* Several times the same request, with varying arguments. */
-	rc = fid2parent(lfsh, &fid, 0, &parent_fid, NULL, 0);
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, NULL, 0);
 	ck_assert_int_eq(rc, 0);
 
-	rc = fid2parent(lfsh, &fid, 0, NULL, NULL, 0);
+	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, NULL, 0);
 	ck_assert_int_eq(rc, 0);
 
-	rc = fid2parent(lfsh, &fid, 0, NULL, name, 5);
+	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, name, 5);
 	ck_assert_int_eq(rc, -EOVERFLOW);
 
-	rc = fid2parent(lfsh, &fid, 0, NULL, name, sizeof(name));
+	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, name, sizeof(name));
 	ck_assert_int_eq(rc, 0);
 
-	rc = fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
 	ck_assert_int_eq(rc, 0);
 
 	if (0) {
@@ -123,7 +123,7 @@ void unittest_fid2(void)
 		rc = symlink(FNAME_OTHER, FNAME);
 		ck_assert_int_eq(rc, 0);
 
-		rc = fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
+		rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
 		ck_assert_int_eq(rc, 0);
 	}
 

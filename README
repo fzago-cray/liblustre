@@ -121,6 +121,12 @@ TODO
 * Provide an rpm specfile
 * check each mention of lustreapi and fix
 * do something with llapi_hsm_log_error; it doesn't fit.
+* llapi_path2parent should probably have an lfsh arg and discriminate
+  between full path and relative paths. lfsh would be used only if a
+  relative path is passed. Same with path2fid.
+* llapi_open_by_fid and some layout function should return -errno on
+  error, not -1 with errno set.
+* remove recno from llapi_fid2path since it's unused
 
 Changes from liblustreapi
 -------------------------
