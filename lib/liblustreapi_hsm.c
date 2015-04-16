@@ -63,8 +63,6 @@
 
 #include "liblustre_internal.h"
 
-#define OPEN_BY_FID_PATH dot_lustre_name"/fid"
-
 /****** HSM Copytool API ********/
 #define CT_PRIV_MAGIC 0xC0BE2001
 struct hsm_copytool_private {

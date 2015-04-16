@@ -47,8 +47,6 @@ struct ost_id {
         };
 };
 
-#define dot_lustre_name ".lustre" /* TODO: this should die */
-
 struct lustre_mdt_attrs {
         __u32   lma_compat;
         __u32   lma_incompat;

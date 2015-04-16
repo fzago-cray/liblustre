@@ -798,11 +798,10 @@ static int ct_copy_xattr(const char *src, const char *dst, int src_fd,
 	return 0;
 }
 
-static int ct_path_lustre(char *buf, int sz, const char *mnt,
-			  const lustre_fid *fid)
+static void ct_path_lustre(char *buf, int sz, const lustre_fid *fid)
 {
-	return snprintf(buf, sz, "%s/%s/fid/"DFID_NOBRACE, mnt,
-			dot_lustre_name, PFID(fid));
+	snprintf(buf, sz, "%s:"DFID_NOBRACE, llapi_get_fsname(lfsh), PFID(fid));
+	buf[sz-1] = 0;
 }
 
 static int ct_path_archive(char *buf, int sz, const char *archive_dir,
@@ -834,7 +833,7 @@ static int ct_begin_restore(struct hsm_copyaction_private **phcp,
 	rc = llapi_hsm_action_begin(phcp, ctdata, hai, mdt_index, open_flags,
 				    false);
 	if (rc < 0) {
-		ct_path_lustre(src, sizeof(src), opt.o_mnt, &hai->hai_fid);
+		ct_path_lustre(src, sizeof(src), &hai->hai_fid);
 		CT_ERROR(rc, "llapi_hsm_action_begin() on '%s' failed", src);
 	}
 
@@ -861,7 +860,7 @@ static int ct_fini(struct hsm_copyaction_private **phcp,
 		 hai->hai_cookie, PFID(&hai->hai_fid),
 		 hp_flags, -ct_rc);
 
-	ct_path_lustre(lstr, sizeof(lstr), opt.o_mnt, &hai->hai_fid);
+	ct_path_lustre(lstr, sizeof(lstr), &hai->hai_fid);
 
 	if (phcp == NULL || *phcp == NULL) {
 		rc = llapi_hsm_action_begin(&hcp, ctdata, hai, -1, 0, true);
@@ -908,7 +907,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 	 * source = data FID
 	 * destination = lustre FID
 	 */
-	ct_path_lustre(src, sizeof(src), opt.o_mnt, &hai->hai_dfid);
+	ct_path_lustre(src, sizeof(src), &hai->hai_dfid);
 	ct_path_archive(dst, sizeof(dst), opt.o_hsm_root, &hai->hai_fid);
 	if (hai->hai_extent.length == -1) {
 		/* whole file, write it to tmp location and atomically
@@ -1477,7 +1476,7 @@ static int ct_import_fid(const lustre_fid *import_fid)
 	char	fid_path[PATH_MAX];
 	int	rc;
 
-	ct_path_lustre(fid_path, sizeof(fid_path), opt.o_mnt, import_fid);
+	ct_path_lustre(fid_path, sizeof(fid_path), import_fid);
 	rc = access(fid_path, F_OK);
 	if (rc == 0 || errno != ENOENT) {
 		rc = (errno == 0) ? -EEXIST : -errno;

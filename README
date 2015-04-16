@@ -147,6 +147,7 @@ section should help porting.
 * llapi_chomp_string is not exported anymore.
 * llapi_stripe_limit_check is gone. Use llapi_layout_stripe_*_is_valid.
 * llapi_get_mdt_index_by_fid directly returns the MDT index.
+* dot_lustre_name is gone.
 
 logging
 ~~~~~~~
