@@ -669,7 +669,7 @@ int main(int argc, char *argv[])
 	if (lustre_dir == NULL)
 		lustre_dir = "/mnt/lustre";
 
-	rc = lustre_open_fs(lustre_dir, &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	if (rc != 0) {
 		fprintf(stderr, "Error: '%s' is not a Lustre filesystem\n",
 			lustre_dir);

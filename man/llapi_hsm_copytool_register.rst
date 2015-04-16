@@ -39,7 +39,7 @@ DESCRIPTION
 To receive HSM requests from a Lustre filesystem, a copytool
 application must open a communication channel with Lustre by calling
 **llapi_hsm_copytool_register**\ (). The Lustre filesystem to monitor
-has already been opened with **lustre_open_fs**\ (). *archives* is an
+has already been opened with **llapi_open_fs**\ (). *archives* is an
 array with up to 32 elements indicating which archive IDs to register
 for. Each element is a number from 1 to 32. *archive_count* is the
 number of valid elements in the *archive* array. If an element in

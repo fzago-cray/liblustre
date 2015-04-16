@@ -249,7 +249,7 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
  * Open an anonymous file. That file will be destroyed by Lustre when
  * the last reference to it is closed.
  *
- * \param  lfsh[in]          an opaque handle returned by lustre_open_fs()
+ * \param  lfsh[in]          an opaque handle returned by llapi_open_fs()
  * \param  parent_fid[in]    the FID of a directory into which the file must be
  *                           created.
  * \param  mdt_idx[in]       the MDT index onto which create the file. To use a

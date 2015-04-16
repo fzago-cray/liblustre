@@ -29,11 +29,11 @@
 #include "liblustre_internal.h"
 
 /**
- * Closes a Lustre filesystem opened with lustre_open_fs()
+ * Closes a Lustre filesystem opened with llapi_open_fs()
  *
- * \param lfsh	An opaque handle returned by lustre_open_fs()
+ * \param lfsh	An opaque handle returned by llapi_open_fs()
  */
-void lustre_close_fs(struct lustre_fs_h *lfsh)
+void llapi_close_fs(struct lustre_fs_h *lfsh)
 {
 	if (lfsh == NULL)
 		return;
@@ -55,7 +55,7 @@ void lustre_close_fs(struct lustre_fs_h *lfsh)
  *
  * \retval       An opaque handle, or NULL if an error occurred.
  */
-int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
+int llapi_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 {
 	struct lustre_fs_h *mylfsh;
 	int rc;
@@ -157,7 +157,7 @@ int lustre_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 	return 0;
 
 fail:
-	lustre_close_fs(mylfsh);
+	llapi_close_fs(mylfsh);
 	return rc;
 }
 

@@ -46,8 +46,8 @@
 		llapi_msg_set_level;
 		llapi_open_by_fid;
 		llapi_path2parent;
-		lustre_close_fs;
-		lustre_open_fs;
+		llapi_close_fs;
+		llapi_open_fs;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are

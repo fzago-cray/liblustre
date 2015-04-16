@@ -149,7 +149,7 @@ struct lov_user_mds_data_v3 {
  */
 
 struct lustre_fs_h {
-	/* Lustre mountpoint, as given to lustre_open_fs. */
+	/* Lustre mountpoint, as given to llapi_open_fs. */
 	char *mount_path;
 	char fs_name[8 + 1];	/* filesystem name */
 	int mount_fd;

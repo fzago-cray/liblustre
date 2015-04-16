@@ -1932,7 +1932,7 @@ static int ct_setup(void)
 		return rc;
 	}
 
-	rc = lustre_open_fs(opt.o_mnt, &lfsh);
+	rc = llapi_open_fs(opt.o_mnt, &lfsh);
 	if (rc != 0) {
 		CT_ERROR(rc, "cannot find a Lustre filesystem mounted at '%s'",
 			 opt.o_mnt);
@@ -1944,7 +1944,7 @@ static int ct_setup(void)
 
 static int ct_cleanup(void)
 {
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 
 	return 0;
 }

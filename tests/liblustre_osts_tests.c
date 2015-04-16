@@ -43,7 +43,7 @@ void unittest_ost1(void)
 	char poolpath[PATH_MAX];
 	int rc;
 
-	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid pool */
@@ -62,7 +62,7 @@ void unittest_ost1(void)
 	rc = find_poolpath(lfsh, "somepool", poolpath, sizeof(poolpath));
 	ck_assert_int_eq(rc, -EINVAL);
 
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 }
 
 /* Test for open_pool_info */
@@ -72,7 +72,7 @@ void unittest_ost2(void)
 	int rc;
 	struct lustre_ost_info *info;
 
-	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid, non empty pool */
@@ -89,6 +89,6 @@ void unittest_ost2(void)
 	/* Ensure this doesn't crash */
 	free_ost_info(NULL);
 
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 }
 

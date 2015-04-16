@@ -49,7 +49,7 @@ void unittest_fid1(void)
 	lustre_fid fid;
 	int rc;
 
-	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
@@ -70,7 +70,7 @@ void unittest_fid1(void)
 	ck_assert_int_eq(fd, -1);
 	ck_assert_int_eq(errno, ENOENT);
 
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 }
 
 /* Test llapi_fid2parent */
@@ -84,7 +84,7 @@ void unittest_fid2(void)
 	int rc;
 	char name[PATH_MAX];
 
-	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
@@ -127,7 +127,7 @@ void unittest_fid2(void)
 		ck_assert_int_eq(rc, 0);
 	}
 
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 }
 
 /* Test llapi_get_mdt_index_by_fid */
@@ -138,7 +138,7 @@ void unittest_mdt_index(void)
 	int rc;
 	int fd;
 
-	rc = lustre_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
@@ -152,5 +152,5 @@ void unittest_mdt_index(void)
 	rc = llapi_get_mdt_index_by_fid(lfsh, &fid);
 	ck_assert_int_eq(rc, 0);
 
-	lustre_close_fs(lfsh);
+	llapi_close_fs(lfsh);
 }
