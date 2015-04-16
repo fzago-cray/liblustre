@@ -58,7 +58,6 @@
 		llapi_fd2fid;
 		llapi_path2fid;
 		llapi_fid2path;
-#		llapi_get_agent_uuid;
 		llapi_msg_set_level;
 		llapi_parse_size;
 		fid_is_norm;

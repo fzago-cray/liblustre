@@ -1,99 +1,100 @@
 /*
- * GPL HEADER START
+ * An alternate Lustre user library.
+ * Copyright 2015 Cray Inc. All rights reserved.
  *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 only,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License version 2 for more details (a copy is included
- * in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License
- * version 2 along with this program; If not, see
- * http://www.sun.com/software/products/lustre/docs/GPLv2.pdf
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
- * CA 95054 USA or visit www.sun.com if you need additional information or
- * have any questions.
- *
- * GPL HEADER END
- */
-/*
- * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
- * Use is subject to license terms.
- *
- * Copyright (c) 2011, 2014, Intel Corporation.
- */
-/*
- * This file is part of Lustre, http://www.lustre.org/
- * Lustre is a trademark of Sun Microsystems, Inc.
- *
- * lustre/utils/liblustreapi.c
- *
- * Author: Peter J. Braam <braam@clusterfs.com>
- * Author: Phil Schwan <phil@clusterfs.com>
- * Author: Robert Read <rread@clusterfs.com>
+ * Lesser General Public License for more details.
  */
 
-/*
- * Read parameters from /proc
- */
+/* Read values from procfs. */
 
+#include <stdlib.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <attr/xattr.h>
+#include <errno.h>
+
+#include <lustre/lustre.h>
+
+#include "liblustre_internal.h"
+
+/* Read a single line from a file in procfs. Returns 0 on success, or
+ * a negative errno on failure. The output parameter must be large
+ * enough.
+ * A success guarantees:
+ *  - no truncation occurred
+ *  - the string is NUL terminated
+ *  - the value doesn't have a carriage return.
+ */
 static int read_procfs_value(const char *type, const char *inst,
 			     const char *param, char *buf, size_t buf_size)
 {
-        char param_path[PATH_MAX];
-        FILE *param_file;
-        int rc;
+	FILE *fp = NULL;
+	char *line = NULL;
+	size_t line_len;
+	char path[PATH_MAX];
+	int rc;
+	ssize_t n;
 
-        snprintf(param_path, sizeof(param_path),
-                 "/proc/fs/lustre/%s/%s/%s", type, inst, param);
-	param_path[sizeof(param_path)-1] = 0;
+	rc = snprintf(path, sizeof(path),
+		      "/proc/fs/lustre/%s/%s/%s", type, inst, param);
+	if (rc < 0 || rc >= sizeof(path))
+		return -ENAMETOOLONG;
 
-        param_file = fopen(param_path, "r");
-        if (param_file == NULL) {
-                rc = -errno;
-                goto out;
-        }
+	fp = fopen(path, "r");
+	if (fp == NULL) {
+		return -errno;
+		goto out;
+	}
 
-        if (fgets(buf, buf_size, param_file) == NULL) {
-                rc = -errno;
-                goto out;
-        }
+	n = getline(&line, &line_len, fp);
+	if (n == -1) {
+		rc = -errno;
+		goto out;
+	}
 
-        rc = 0;
+	chomp_string(line);
+
+	if (n > buf_size) {
+		rc = -EOVERFLOW;
+		goto out;
+	}
+
+	strcpy(buf, line);
+
+	rc = 0;
+
 out:
-        if (param_file != NULL)
-                fclose(param_file);
+	if (fp != NULL)
+		fclose(fp);
+	free(line);
 
-        return rc;
-}
-
-int llapi_file_fget_lmv_uuid(int fd, struct obd_uuid *lov_name)
-{
-        int rc = ioctl(fd, OBD_IOC_GETMDNAME, lov_name);
-        if (rc) {
-                rc = -errno;
-                llapi_error(LLAPI_MSG_ERROR, rc, "error: can't get lmv name.");
-        }
-        return rc;
+	return rc;
 }
 
 int get_param_lmv(int fd, const char *param, char *buf, size_t buf_size)
 {
-        struct obd_uuid uuid;
-        int rc;
+	struct obd_uuid uuid;
+	int rc;
 
-        rc = llapi_file_fget_lmv_uuid(fd, &uuid);
-        if (rc != 0)
-                return rc;
+	/* TODO: can we cache this value? in lfsh? */
+	rc = ioctl(fd, OBD_IOC_GETMDNAME, &uuid);
+	if (rc != 0)
+		return -errno;
 
-        return get_param_cli("lmv", uuid.uuid, param, buf, buf_size);
+	return read_procfs_value("lmv", uuid.uuid, param, buf, buf_size);
 }
+
+#ifdef UNIT_TEST
+#include "../tests/liblustre_params_tests.c"
+#endif
 
 

@@ -18,7 +18,8 @@ liblustre_la_SOURCES += \
 	liblustre_logging.c \
 	liblustre_misc.c \
 	liblustre_misc2.c \
-	liblustre_osts.c
+	liblustre_osts.c \
+	liblustre_params.c
 
 liblustre_la_LDFLAGS = -Wl,--version-script=liblustre.map
 

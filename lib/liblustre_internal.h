@@ -169,6 +169,8 @@ void chomp_string(char *buf);
 #define LUSTRE_VOLATILE_HDR ".\x0c\x13\x14\x12:VOLATILE"
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
+int get_param_lmv(int fd, const char *param, char *buf, size_t buf_size);
+
 /*
  * FID
  */
@@ -288,10 +290,6 @@ int llapi_json_add_item(struct llapi_json_item_list **item_list,
 			const char *key, __u32 type, const void *val);
 int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
 
-
-int llapi_get_agent_uuid(const struct lustre_fs_h *lfsh,
-			 char *buf, size_t bufsize);
-
 /*
  * Communication with kernel.
  */
@@ -336,6 +334,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
 /*
  * IOCTLs
  */
+#define OBD_IOC_GETMDNAME	_IOR ('f', 131, char[MAX_OBD_NAME])
 #define OBD_IOC_FID2PATH	_IOWR('f', 150, long)
 #define LL_IOC_LOV_SETSTRIPE    _IOW ('f', 154, long)
 #define LL_IOC_PATH2FID         _IOR ('f', 173, long)
@@ -363,6 +362,8 @@ void unittest_fid1(void);
 void unittest_fid2(void);
 void unittest_chomp(void);
 void unittest_mdt_index(void);
+void unittest_param_lmv(void);
+void unittest_read_procfs_value(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 

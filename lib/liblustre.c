@@ -180,16 +180,6 @@ const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh)
 	return lfsh->mount_path;
 }
 
-/**
- * returns the HSM agent uuid
- */
-/* TODO - do we even need this in the library? */
-int llapi_get_agent_uuid(const struct lustre_fs_h *lfsh,
-			 char *buf, size_t bufsize)
-{
-	return 0; /* TODO */
-}
-
 /********
  * TODO - The following has to be re-implemented - Nothing should
  * remain below that line

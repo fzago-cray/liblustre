@@ -26,7 +26,7 @@ typedef struct lu_fid {
 
 #define LOV_MIN_STRIPE_BITS 16
 #define LOV_MIN_STRIPE_SIZE (1 << LOV_MIN_STRIPE_BITS)
-#define LOV_MAX_STRIPE_COUNT 2000 
+#define LOV_MAX_STRIPE_COUNT 2000
 #define LOV_V1_INSANE_STRIPE_COUNT 65532
 
 #define UUID_MAX        40
@@ -69,8 +69,8 @@ struct lustre_mdt_attrs {
 
 struct lov_user_ost_data_v1 {
         struct ost_id l_ost_oi;
-        __u32 l_ost_gen;       
-        __u32 l_ost_idx;       
+        __u32 l_ost_gen;
+        __u32 l_ost_idx;
 } __attribute__((packed));
 
 #define lov_user_md lov_user_md_v1
@@ -171,7 +171,7 @@ static inline ssize_t hur_len(struct hsm_user_request *hur)
 	size = offsetof(struct hsm_user_request, hur_user_item[0]) +
 		(__u64)hur->hur_request.hr_itemcount *
 		sizeof(hur->hur_user_item[0]) + hur->hur_request.hr_data_len;
-	
+
 	if (size != (ssize_t)size)
 		return -1;
 
@@ -189,12 +189,17 @@ struct hsm_action_list {
 } __attribute__((packed));
 
 struct hsm_action_item {
-	__u32      hai_len;   
-	__u32      hai_action; 
-	lustre_fid hai_fid;     
-	lustre_fid hai_dfid;    
+	__u32      hai_len;
+	__u32      hai_action;
+	lustre_fid hai_fid;
+	lustre_fid hai_dfid;
 	struct hsm_extent hai_extent;
-	__u64      hai_cookie;   
-	__u64      hai_gid;     
-	char       hai_data[0]; 
+	__u64      hai_cookie;
+	__u64      hai_gid;
+	char       hai_data[0];
 } __attribute__((packed));
+
+#define UUID_MAX        40
+struct obd_uuid {
+        char uuid[UUID_MAX];
+};
