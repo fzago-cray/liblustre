@@ -56,18 +56,18 @@
  */
 /* This is more of a convenience function. That doesn't belong in this
  * library. */
-int llapi_parse_size(const char *optarg, unsigned long long *size,
+int llapi_parse_size(const char *arg, unsigned long long *size,
 		     unsigned long long *size_units, int bytes_spec)
 {
         char *end;
 
-        if (strncmp(optarg, "-", 1) == 0)
+        if (strncmp(arg, "-", 1) == 0)
                 return -1;
 
         if (*size_units == 0)
                 *size_units = 1;
 
-        *size = strtoull(optarg, &end, 0);
+        *size = strtoull(arg, &end, 0);
 
         if (*end != '\0') {
                 if ((*end == 'b') && *(end + 1) == '\0' &&

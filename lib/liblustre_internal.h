@@ -205,9 +205,9 @@ static inline bool llapi_stripe_count_is_valid(int64_t count)
 	return count >= -1 && count <= LOV_MAX_STRIPE_COUNT;
 }
 
-static inline bool llapi_stripe_index_is_valid(int64_t index)
+static inline bool llapi_stripe_index_is_valid(int64_t idx)
 {
-	return index >= -1 && index <= LOV_V1_INSANE_STRIPE_COUNT;
+	return idx >= -1 && idx <= LOV_V1_INSANE_STRIPE_COUNT;
 }
 
 /*

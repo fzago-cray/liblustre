@@ -56,12 +56,12 @@
  *          (can be null for unicast to this pid)
  * @param rfd_flags flags for read side of pipe (e.g. O_NONBLOCK)
  */
-int libcfs_ukuc_start(lustre_kernelcomm *link, int group, int rfd_flags)
+int libcfs_ukuc_start(lustre_kernelcomm *lnk, int group, int rfd_flags)
 {
 	int pfd[2];
 	int rc;
 
-	link->lk_rfd = link->lk_wfd = LK_NOFD;
+	lnk->lk_rfd = lnk->lk_wfd = LK_NOFD;
 
 	if (pipe(pfd) < 0)
 		return -errno;
@@ -73,46 +73,46 @@ int libcfs_ukuc_start(lustre_kernelcomm *link, int group, int rfd_flags)
 		return rc;
 	}
 
-	memset(link, 0, sizeof(*link));
-	link->lk_rfd = pfd[0];
-	link->lk_wfd = pfd[1];
-	link->lk_group = group;
-	link->lk_uid = getpid();
+	memset(lnk, 0, sizeof(*lnk));
+	lnk->lk_rfd = pfd[0];
+	lnk->lk_wfd = pfd[1];
+	lnk->lk_group = group;
+	lnk->lk_uid = getpid();
 	return 0;
 }
 
-int libcfs_ukuc_stop(lustre_kernelcomm *link)
+int libcfs_ukuc_stop(lustre_kernelcomm *lnk)
 {
 	int rc;
 
-	if (link->lk_wfd != LK_NOFD)
-		close(link->lk_wfd);
-        rc = close(link->lk_rfd);
-	link->lk_rfd = link->lk_wfd = LK_NOFD;
+	if (lnk->lk_wfd != LK_NOFD)
+		close(lnk->lk_wfd);
+        rc = close(lnk->lk_rfd);
+	lnk->lk_rfd = lnk->lk_wfd = LK_NOFD;
 	return rc;
 }
 
 /** Returns the file descriptor for the read side of the pipe,
  *  to be used with poll/select.
- * @param link Private descriptor for pipe/socket.
+ * @param lnk Private descriptor for pipe/socket.
  */
-int libcfs_ukuc_get_rfd(lustre_kernelcomm *link)
+int libcfs_ukuc_get_rfd(lustre_kernelcomm *lnk)
 {
-	return link->lk_rfd;
+	return lnk->lk_rfd;
 }
 
 #define lhsz sizeof(*kuch)
 
-/** Read a message from the link.
+/** Read a message from the lnk.
  * Allocates memory, returns handle
  *
- * @param link Private descriptor for pipe/socket.
+ * @param lnk Private descriptor for pipe/socket.
  * @param buf Buffer to read into, must include size for kuc_hdr
  * @param maxsize Maximum message size allowed
  * @param transport Only listen to messages on this transport
  *      (and the generic transport)
  */
-int libcfs_ukuc_msg_get(lustre_kernelcomm *link, char *buf, int maxsize,
+int libcfs_ukuc_msg_get(lustre_kernelcomm *lnk, char *buf, int maxsize,
                         int transport)
 {
         struct kuc_hdr *kuch;
@@ -122,7 +122,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *link, char *buf, int maxsize,
 
         while (1) {
                 /* Read header first to get message size */
-                rc = read(link->lk_rfd, buf, lhsz);
+                rc = read(lnk->lk_rfd, buf, lhsz);
                 if (rc <= 0) {
                         rc = -errno;
                         break;
@@ -143,7 +143,7 @@ int libcfs_ukuc_msg_get(lustre_kernelcomm *link, char *buf, int maxsize,
                 }
 
                 /* Read payload */
-                rc = read(link->lk_rfd, buf + lhsz, kuch->kuc_msglen - lhsz);
+                rc = read(lnk->lk_rfd, buf + lhsz, kuch->kuc_msglen - lhsz);
                 if (rc < 0) {
                         rc = -errno;
                         break;

@@ -839,19 +839,19 @@ int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
  * \retval	-1 if arguments are invalid
  */
 int llapi_layout_ost_index_get(const struct llapi_layout *layout,
-			       uint64_t stripe_number, uint64_t *index)
+			       uint64_t stripe_number, uint64_t *idx)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
 	    stripe_number >= layout->llot_stripe_count ||
-	    index == NULL  || layout->llot_objects_are_valid == 0) {
+	    idx == NULL  || layout->llot_objects_are_valid == 0) {
 		errno = EINVAL;
 		return -1;
 	}
 
 	if (layout->llot_objects[stripe_number].l_ost_idx == -1)
-		*index = LLAPI_LAYOUT_DEFAULT;
+		*idx = LLAPI_LAYOUT_DEFAULT;
 	else
-		*index = layout->llot_objects[stripe_number].l_ost_idx;
+		*idx = layout->llot_objects[stripe_number].l_ost_idx;
 
 	return 0;
 }
