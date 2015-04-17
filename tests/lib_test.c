@@ -29,6 +29,7 @@ START_TEST(chomp) { unittest_chomp(); } END_TEST
 START_TEST(mdt_index) { unittest_mdt_index(); } END_TEST
 START_TEST(param_lmv) { unittest_param_lmv(); } END_TEST
 START_TEST(read_procfs_value) { unittest_read_procfs_value(); } END_TEST
+START_TEST(parse_size) { unittest_llapi_parse_size(); } END_TEST
 
 static Suite *ost_suite(void)
 {
@@ -51,6 +52,7 @@ static Suite *ost_suite(void)
 	tcase_add_test(tc, mdt_index);
 	tcase_add_test(tc, param_lmv);
 	tcase_add_test(tc, read_procfs_value);
+	tcase_add_test(tc, parse_size);
 	suite_add_tcase(s, tc);
 
 	return s;

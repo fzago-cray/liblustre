@@ -109,3 +109,8 @@ int llapi_parse_size(const char *arg, unsigned long long *size,
         *size *= *size_units;
         return 0;
 }
+
+#ifdef UNIT_TEST
+#include "../tests/liblustre_misc_tests.c"
+#endif
+

@@ -15,6 +15,7 @@ llapi_fid_test_LDADD=${top_builddir}/lib/liblustre_unittest.la ${CHECK_LIBS} -lb
 
 EXTRA_DIST = \
 	liblustre_file2_tests.c \
+	liblustre_misc_tests.c \
 	liblustre_misc2_tests.c \
 	liblustre_osts_tests.c \
 	liblustre_params_tests.c \

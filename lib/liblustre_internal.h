@@ -364,6 +364,7 @@ void unittest_chomp(void);
 void unittest_mdt_index(void);
 void unittest_param_lmv(void);
 void unittest_read_procfs_value(void);
+void unittest_llapi_parse_size(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
 
