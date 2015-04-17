@@ -47,27 +47,27 @@ void unittest_llapi_parse_size(void)
 
 	/* byte */
 	size_units = 0;
-	rc = llapi_parse_size("1453", &size, &size_units, 1);
+	rc = llapi_parse_size("1453", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 1453);
-	ck_assert_int_eq(size_units, 1);
+	ck_assert_int_eq(size_units, true);
 
 	size_units = 0;
-	rc = llapi_parse_size("145", &size, &size_units, 1);
+	rc = llapi_parse_size("145", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 145);
-	ck_assert_int_eq(size_units, 1);
+	ck_assert_int_eq(size_units, true);
 
 	/* b is block, not byte.*/
 	size_units = 0;
-	rc = llapi_parse_size("54353b", &size, &size_units, 0);
+	rc = llapi_parse_size("54353b", &size, &size_units, false);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 27828736);
 	ck_assert_int_eq(size_units, 512);
 
 	/* b is block, not byte, and number is too large.*/
 	size_units = 0;
-	rc = llapi_parse_size("145353452354354353b", &size, &size_units, 0);
+	rc = llapi_parse_size("145353452354354353b", &size, &size_units, false);
 	ck_assert_int_eq(rc, -1);
 
 	/* Others */
@@ -78,7 +78,7 @@ void unittest_llapi_parse_size(void)
 		/* Test uppercase letter, with bytes_spec=0 */
 		sprintf(args, "12%c", ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 0);
+		rc = llapi_parse_size(args, &size, &size_units, false);
 		ck_assert_int_eq(rc, 0);
 		ck_assert_int_eq(size, 12*expect_unit);
 		ck_assert_int_eq(size_units, expect_unit);
@@ -86,7 +86,7 @@ void unittest_llapi_parse_size(void)
 		/* Test uppercase letter, with bytes_spec=1 */
 		sprintf(args, "15%c", ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 1);
+		rc = llapi_parse_size(args, &size, &size_units, true);
 		ck_assert_int_eq(rc, 0);
 		ck_assert_int_eq(size, 15*expect_unit);
 		ck_assert_int_eq(size_units, expect_unit);
@@ -94,7 +94,7 @@ void unittest_llapi_parse_size(void)
 		/* Test uppercase letter, with overflow */
 		sprintf(args, "%llu%c", 16*overflow_size, ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 1);
+		rc = llapi_parse_size(args, &size, &size_units, true);
 		ck_assert_int_eq(rc, -1);
 
 		i++;
@@ -102,7 +102,7 @@ void unittest_llapi_parse_size(void)
 		/* Test lowercase letter, with bytes_spec=0 */
 		sprintf(args, "11%c", ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 1);
+		rc = llapi_parse_size(args, &size, &size_units, true);
 		ck_assert_int_eq(rc, 0);
 		ck_assert_int_eq(size, 11*expect_unit);
 		ck_assert_int_eq(size_units, expect_unit);
@@ -110,7 +110,7 @@ void unittest_llapi_parse_size(void)
 		/* Test lowercase letter, with bytes_spec=1 */
 		sprintf(args, "15%c", ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 1);
+		rc = llapi_parse_size(args, &size, &size_units, true);
 		ck_assert_int_eq(rc, 0);
 		ck_assert_int_eq(size, 15*expect_unit);
 		ck_assert_int_eq(size_units, expect_unit);
@@ -118,7 +118,7 @@ void unittest_llapi_parse_size(void)
 		/* Test lowercase letter, with overflow */
 		sprintf(args, "%llu%c", 16*overflow_size, ext[i]);
 		size_units = 0;
-		rc = llapi_parse_size(args, &size, &size_units, 1);
+		rc = llapi_parse_size(args, &size, &size_units, true);
 		ck_assert_int_eq(rc, -1);
 
 		expect_unit *= 1024;
@@ -127,66 +127,62 @@ void unittest_llapi_parse_size(void)
 
 	/* With leading spaces */
 	size_units = 0;
-	rc = llapi_parse_size("    87", &size, &size_units, 1);
+	rc = llapi_parse_size("    87", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 87);
 	ck_assert_int_eq(size_units, 1);
 
 	/* Tests with no specifier. */
 	size_units = 300;
-	rc = llapi_parse_size("17", &size, &size_units, 1);
+	rc = llapi_parse_size("17", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 17*300);
 	ck_assert_int_eq(size_units, 300);
 
 	size_units = 2;
-	rc = llapi_parse_size("17", &size, &size_units, 1);
+	rc = llapi_parse_size("17", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 17*2);
 	ck_assert_int_eq(size_units, 2);
 
 	/* Invalid strings or negative numbers */
 	size_units = 0;
-	rc = llapi_parse_size("hello", &size, &size_units, 1);
+	rc = llapi_parse_size("hello", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
 
 	size_units = 0;
-	rc = llapi_parse_size("17 17", &size, &size_units, 1);
+	rc = llapi_parse_size("17 17", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
 
 	size_units = 0;
-	rc = llapi_parse_size("17hello", &size, &size_units, 1);
+	rc = llapi_parse_size("17hello", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
 
 	size_units = 0;
-	rc = llapi_parse_size("17 b", &size, &size_units, 1);
+	rc = llapi_parse_size("17 b", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
 
 	size_units = 0;
-	rc = llapi_parse_size("-19", &size, &size_units, 1);
+	rc = llapi_parse_size("-19", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
 
-#if 0
 	size_units = 0;
-	rc = llapi_parse_size(" -19", &size, &size_units, 1);
+	rc = llapi_parse_size(" -19", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
-#endif
 
-#if 0
 	size_units = 0;
-	rc = llapi_parse_size("", &size, &size_units, 1);
+	rc = llapi_parse_size("", &size, &size_units, true);
 	ck_assert_int_eq(rc, -1);
-#endif
 
 	/* Hex and octal */
 	size_units = 0;
-	rc = llapi_parse_size("0x17", &size, &size_units, 1);
+	rc = llapi_parse_size("0x17", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 0x17);
 	ck_assert_int_eq(size_units, 1);
 
 	size_units = 0;
-	rc = llapi_parse_size("017", &size, &size_units, 1);
+	rc = llapi_parse_size("017", &size, &size_units, true);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 017);
 	ck_assert_int_eq(size_units, 1);
