@@ -30,6 +30,7 @@ START_TEST(mdt_index) { unittest_mdt_index(); } END_TEST
 START_TEST(param_lmv) { unittest_param_lmv(); } END_TEST
 START_TEST(read_procfs_value) { unittest_read_procfs_value(); } END_TEST
 START_TEST(parse_size) { unittest_llapi_parse_size(); } END_TEST
+START_TEST(fid2path) { unittest_llapi_fid2path(); } END_TEST
 
 static Suite *ost_suite(void)
 {
@@ -45,6 +46,7 @@ static Suite *ost_suite(void)
 	tc = tcase_create("FID");
 	tcase_add_test(tc, fid1);
 	tcase_add_test(tc, fid2);
+	tcase_add_test(tc, fid2path);
 	suite_add_tcase(s, tc);
 
 	tc = tcase_create("MISC");

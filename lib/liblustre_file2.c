@@ -246,6 +246,56 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
 }
 
 /**
+ * Return a path given a FID. The path is relative to the filesystem
+ * mountpoint. If the FID is of the mountpoint, the return path will
+ * be empty.
+ *
+ * \param[in]   lfsh           an opened Lustre fs opaque handle
+ * \param[in]   fid            the FID of the file / directory
+ * \param[out]  path           the requested path
+ * \param[in]   path_len       the length of path
+ * \param[in][out]   recno     may be NULL
+ * \param[in][out]   linkno    which name to return; may be NULL
+ *
+ * \retval    0 on success
+ * \retval    a negative errno on error
+ */
+int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+		   char *path, size_t path_len,
+		   long long *recno, unsigned int *linkno)
+{
+	/* Avoid allocating gf by adding MAX_PATH after it. */
+	struct {
+		struct getinfo_fid2path gf;
+		char filler[PATH_MAX];
+	} x;
+	int rc;
+
+	/* The returned path is NUL terminated. */
+	if (path_len == 0)
+		return -EINVAL;
+
+        x.gf.gf_fid = *fid;
+        x.gf.gf_recno = recno ? *recno : -1;
+        x.gf.gf_linkno = linkno ? *linkno : 0;
+        x.gf.gf_pathlen = path_len;
+
+	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
+	if (rc == 0) {
+		/* We know the path fits. */
+		strcpy(path, x.gf.gf_path);
+		if (recno)
+			*recno = x.gf.gf_recno;
+		if (linkno)
+			*linkno = x.gf.gf_linkno;
+	} else {
+		rc = -errno;
+	}
+
+	return rc;
+}
+
+/**
  * Open an anonymous file. That file will be destroyed by Lustre when
  * the last reference to it is closed.
  *

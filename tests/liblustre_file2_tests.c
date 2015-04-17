@@ -74,7 +74,6 @@ void unittest_fid1(void)
 }
 
 /* Test llapi_fid2parent */
-/* Test FID functions. */
 void unittest_fid2(void)
 {
 	struct lustre_fs_h *lfsh;
@@ -126,6 +125,26 @@ void unittest_fid2(void)
 		rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
 		ck_assert_int_eq(rc, 0);
 	}
+
+	llapi_close_fs(lfsh);
+}
+
+/* Test llapi_fid2path. */
+void unittest_llapi_fid2path(void)
+{
+	struct lustre_fs_h *lfsh;
+	lustre_fid fid;
+	int rc;
+	char path[PATH_MAX];
+
+	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	ck_assert_int_eq(rc, 0);
+
+	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &fid);
+	ck_assert_int_eq(rc, 0);
+
+	rc = llapi_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
+	ck_assert_int_eq(rc, 0);
 
 	llapi_close_fs(lfsh);
 }

@@ -124,6 +124,9 @@ TODO
 -   llapi\_open\_by\_fid and some layout function should return -errno
     on error, not -1 with errno set.
 -   remove recno from llapi\_fid2path since it's unused
+-   llapi_fid2path and llapi_fd2parent should use a newer ioctl that
+    optionally copies the path directly into an application buffer to
+    save a memory copy.
 
 Changes from liblustreapi
 -------------------------
@@ -146,6 +149,8 @@ should help porting.
     llapi\_layout\_stripe\_\*\_is\_valid.
 -   llapi\_get\_mdt\_index\_by\_fid directly returns the MDT index.
 -   dot\_lustre\_name is gone.
+-   llapi\_fid2path will return an empty string instead of / if the
+    mountpoint is given. recno and linkno can now be NULL.
 
 ### logging
 

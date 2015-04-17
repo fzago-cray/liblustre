@@ -12,7 +12,6 @@ liblustre_la_SOURCES += \
 	liblustre.c \
 	liblustre_file2.c \
 	liblustre_internal.h \
-	liblustre_ioctls.c \
 	liblustre_logging.c \
 	liblustre_misc.c \
 	liblustre_osts.c \

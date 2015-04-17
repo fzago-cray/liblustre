@@ -86,7 +86,7 @@ static void helper_fid2path(const char *filename, int fd)
 	char path[PATH_MAX];
 	char path3[PATH_MAX];
 	long long recno;
-	int linkno;
+	unsigned int linkno;
 	int rc;
 
 	rc = llapi_path2fid(filename, &fid);
@@ -218,7 +218,7 @@ START_TEST(test11)
 	lustre_fid fid;
 	char path[PATH_MAX];
 	long long recno;
-	int linkno;
+	unsigned int linkno;
 
 	/* Against a regular file */
 	fd = creat(mainpath, 0);
@@ -343,7 +343,7 @@ START_TEST(test30)
 	int i;
 	int j;
 	int fd;
-	int linkno;
+	unsigned int linkno;
 	bool past_link_limit = false;
 
 	/* Create the containing directory. */

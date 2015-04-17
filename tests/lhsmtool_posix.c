@@ -1026,8 +1026,6 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 		 * cleanup of dead links would be required.
 		 */
 		char		 buf[PATH_MAX];
-		long long	 recno = -1;
-		int		 linkno = 0;
 		char		*ptr;
 		int		 depth = 0;
 		ssize_t		 sz;
@@ -1040,7 +1038,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 			(*ptr++ == '/') ? depth-- : 0;
 
 		rc = llapi_fid2path(lfsh, &hai->hai_fid, src + strlen(src),
-				    sizeof(src) - strlen(src), &recno, &linkno);
+				    sizeof(src) - strlen(src), NULL, NULL);
 		if (rc < 0) {
 			CT_ERROR(rc, "cannot get FID of '%s'", buf);
 			rcf = rcf ? rcf : rc;
@@ -1304,15 +1302,13 @@ static int ct_process_item(struct hsm_action_item *hai, const long hal_flags)
 	if (opt.o_verbose >= LLAPI_MSG_INFO || opt.o_dry_run) {
 		/* Print the original path */
 		char		path[PATH_MAX];
-		long long	recno = -1;
-		int		linkno = 0;
 
 		CT_TRACE("'"DFID"' action %s reclen %d, cookie=%#llx",
 			 PFID(&hai->hai_fid),
 			 hsm_copytool_action2name(hai->hai_action),
 			 hai->hai_len, hai->hai_cookie);
 		rc = llapi_fid2path(lfsh, &hai->hai_fid, path,
-				    sizeof(path), &recno, &linkno);
+				    sizeof(path), NULL, NULL);
 		if (rc < 0)
 			CT_ERROR(rc, "cannot get path of FID "DFID,
 				 PFID(&hai->hai_fid));
