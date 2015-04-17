@@ -1,4 +1,5 @@
-lib_LTLIBRARIES = liblustre.la liblustre_unittest.la
+lib_LTLIBRARIES = liblustre.la
+noinst_LTLIBRARIES = liblustre_unittest.la
 
 # LGPL
 liblustre_la_SOURCES = \

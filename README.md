@@ -115,7 +115,6 @@ TODO
 -   All exported API functions should have at least a small test.
 -   Fix all the "TODO"s
 -   Add a man page for every API.
--   Provide an rpm specfile
 -   check each mention of lustreapi and fix
 -   do something with llapi\_hsm\_log\_error; it doesn't fit.
 -   llapi\_path2parent should probably have an lfsh arg and discriminate

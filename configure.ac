@@ -1,8 +1,9 @@
 AC_PREREQ(2.59)
 
-define([githash], esyscmd([sh -c "git rev-parse --short HEAD | tr -d '\n'"]))dnl
+# Note: the version is coming from the RPM specfile
+define([specversion], esyscmd([sh -c "grep 'Version:' liblustre.spec | cut -d ':' -f 2 | tr -d '\n'"]))dnl
 AC_INIT([liblustre],
-		[githash],
+		[specversion],
 		[],
 		[liblustre],
 		[https://github.com/fzago-cray/liblustre])

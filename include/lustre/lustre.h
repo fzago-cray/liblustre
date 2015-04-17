@@ -33,7 +33,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-#include <lustre/lustre_user.h>
+#include <lustre/liblustre_user.h>
 
 /* Lustre extended attributes */
 #define XATTR_LUSTRE_PREFIX	"lustre."
