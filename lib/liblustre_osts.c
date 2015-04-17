@@ -97,7 +97,7 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		return rc;
 
 	alloc_count = 10;
-	myinfo = malloc(sizeof(*info) + alloc_count * sizeof (char *));
+	myinfo = malloc(sizeof(*info) + alloc_count * sizeof(char *));
 	if (myinfo == NULL)
 		return -ENOMEM;
 
@@ -109,7 +109,6 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		goto done;
 	}
 
-	alloc_count = 0;
 	line = NULL;
 	while((sret = getline(&line, &len, f)) != -1) {
 		/* Realloc buffers if needed. */
@@ -117,16 +116,15 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 			struct lustre_ost_info *newinfo;
 			alloc_count += 10;
 			newinfo = realloc(myinfo, sizeof(*info) +
-					  alloc_count * sizeof (char *));
+					  alloc_count * sizeof(char *));
 			if (newinfo == NULL) {
 				rc = -ENOMEM;
 				goto done;
 			}
+			myinfo = newinfo;
 		}
 
-		/* Remove trailing \n if present. */
-		if (len > 0 && line[len-1] == '\n')
-			line[len-1] = '\0';
+		chomp_string(line);
 
 		myinfo->osts[myinfo->count] = line;
 		myinfo->count ++;
@@ -140,11 +138,10 @@ done:
 	if (f)
 		fclose(f);
 
-	if (rc == 0) {
+	if (rc == 0)
 		*info = myinfo;
-	} else {
+	else
 		free_ost_info(myinfo);
-	}
 
 	return rc;
 }
