@@ -20,3 +20,8 @@ EXTRA_DIST = \
 	liblustre_params_tests.c \
 	lib_test.c \
 	llapi_fid_test.c
+
+# See m4/ax_valgrind_check.m4 for documentation
+@VALGRIND_CHECK_RULES@
+#VALGRIND_SUPPRESSIONS_FILES = my-project.supp
+#EXTRA_DIST = my-project.supp

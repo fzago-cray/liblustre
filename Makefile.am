@@ -8,6 +8,9 @@ SUBDIRS = include lib man tests
 rpm_dir=`pwd`/rpms
 rpmbuild_opt=
 
+check-valgrind:
+	make -C tests check-valgrind
+
 rpms: dist
 	mkdir -p $(rpm_dir)/BUILD $(rpm_dir)/SPECS $(rpm_dir)/SRPMS $(rpm_dir)/RPMS
 	rpmbuild $(rpmbuild_opt) --define="_topdir $(rpm_dir)" \

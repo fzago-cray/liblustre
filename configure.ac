@@ -37,6 +37,7 @@ if test "x$RST2MAN" = "x"; then
 fi
 
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+AX_VALGRIND_CHECK
 
 # Output files
 AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile lib/liblustre.pc man/Makefile tests/Makefile])
