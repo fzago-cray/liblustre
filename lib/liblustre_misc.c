@@ -13,6 +13,8 @@
  * Lesser General Public License for more details.
  */
 
+/* Miscellaneous functions. */
+
 #include <stdlib.h>
 #include <errno.h>
 #include <limits.h>
@@ -119,6 +121,23 @@ int llapi_parse_size(const char *string, unsigned long long *size,
 	 }
 
 	 return -1;
+}
+
+/**
+ * Removes trailing newlines from a string.
+ *
+ * \param buf    the string to modify in place
+ */
+void chomp_string(char *buf)
+{
+	char *p;
+
+	if (buf == NULL)
+		return;
+
+	p = strchr(buf, '\n');
+	if (p)
+		*p = '\0';
 }
 
 #ifdef UNIT_TEST

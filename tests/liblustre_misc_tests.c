@@ -187,3 +187,31 @@ void unittest_llapi_parse_size(void)
 	ck_assert_int_eq(size, 017);
 	ck_assert_int_eq(size_units, 1);
 }
+
+/* Test chomp_string */
+void unittest_chomp(void)
+{
+	char buf[100];
+
+	chomp_string(NULL);
+
+	strcpy(buf, "hello\nbye\nbye");
+	chomp_string(buf);
+	ck_assert_str_eq(buf, "hello");
+
+	strcpy(buf, "\n");
+	chomp_string(buf);
+	ck_assert_str_eq(buf, "");
+
+	strcpy(buf, "\nhello");
+	chomp_string(buf);
+	ck_assert_str_eq(buf, "");
+
+	strcpy(buf, "\nhello\n");
+	chomp_string(buf);
+	ck_assert_str_eq(buf, "");
+
+	strcpy(buf, "hello\n\n\n");
+	chomp_string(buf);
+	ck_assert_str_eq(buf, "hello");
+}
