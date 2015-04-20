@@ -1,0 +1,33 @@
+# exp-sgcheck has some problems with the printf family when there is
+# several %s on the format string. Suppress these warnings.
+{
+   supp-sgcheck-snprintf1
+   exp-sgcheck:SorG
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:helper_fid2path
+   fun:test*
+   fun:srunner_run_all
+   fun:main
+}
+{
+   supp-sgcheck-snprintf2
+   exp-sgcheck:SorG
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:test30
+   fun:srunner_run_all
+   fun:main
+}
+{
+   supp-sgcheck-snprintf3
+   exp-sgcheck:SorG
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:helper_fid2path
+   fun:srunner_run_all
+   fun:main
+}
