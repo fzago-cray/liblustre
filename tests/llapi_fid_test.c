@@ -335,7 +335,7 @@ START_TEST(test30)
 	struct {
 		char filename[PATH_MAX];
 		bool seen;
-	} links[num_links];
+	} *links;
 	char buf[PATH_MAX];
 	char buf2[PATH_MAX];
 	lustre_fid fid;
@@ -349,6 +349,9 @@ START_TEST(test30)
 	/* Create the containing directory. */
 	rc = mkdir(mainpath, 0);
 	ck_assert_int_eq(rc, 0);
+
+	links = calloc(num_links, sizeof(*links));
+	ck_assert_ptr_ne(links, NULL);
 
 	/* Initializes the link array. */
 	for (i = 0; i < num_links; i++) {
@@ -418,8 +421,9 @@ START_TEST(test30)
 			 * file. */
 			ck_assert_str_eq(buf2, links[0].filename);
 		}
-
 	}
+
+	free(links);
 }
 END_TEST
 
