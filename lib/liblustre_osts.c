@@ -131,6 +131,7 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 
 		line = NULL;
 	}
+	free(line);
 
 	rc = 0;
 
