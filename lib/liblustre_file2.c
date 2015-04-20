@@ -337,13 +337,8 @@ int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 	fd = llapi_layout_file_openat(lfsh->fid_fd, path,
 				      open_flags | O_RDWR | O_CREAT,
 				      mode, layout);
-	if (fd == -1) {
-		rc = -errno;
-		log_msg(LLAPI_MSG_ERROR, rc,
-			"Cannot create volatile file '%s' under '%s'",
-			path, lfsh->mount_path);
-		return rc;
-	}
+	if (fd == -1)
+		return -errno;
 
 	return fd;
 }
