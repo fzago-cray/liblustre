@@ -179,10 +179,10 @@ RPMS can be built with:
 
 This will result in these 4 rpms:
 
-  rpms/SRPMS/liblustre-0.1.0-g01bb122.src.rpm
-  rpms/RPMS/x86_64/liblustre-0.1.0-g01bb122.x86_64.rpm
-  rpms/RPMS/x86_64/liblustre-devel-0.1.0-g01bb122.x86_64.rpm
-  rpms/RPMS/x86_64/liblustre-debuginfo-0.1.0-g01bb122.x86_64.rpm
+    rpms/SRPMS/liblustre-0.1.0-g01bb122.src.rpm
+    rpms/RPMS/x86_64/liblustre-0.1.0-g01bb122.x86_64.rpm
+    rpms/RPMS/x86_64/liblustre-devel-0.1.0-g01bb122.x86_64.rpm
+    rpms/RPMS/x86_64/liblustre-debuginfo-0.1.0-g01bb122.x86_64.rpm
 
 Only the liblustre rpm is need to run an
 application. liblustre-develcontains the man pages and the headers.
@@ -202,7 +202,7 @@ testsuite to /mnt/lustre.
 
 ### Check
 
-The test are written with the "check" framework (see
+The tests are written with the "check" framework (see
 http://check.sourceforge.net/). Some arguments, such as no forking can
 be passed on the command line while testing:
 
