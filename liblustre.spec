@@ -10,7 +10,7 @@ License:	GPLv2+
 URL:		https://github.com/fzago-cray/liblustre
 Source0:	%{name}-%{version}.tar.xz
 
-BuildRequires:	python-docutils
+BuildRequires:	python-docutils check
 
 %description
 
