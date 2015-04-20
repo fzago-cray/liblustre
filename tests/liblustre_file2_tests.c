@@ -13,12 +13,10 @@
  * Lesser General Public License for more details.
  */
 
-/* Tests FIDs functions.
+/*
+ * Tests FIDs functions.
  *
  * Assumptions: /mnt/lustre exists.
- *
- * TODO: re-use/re-license lustre's llapi_fid_test since Cray wrote
- * all of it except the test framework.
  */
 
 #include <stdlib.h>
