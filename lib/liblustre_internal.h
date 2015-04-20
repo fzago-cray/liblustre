@@ -21,15 +21,12 @@
  * LGPL HEADER END
  */
 /*
+ * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Use is subject to license terms.
  *
- * lustre/utils/lustreapi_internal.h
+ * Copyright (c) 2010, 2014, Intel Corporation.
  *
- */
-/*
- *
- * Author: Aurelien Degremont <aurelien.degremont@cea.fr>
- * Author: JC Lafoucriere <jacques-charles.lafoucriere@cea.fr>
- * Author: Thomas Leibovici <thomas.leibovici@cea.fr>
+ * Copyright 2015 Cray Inc. All rights reserved.
  */
 
 #ifndef _LUSTREAPI_INTERNAL_H_
