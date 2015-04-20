@@ -24,4 +24,4 @@ EXTRA_DIST = \
 # See m4/ax_valgrind_check.m4 for documentation
 @VALGRIND_CHECK_RULES@
 VALGRIND_SUPPRESSIONS_FILES = valgrind.supp
-EXTRA_DIST = valgrind.supp
+EXTRA_DIST += valgrind.supp
