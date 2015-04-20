@@ -241,7 +241,7 @@ static int llapi_hsm_log_ct_registration(struct hsm_copytool_private *ct,
 					 __u32 event_type)
 {
 	int				rc;
-	char				agent_uuid[UUID_MAX];
+	char				*agent_uuid = NULL;
 	struct llapi_json_item_list	*json_items;
 
 	/* Noop unless the event fd was initialized */
@@ -261,8 +261,7 @@ static int llapi_hsm_log_ct_registration(struct hsm_copytool_private *ct,
 	if (rc < 0)
 		goto err;
 
-	rc = get_param_lmv(ct->lfsh->mount_fd, "uuid",
-			   agent_uuid, sizeof(agent_uuid));
+	rc = get_param_lmv(ct->lfsh->mount_fd, "uuid", &agent_uuid);
 	if (rc < 0)
 		goto err;
 
@@ -299,6 +298,8 @@ err:
 out_free:
 	if (json_items != NULL)
 		llapi_json_destroy_list(&json_items);
+
+	free(agent_uuid);
 
 	return rc;
 }

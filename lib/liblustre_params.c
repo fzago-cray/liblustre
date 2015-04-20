@@ -33,9 +33,11 @@
  *  - no truncation occurred
  *  - the string is NUL terminated
  *  - the value doesn't have a carriage return.
+ *
+ * value must be free()'ed by the caller
  */
 static int read_procfs_value(const char *type, const char *inst,
-			     const char *param, char *buf, size_t buf_size)
+			     const char *param, char **value)
 {
 	FILE *fp = NULL;
 	char *line = NULL;
@@ -58,29 +60,35 @@ static int read_procfs_value(const char *type, const char *inst,
 	n = getline(&line, &line_len, fp);
 	if (n == -1) {
 		rc = -errno;
+		free(line);
 		goto out;
 	}
 
 	chomp_string(line);
-
-	if (n > buf_size) {
-		rc = -EOVERFLOW;
-		goto out;
-	}
-
-	strcpy(buf, line);
+	*value = line;
 
 	rc = 0;
 
 out:
 	if (fp != NULL)
 		fclose(fp);
-	free(line);
 
 	return rc;
 }
 
-int get_param_lmv(int fd, const char *param, char *buf, size_t buf_size)
+/**
+ * Read a parameter from /proc/fs/lustre/
+ *
+ * \param[in]   fd
+ * \param[in]   param    which parameter to read
+ * \param[out]  value    value read
+ *
+ * \retval   0 on success, with value allocated
+ * \retval   a negative errno on error
+ *
+ * value must be free()'ed by the caller
+ */
+int get_param_lmv(int fd, const char *param, char **value)
 {
 	struct obd_uuid uuid;
 	int rc;
@@ -90,7 +98,7 @@ int get_param_lmv(int fd, const char *param, char *buf, size_t buf_size)
 	if (rc != 0)
 		return -errno;
 
-	return read_procfs_value("lmv", uuid.uuid, param, buf, buf_size);
+	return read_procfs_value("lmv", uuid.uuid, param, value);
 }
 
 #ifdef UNIT_TEST

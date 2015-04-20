@@ -41,16 +41,19 @@
 /* Test read_procfs_value */
 void unittest_read_procfs_value(void)
 {
-	char buf[1000];
+	char *buf = NULL;
 	int rc;
 
 	/* /proc/fs/lustre/version is multiline, but get only the
 	 * first one, which should be something like:
 	 *   lustre: 2.7.51 */
-	rc = read_procfs_value("", "", "version", buf, sizeof(buf));
+	rc = read_procfs_value("", "", "version", &buf);
 	ck_assert_int_eq(rc, 0);
+	ck_assert_ptr_ne(buf, NULL);
 
 	ck_assert(strncmp(buf, "lustre:", 7) == 0);
+
+	free(buf);
 }
 
 /* Test get_param_lmv(). */
@@ -58,7 +61,7 @@ void unittest_param_lmv(void)
 {
 	int fd;
 	int rc;
-	char value[1000];
+	char *value;
 
 	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
@@ -67,19 +70,10 @@ void unittest_param_lmv(void)
 	 * uuid sample: b40310d6-d551-90d6-a220-6261f93e51d9  */
 
 	/* Success */
-	rc = get_param_lmv(fd, "uuid", value, sizeof(value));
+	rc = get_param_lmv(fd, "uuid", &value);
 	ck_assert_int_eq(rc, 0);
-
-	/* Read value with 37 bytes (size of uuid + NUL) */
-	rc = get_param_lmv(fd, "uuid", value, 37);
-	ck_assert_int_eq(rc, 0);
-
-	/* Again, but without enough space. */
-	rc = get_param_lmv(fd, "uuid", value, 36);
-	ck_assert_int_eq(rc, -EOVERFLOW);
-
-	rc = get_param_lmv(fd, "uuid", value, 0);
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_ptr_ne(value, NULL);
+	free(value);
 
 	close(fd);
 }

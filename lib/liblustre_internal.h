@@ -169,7 +169,7 @@ void chomp_string(char *buf);
 #define LUSTRE_VOLATILE_HDR ".\x0c\x13\x14\x12:VOLATILE"
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
-int get_param_lmv(int fd, const char *param, char *buf, size_t buf_size);
+int get_param_lmv(int fd, const char *param, char **value);
 
 /*
  * FID
