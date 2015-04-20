@@ -161,3 +161,50 @@ llapi\_msg\_set\_level(). When the callback is called, the application
 can then emit the messages if it wishes. lhsmtool\_posix.c has been
 modified to use that interface. The posix copytool will output all its
 messages on stdout.
+
+Building liblustre
+------------------
+
+To build the library:
+
+    autoreconf -i
+    ./configure
+    make
+
+Testing liblustre
+-----------------
+
+The automake test tool is used. First setup a lustre test filesystem
+with some pools. Right now the path to lustre is harcoded in the
+testsuite to /mnt/lustre.
+
+    llmount.sh
+    lctl pool_new lustre.mypool
+    lctl pool_add lustre.mypool OST0000
+
+    make check
+
+### Check
+
+The test are written with the "check" framework (see
+http://check.sourceforge.net/). Some arguments, such as no forking can
+be passed on the command line while testing:
+
+    CK_FORK=no make check
+
+See the documentation for more information:
+
+
+### Valgrind
+
+The testsuite can also be run under valgrind. Use valgrind 3.11 or
+later since it has support for a few Lustre ioctls. As of writing,
+this version hasn't been released; its sources can be retrieved from
+subversion (see http://valgrind.org/downloads/repository.html).
+
+For that purpose, under Centos 6, the following packages need to be
+updated: autoconf, automake, libtool. The packages from CentOS 7 can
+be used. The dependency on m4 can be ignored (use --nodeps when
+installing the rpms).
+
+    make check-valgrind
