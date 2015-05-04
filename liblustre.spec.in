@@ -1,8 +1,6 @@
-%global githash %(sh -c "git rev-parse --short HEAD | tr -d '\n'")
-
 Name:		liblustre
 Version:	0.1.0
-Release:	g%{githash}
+Release:	g@GIT_HASH@
 Summary:	An alternate user space library for Lustre
 Group:		System Environment/Libraries
 # TODO: will need to change to LGPLv2+
@@ -14,7 +12,7 @@ BuildRequires:	python-docutils check
 
 %description
 
-A alternate library for Lustre that can be installed in parallel with
+An alternate library for Lustre that can be installed in parallel with
 liblustreapi. The APIs provided by liblustre are slightly different
 than those provided by liblustreapi.
 
@@ -30,6 +28,7 @@ Development package for %{name}.
 %setup -q
 
 %build
+autoreconf -i
 %configure
 make %{?_smp_mflags}
 
