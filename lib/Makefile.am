@@ -10,19 +10,19 @@ noinst_LTLIBRARIES = liblustre_unittest.la liblustre_support.la
 
 # LGPL
 liblustre_la_SOURCES = \
-	liblustreapi_json.c \
+	liblustre.c \
+	liblustre_file2.c \
+	liblustre_logging.c \
+	liblustre_misc.c \
+	liblustre_osts.c \
+	liblustre_params.c \
 	liblustreapi_hsm.c \
+	liblustreapi_json.c \
 	liblustreapi_layout.c
 
 # Not LGPL yet
 liblustre_la_SOURCES += \
-	liblustre.c \
-	liblustre_file2.c \
-	liblustre_internal.h \
-	liblustre_logging.c \
-	liblustre_misc.c \
-	liblustre_osts.c \
-	liblustre_params.c
+	liblustre_internal.h
 
 liblustre_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/lib/liblustre.map
 liblustre_la_CFLAGS = -I${top_srcdir}/include -I.
