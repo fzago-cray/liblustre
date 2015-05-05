@@ -189,7 +189,7 @@ static void log_fn(enum llapi_message_level level, int err,
 	va_list args;
 
 	va_start(args, fmt);
-	log_fn_cb(level, err, fmt, args);
+	log_fn_cb(level, abs(err), fmt, args);
 	va_end(args);
 }
 
