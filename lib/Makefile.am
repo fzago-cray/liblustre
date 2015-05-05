@@ -12,6 +12,7 @@ noinst_LTLIBRARIES = liblustre_unittest.la liblustre_support.la
 liblustre_la_SOURCES = \
 	liblustre.c \
 	liblustre_file2.c \
+	liblustre_internal.h \
 	liblustre_logging.c \
 	liblustre_misc.c \
 	liblustre_osts.c \
@@ -22,7 +23,7 @@ liblustre_la_SOURCES = \
 
 # Not LGPL yet
 liblustre_la_SOURCES += \
-	liblustre_internal.h
+	liblustre_internal_gpl.h
 
 liblustre_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/lib/liblustre.map
 liblustre_la_CFLAGS = -I${top_srcdir}/include -I.
