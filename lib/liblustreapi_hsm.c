@@ -801,16 +801,13 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
  * \param archive_count		Number of valid archive IDs in \a archives
  * \param archives		Which archive numbers this copytool is
  *				responsible for
- * \param rfd_flags		flags applied to read fd of pipe
- *				(e.g. O_NONBLOCK)
  *
  * \retval 0 on success.
  * \retval -errno on error.
  */
 int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 				struct hsm_copytool_private **priv,
-				int archive_count, int *archives,
-				int rfd_flags)
+				int archive_count, int *archives)
 {
 	struct hsm_copytool_private	*ct;
 	int				 rc;

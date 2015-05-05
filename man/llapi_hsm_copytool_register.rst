@@ -19,7 +19,7 @@ SYNOPSIS
 
 **int llapi_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
 struct hsm_copytool_private \*\***\ priv\ **, int** archive_count\ **,
-int \***\ archives\ **, int** rfd_flags\ **)**
+int \***\ archives\ **)**
 
 **int llapi_hsm_copytool_unregister(struct hsm_copytool_private \*\***\ priv**)**
 
@@ -44,8 +44,7 @@ array with up to 32 elements indicating which archive IDs to register
 for. Each element is a number from 1 to 32. *archive_count* is the
 number of valid elements in the *archive* array. If an element in
 *archives* is 0, or if *archive_count* is 0, then all archives will be
-monitored. *rfd_flags* determines whether **llapi_hsm_copytool_recv**
-will be blocking, with 0, or non-blocking, with O_NONBLOCK.
+monitored.
 
 **llapi_hsm_copytool_register** returns *priv*, an opaque
 pointer that must be used with the other functions.
@@ -55,8 +54,7 @@ the opaque handle returned by **llapi_hsm_copytool_register**.
 
 **llapi_hsm_copytool_get_fd** returns the file descriptor used by the
 Library to communicate with the kernel. This descriptor is only
-intended to be used with **select(2)** or **poll(2)**. *rfd_flags*
-should have been set to O_NONBLOCK.
+intended to be used with **select(2)** or **poll(2)**.
 
 To receive the requests, the application has to call
 **llapi_hsm_copytool_recv**. When it returns 0, a message is available
