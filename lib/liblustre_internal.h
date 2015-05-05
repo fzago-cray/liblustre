@@ -290,14 +290,14 @@ int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
 /*
  * Communication with kernel.
  */
-typedef struct lustre_kernelcomm {
+struct lustre_kernelcomm {
 	__u32 lk_wfd;
 	__u32 lk_rfd;
 	__u32 lk_uid;
 	__u32 lk_group;
 	__u32 lk_data;
 	__u32 lk_flags;
-} __attribute__((packed)) lustre_kernelcomm;
+} __attribute__((packed));
 
 struct kuc_hdr {
 	__u16 kuc_magic;
@@ -320,13 +320,6 @@ enum kuc_generic_message_type {
 #define KUC_GRP_HSM	   0x02
 
 #define LK_FLG_STOP 0x01
-#define LK_NOFD -1U
-
-int libcfs_ukuc_start(lustre_kernelcomm *l, int groups, int rfd_flags);
-int libcfs_ukuc_stop(lustre_kernelcomm *l);
-int libcfs_ukuc_get_rfd(lustre_kernelcomm *link);
-int libcfs_ukuc_msg_get(lustre_kernelcomm *l, char *buf, int maxsize,
-			int transport);
 
 /*
  * IOCTLs
@@ -365,4 +358,3 @@ void unittest_llapi_parse_size(void);
 void unittest_llapi_fid2path(void);
 
 #endif /* _LUSTREAPI_INTERNAL_H_ */
-

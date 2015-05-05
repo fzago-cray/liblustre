@@ -68,9 +68,12 @@
 struct hsm_copytool_private {
 	int			 magic;
 	const struct lustre_fs_h *lfsh;
-	struct kuc_hdr		*kuch;
-	lustre_kernelcomm	 kuc;
+	int			 channel_rfd;
 	__u32			 archives;
+
+	/* HSM action list. The kernel comm (kuc_msglen) is limited to
+	 * 64k. It's small enough to reserve it here. */
+	unsigned char            hal[65536];
 };
 
 #define CP_PRIV_MAGIC 0x19880429
@@ -654,6 +657,144 @@ out_free:
 	return;
 }
 
+
+/* Open a communication channel with the kernel to retrieve HSM
+ * events. Return 0 on success, or -1 on error. */
+static int open_hsm_comm(struct hsm_copytool_private *ct)
+{
+	struct lustre_kernelcomm channel;
+	int pipefd[2];
+	int rc;
+
+	rc = pipe(pipefd);
+	if (rc == -1)
+		return -errno;
+
+	/* Set the reader as non-blocking, so it can be poll'ed or
+	 * select'ed. */
+	rc = fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
+	if (rc == -1) {
+		rc = -errno;
+		goto out_err;
+	}
+
+	/* Storing archive(s) in lk_data; see mdc_ioc_hsm_ct_start */
+	channel.lk_rfd = 0;
+	channel.lk_wfd = pipefd[1];
+	channel.lk_uid = getpid();
+	channel.lk_group = KUC_GRP_HSM;
+	channel.lk_data = ct->archives;
+	channel.lk_flags = 0;
+
+	rc = ioctl(ct->lfsh->mount_fd, LL_IOC_HSM_CT_START, &channel);
+	if (rc == -1) {
+		rc = -errno;
+		goto out_err;
+	}
+
+	/* The application reads and the kernel writes. */
+	ct->channel_rfd = pipefd[0];
+	close(pipefd[1]);
+
+	return 0;
+
+out_err:
+	close(pipefd[0]);
+	close(pipefd[1]);
+
+	return rc;
+}
+
+/* Clsoe the HSM connection opened by open_hsm_conn. */
+static void close_hsm_comm(struct hsm_copytool_private *ct)
+{
+	struct lustre_kernelcomm channel = {
+		.lk_group = KUC_GRP_HSM,
+		.lk_flags = LK_FLG_STOP,
+	};
+
+	if (ct->channel_rfd != -1) {
+		/* Tell the kernel to stop sending us messages */
+		ioctl(ct->lfsh->mount_fd, LL_IOC_HSM_CT_START, &channel);
+
+		close(ct->channel_rfd);
+		ct->channel_rfd = -1;
+	}
+}
+
+/* Get a message from HSM. Return 0 on success and set hal and
+ * hal_len. Return a negative errno on error. The caller is expected
+ * to handle -EWOULDBLOCK. */
+static int get_hsm_comm(struct hsm_copytool_private *ct,
+			struct hsm_action_list **hal,
+			size_t *hal_len)
+{
+	int rc;
+	struct kuc_hdr header;
+	size_t data_len;
+
+	/* Read until we get a valid message or an error occurs. */
+	while (1) {
+		/* Get header */
+		rc = read(ct->channel_rfd, &header, sizeof(header));
+		if (rc == -1) {
+			rc = -errno;
+			break;
+		}
+
+		if (rc != sizeof(struct kuc_hdr)) {
+			/* Not enough data. We're hosed. */
+			rc = -ENODATA;
+			break;
+		}
+
+		if (header.kuc_magic != KUC_MAGIC) {
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"Bad magic received from kernel (%08x instead of %08x)",
+				header.kuc_magic, KUC_MAGIC);
+			rc = -EPROTO;
+			break;
+		}
+
+		if (header.kuc_msglen < sizeof(header)) {
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"Invalid data length (%08x < %08x)",
+				header.kuc_msglen < sizeof(header));
+			rc = -EPROTO;
+			break;
+		}
+
+		/* Get message data */
+		data_len = header.kuc_msglen - sizeof(header);
+		rc = read(ct->channel_rfd, ct->hal, data_len);
+		if (rc != data_len) {
+			/* Not enough data. We're hosed. */
+			rc = -EPROTO;
+			break;
+		}
+
+		/* Only accept HSM messages. */
+		if (header.kuc_transport == KUC_TRANSPORT_HSM ||
+		    header.kuc_transport == KUC_TRANSPORT_GENERIC) {
+
+			switch(header.kuc_msgtype) {
+			case KUC_MSG_SHUTDOWN:
+				rc = -ESHUTDOWN;
+				break;
+			case HMT_ACTION_LIST:
+				*hal = (struct hsm_action_list *)ct->hal;
+				*hal_len = data_len;
+				return 0;
+			}
+		}
+
+		/* Something else. Ignore the message and try again. */
+	}
+
+	return rc;
+}
+
+
 /** Register a copytool
  * \param[out] priv		Opaque private control structure
  * \param mnt			Lustre filesystem mount point
@@ -693,14 +834,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 
 	ct->magic = CT_PRIV_MAGIC;
 	ct->lfsh = lfsh;
-	ct->kuc.lk_rfd = LK_NOFD;
-	ct->kuc.lk_wfd = LK_NOFD;
-
-	ct->kuch = malloc(HAL_MAXSIZE + sizeof(*ct->kuch));
-	if (ct->kuch == NULL) {
-		rc = -ENOMEM;
-		goto out_err;
-	}
+	ct->channel_rfd = -1;
 
 	/* no archives specified means "match all". */
 	ct->archives = 0;
@@ -723,36 +857,22 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 		ct->archives |= (1 << (archives[rc] - 1));
 	}
 
-	rc = libcfs_ukuc_start(&ct->kuc, KUC_GRP_HSM, rfd_flags);
-	if (rc < 0)
-		goto out_err;
-
-	/* Storing archive(s) in lk_data; see mdc_ioc_hsm_ct_start */
-	ct->kuc.lk_data = ct->archives;
-	rc = ioctl(lfsh->mount_fd, LL_IOC_HSM_CT_START, &ct->kuc);
+	rc = open_hsm_comm(ct);
 	if (rc < 0) {
-		rc = -errno;
 		log_msg(LLAPI_MSG_ERROR, rc,
-			    "cannot start copytool on '%s'", lfsh->mount_path);
-		goto out_kuc;
+			"cannot start copytool on '%s'", lfsh->mount_path);
+		goto out_err;
 	}
 
 	llapi_hsm_log_ct_registration(ct, CT_REGISTER);
 
-	/* Only the kernel reference keeps the write side open */
-	close(ct->kuc.lk_wfd);
-	ct->kuc.lk_wfd = LK_NOFD;
 	*priv = ct;
 
 	return 0;
 
-out_kuc:
-	/* cleanup the kuc channel */
-	libcfs_ukuc_stop(&ct->kuc);
-
 out_err:
-	free(ct->kuch);
-
+	if (ct->channel_rfd != -1)
+		close(ct->channel_rfd);
 	free(ct);
 
 	return rc;
@@ -774,16 +894,10 @@ int llapi_hsm_copytool_unregister(struct hsm_copytool_private **priv)
 	if (ct->magic != CT_PRIV_MAGIC)
 		return -EINVAL;
 
-	/* Tell the kernel to stop sending us messages */
-	ct->kuc.lk_flags = LK_FLG_STOP;
-	ioctl(ct->lfsh->mount_fd, LL_IOC_HSM_CT_START, &ct->kuc);
-
-	/* Shut down the kernelcomms */
-	libcfs_ukuc_stop(&ct->kuc);
+	close_hsm_comm(ct);
 
 	llapi_hsm_log_ct_registration(ct, CT_UNREGISTER);
 
-	free(ct->kuch);
 	free(ct);
 	*priv = NULL;
 
@@ -800,7 +914,7 @@ int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct)
 	if (ct == NULL || ct->magic != CT_PRIV_MAGIC)
 		return -EINVAL;
 
-	return libcfs_ukuc_get_rfd(&ct->kuc);
+	return ct->channel_rfd;
 }
 
 /** Wait for the next hsm_action_list
@@ -813,11 +927,9 @@ int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct)
  * cleared the data in ct->kuch from the previous call.
  */
 int llapi_hsm_copytool_recv(struct hsm_copytool_private *ct,
-			    struct hsm_action_list **halh, int *msgsize)
+			    struct hsm_action_list **halh, size_t *msgsize)
 {
-	struct kuc_hdr		*kuch;
-	struct hsm_action_list	*hal;
-	int			 rc = 0;
+	int rc;
 
 	if (ct == NULL || ct->magic != CT_PRIV_MAGIC)
 		return -EINVAL;
@@ -825,58 +937,24 @@ int llapi_hsm_copytool_recv(struct hsm_copytool_private *ct,
 	if (halh == NULL || msgsize == NULL)
 		return -EINVAL;
 
-	kuch = ct->kuch;
-
 repeat:
-	rc = libcfs_ukuc_msg_get(&ct->kuc, (char *)kuch,
-				 HAL_MAXSIZE + sizeof(*kuch),
-				 KUC_TRANSPORT_HSM);
+	rc = get_hsm_comm(ct, halh, msgsize);
 	if (rc < 0)
 		goto out_err;
 
-	/* Handle generic messages */
-	if (kuch->kuc_transport == KUC_TRANSPORT_GENERIC &&
-	    kuch->kuc_msgtype == KUC_MSG_SHUTDOWN) {
-		rc = -ESHUTDOWN;
-		goto out_err;
-	}
-
-	if (kuch->kuc_transport != KUC_TRANSPORT_HSM ||
-	    kuch->kuc_msgtype != HMT_ACTION_LIST) {
-		log_msg(LLAPI_MSG_ERROR, 0,
-				  "Unknown HSM message type %d:%d\n",
-				  kuch->kuc_transport, kuch->kuc_msgtype);
-		rc = -EPROTO;
-		goto out_err;
-	}
-
-	if (kuch->kuc_msglen < sizeof(*kuch) + sizeof(*hal)) {
-		log_msg(LLAPI_MSG_ERROR, 0, "Short HSM message %d",
-				  kuch->kuc_msglen);
-		rc = -EPROTO;
-		goto out_err;
-	}
-
-	/* Our message is a hsm_action_list. Use pointer math to skip
-	* kuch_hdr and point directly to the message payload.
-	*/
-	hal = (struct hsm_action_list *)(kuch + 1);
-
-	/* Check that we have registered for this archive #
-	 * if 0 registered, we serve any archive */
+	/* Check that we have registered for this archive number.
+	 * If 0 registered, we serve any archive. */
 	if (ct->archives &&
-	    ((1 << (hal->hal_archive_id - 1)) & ct->archives) == 0) {
+	    ((1 << ((*halh)->hal_archive_id - 1)) & ct->archives) == 0) {
 		log_msg(LLAPI_MSG_INFO, 0,
 			"This copytool does not service archive #%d,"
 			" ignoring this request."
 			" Mask of served archive is 0x%.8X",
-			hal->hal_archive_id, ct->archives);
+			(*halh)->hal_archive_id, ct->archives);
 
 		goto repeat;
 	}
 
-	*halh = hal;
-	*msgsize = kuch->kuc_msglen - sizeof(*kuch);
 	return 0;
 
 out_err:

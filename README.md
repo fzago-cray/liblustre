@@ -150,6 +150,9 @@ should help porting.
 -   dot\_lustre\_name is gone.
 -   llapi\_fid2path will return an empty string instead of / if the
     mountpoint is given. recno and linkno can now be NULL.
+-   reading an HSM event is non blocking. llapi_hsm_copytool_register()
+    can return -EWOULDBLOCK so the caller should handle that
+    condition.
 
 ### logging
 

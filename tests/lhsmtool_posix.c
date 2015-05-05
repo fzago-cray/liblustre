@@ -67,6 +67,7 @@
 /* fid_* function from upstream lustre_idl. Ideally these should go in
  * the library, however they are GPL so far. However they are short
  * enough that they might not be copyrightable. */
+/* Note: fid_seq is not a full copy. */
 enum fid_seq {
     FID_SEQ_IGIF        = 12,
     FID_SEQ_IGIF_MAX    = 0x0ffffffffULL,
@@ -1878,16 +1879,23 @@ static int ct_run(void)
 	while (1) {
 		struct hsm_action_list	*hal;
 		struct hsm_action_item	*hai;
-		int			 msgsize;
+		size_t			 msgsize;
 		int			 i = 0;
 
 		CT_TRACE("waiting for message from kernel");
 
 		rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
-		if (rc == -ESHUTDOWN) {
-			CT_TRACE("shutting down");
-			break;
-		} else if (rc < 0) {
+		if (rc < 0) {
+			if (rc == -ESHUTDOWN) {
+				CT_TRACE("shutting down");
+				break;
+			}
+
+			if (rc == -EWOULDBLOCK) {
+				sleep(1);
+				continue;
+			}
+
 			CT_WARN("cannot receive action list: %s",
 				strerror(-rc));
 			err_major++;

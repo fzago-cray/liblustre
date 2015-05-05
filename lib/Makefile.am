@@ -16,7 +16,6 @@ liblustre_la_SOURCES = \
 
 # Not LGPL yet
 liblustre_la_SOURCES += \
-	kernel_user_comm.c \
 	liblustre.c \
 	liblustre_file2.c \
 	liblustre_internal.h \
