@@ -162,6 +162,17 @@ can then emit the messages if it wishes. lhsmtool\_posix.c has been
 modified to use that interface. The posix copytool will output all its
 messages on stdout.
 
+Package dependencies
+--------------------
+
+On Debian/Ubunto, the following packages are needed to build:
+
+    check libattr1-dev python-docutils
+
+On RHEL/CentOS, the following packages are needed to build:
+
+    check libattr-devel python-docutils
+
 Building liblustre
 ------------------
 
