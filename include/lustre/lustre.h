@@ -107,15 +107,6 @@ int llapi_layout_file_create(const char *path, int open_flags, int mode,
 /*
  * Misc
  */
-struct llapi_stripe_param {
-	unsigned long long	 lsp_stripe_size;
-	const char		*lsp_pool;
-	int			 lsp_stripe_offset;
-	int			 lsp_stripe_pattern;
-	int			 lsp_stripe_count;
-	bool			 lsp_is_specific;
-	__u32			 lsp_osts[0];
-};
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		   char *path, size_t path_len, long long *recno,
 		   unsigned int *linkno);
