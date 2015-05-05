@@ -158,21 +158,31 @@ int llapi_hsm_unregister_event_fifo(const char *path);
 void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 			 const char *fmt, va_list args);
 
-#define LLAPI_ROUNDUP8(val) (((val) + 7) & (~0x7))
-
-static inline struct hsm_action_item *hai_first(struct hsm_action_list *hal)
+/* Returns the first action item after the action list header. */
+static inline
+const struct hsm_action_item *hai_first(const struct hsm_action_list *hal)
 {
-	return (struct hsm_action_item *)
-		(hal->hal_fsname + LLAPI_ROUNDUP8(strlen(hal->hal_fsname) + 1));
+	const char *p;
+
+	/* Find end of string. */
+	p = hal->hal_fsname;
+	while (*p)
+		p++;
+
+	/* Add 1 for the NUL character, plus 7 for the rounding to the
+	 * 8 bytes boundary operation */
+	p += 8;
+
+	return (struct hsm_action_item *)((uintptr_t)p & ~7);
 }
 
-static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
+/* Returns the next action item. */
+static inline
+const struct hsm_action_item *hai_next(const struct hsm_action_item *hai)
 {
 	return (struct hsm_action_item *)
-		((char *)hai + LLAPI_ROUNDUP8(hai->hai_len));
+		(((uintptr_t)hai + hai->hai_len + 7) & ~7);
 }
-
-#undef LLAPI_ROUNDUP8
 
 /*
  * HSM copytool interface.
@@ -188,7 +198,8 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 int llapi_hsm_copytool_unregister(struct hsm_copytool_private **priv);
 int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct);
 int llapi_hsm_copytool_recv(struct hsm_copytool_private *priv,
-			    struct hsm_action_list **hal, size_t *msgsize);
+			    const struct hsm_action_list **hal,
+			    size_t *msgsize);
 int llapi_hsm_action_begin(struct hsm_copyaction_private **phcp,
 			   const struct hsm_copytool_private *ct,
 			   const struct hsm_action_item *hai,

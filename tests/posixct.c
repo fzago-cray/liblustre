@@ -1877,8 +1877,8 @@ static int ct_run(void)
 	signal(SIGTERM, handler);
 
 	while (1) {
-		struct hsm_action_list	*hal;
-		struct hsm_action_item	*hai;
+		const struct hsm_action_list	*hal;
+		const struct hsm_action_item	*hai;
 		size_t			 msgsize;
 		int			 i = 0;
 

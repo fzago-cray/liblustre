@@ -726,7 +726,7 @@ static void close_hsm_comm(struct hsm_copytool_private *ct)
  * hal_len. Return a negative errno on error. The caller is expected
  * to handle -EWOULDBLOCK. */
 static int get_hsm_comm(struct hsm_copytool_private *ct,
-			struct hsm_action_list **hal,
+			const struct hsm_action_list **hal,
 			size_t *hal_len)
 {
 	int rc;
@@ -927,7 +927,7 @@ int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct)
  * cleared the data in ct->kuch from the previous call.
  */
 int llapi_hsm_copytool_recv(struct hsm_copytool_private *ct,
-			    struct hsm_action_list **halh, size_t *msgsize)
+			    const struct hsm_action_list **halh, size_t *msgsize)
 {
 	int rc;
 
