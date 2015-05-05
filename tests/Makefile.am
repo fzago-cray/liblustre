@@ -1,11 +1,11 @@
-check_PROGRAMS=lib_test lhsmtool_posix llapi_fid_test
+check_PROGRAMS=lib_test posixct llapi_fid_test
 
 noinst_PROGRAMS=$(check_PROGRAMS)
 
 TESTS = lib_test llapi_fid_test
 
-lhsmtool_posix_CFLAGS = -I${top_srcdir}/include
-lhsmtool_posix_LDADD = \
+posixct_CFLAGS = -I${top_srcdir}/include
+posixct_LDADD = \
 	${top_builddir}/lib/liblustre_support.la \
 	${top_builddir}/lib/liblustre.la -lbsd -lpthread
 
