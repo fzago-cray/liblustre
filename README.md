@@ -126,6 +126,9 @@ TODO
 -   llapi_fid2path and llapi_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
     save a memory copy.
+-   llapi_hsm_import is not working. The layout interface doesn't have
+    an equivalent for LOV_PATTERN_F_RELEASED. Lustre HSM test 12a
+    fails.
 
 Changes from liblustreapi
 -------------------------
@@ -241,3 +244,11 @@ be used. The dependency on m4 can be ignored (use --nodeps when
 installing the rpms).
 
     make check-valgrind
+
+
+### Posix Copytool
+
+Execute posixct once, so that the lt-posixct binary is created. Then
+run the Lustre test suite like this:
+
+    HSMTOOL=/root/liblustre/tests/.libs/lt-posixct ONLY=12a PDSH=ssh AGTCOUNT=1 agt1_HOST=localhost NAME=local ./sanity-hsm.sh
