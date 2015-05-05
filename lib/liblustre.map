@@ -1,9 +1,12 @@
 {
 	# Symbols that the library exports.
     global:
+		llapi_close_fs;
 		llapi_create_volatile_by_fid;
+		llapi_fd2fid;
 		llapi_fd2parent;
 		llapi_fid2parent;
+		llapi_fid2path;
 		llapi_get_fsname;
 		llapi_get_mdt_index_by_fid;
 		llapi_get_mountpoint;
@@ -45,9 +48,9 @@
 		llapi_msg_callback_set;
 		llapi_msg_set_level;
 		llapi_open_by_fid;
-		llapi_path2parent;
-		llapi_close_fs;
 		llapi_open_fs;
+		llapi_path2fid;
+		llapi_path2parent;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
@@ -55,9 +58,6 @@
 		unittest_*;
 
 		# NON-LGPL yet
-		llapi_fd2fid;
-		llapi_path2fid;
-		llapi_fid2path;
 		fid_is_norm;
 		fid_is_igif;
 
