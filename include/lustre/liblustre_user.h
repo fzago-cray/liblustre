@@ -1,5 +1,28 @@
+/*
+ * LGPL HEADER START
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
+ *     alternatives
+ * Copyright 2015 Cray Inc. All rights reserved
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 or (at your discretion) any later version.
+ * (LGPL) version 2.1 accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * LGPL HEADER END
+ */
+
 #ifndef _LUSTRE_H_
-#error Dot not include this file directly. Use lustre.h.
+#error Do not include this file directly. Use lustre.h.
 #endif
 
 /*
@@ -29,8 +52,6 @@ typedef struct lu_fid {
 #define LOV_MAX_STRIPE_COUNT 2000
 #define LOV_V1_INSANE_STRIPE_COUNT 65532
 
-#define UUID_MAX        40
-
 #define O_LOV_DELAY_CREATE (0100000000 | (O_NOCTTY | FASYNC))
 
 #define MAX_OBD_NAME 128
@@ -38,20 +59,24 @@ typedef struct lu_fid {
 #define XATTR_TRUSTED_PREFIX    "trusted."
 
 struct ost_id {
-        union {
-                struct {
-                        __u64   oi_id;
-                        __u64   oi_seq;
-                } oi;
-                struct lu_fid oi_fid;
-        };
+	union {
+		struct {
+			__u64   oi_id;
+			__u64   oi_seq;
+		} oi;
+		struct lu_fid oi_fid;
+	};
 };
 
 struct lustre_mdt_attrs {
-        __u32   lma_compat;
-        __u32   lma_incompat;
-        /** FID of this inode */
-        struct lu_fid  lma_self_fid;
+	__u32   lma_compat;
+	__u32   lma_incompat;
+	struct lu_fid  lma_self_fid;
+};
+
+#define UUID_MAX 40
+struct obd_uuid {
+	char uuid[UUID_MAX];
 };
 
 /*
@@ -66,23 +91,23 @@ struct lustre_mdt_attrs {
 #define lov_user_ost_data lov_user_ost_data_v1
 
 struct lov_user_ost_data_v1 {
-        struct ost_id l_ost_oi;
-        __u32 l_ost_gen;
-        __u32 l_ost_idx;
+	struct ost_id l_ost_oi;
+	__u32 l_ost_gen;
+	__u32 l_ost_idx;
 } __attribute__((packed));
 
 #define lov_user_md lov_user_md_v1
 struct lov_user_md_v1 {
-        __u32 lmm_magic;
-        __u32 lmm_pattern;
-        struct ost_id lmm_oi;
-        __u32 lmm_stripe_size;
-        __u16 lmm_stripe_count;
-        union {
-                __u16 lmm_stripe_offset;
-                __u16 lmm_layout_gen;
-        };
-        struct lov_user_ost_data_v1 lmm_objects[0];
+	__u32 lmm_magic;
+	__u32 lmm_pattern;
+	struct ost_id lmm_oi;
+	__u32 lmm_stripe_size;
+	__u16 lmm_stripe_count;
+	union {
+		__u16 lmm_stripe_offset;
+		__u16 lmm_layout_gen;
+	};
+	struct lov_user_ost_data_v1 lmm_objects[0];
 } __attribute__((packed,  __may_alias__));
 
 /*
@@ -99,8 +124,8 @@ enum hsm_states {
 };
 
 enum hsm_copytool_action {
-	HSMA_NONE    = 10, /* no action */
-	HSMA_ARCHIVE = 20, /* arbitrary offset */
+	HSMA_NONE    = 10,
+	HSMA_ARCHIVE = 20,
 	HSMA_RESTORE = 21,
 	HSMA_REMOVE  = 22,
 	HSMA_CANCEL  = 23
@@ -130,12 +155,12 @@ struct hsm_current_action {
 };
 
 enum hsm_user_action {
-        HUA_NONE    =  1,
-        HUA_ARCHIVE = 10,
-        HUA_RESTORE = 11,
-        HUA_RELEASE = 12,
-        HUA_REMOVE  = 13,
-        HUA_CANCEL  = 14,
+	HUA_NONE    =  1,
+	HUA_ARCHIVE = 10,
+	HUA_RESTORE = 11,
+	HUA_RELEASE = 12,
+	HUA_REMOVE  = 13,
+	HUA_CANCEL  = 14,
 };
 
 struct hsm_request {
@@ -147,7 +172,7 @@ struct hsm_request {
 };
 
 struct hsm_user_item {
-       lustre_fid        hui_fid;
+       lustre_fid	 hui_fid;
        struct hsm_extent hui_extent;
 } __attribute__((packed));
 
@@ -155,26 +180,6 @@ struct hsm_user_request {
 	struct hsm_request	hur_request;
 	struct hsm_user_item	hur_user_item[0];
 } __attribute__((packed));
-
-static inline void *hur_data(struct hsm_user_request *hur)
-{
-	return &(hur->hur_user_item[hur->hur_request.hr_itemcount]);
-}
-
-/* TODO: should rewrite that one. */
-static inline ssize_t hur_len(struct hsm_user_request *hur)
-{
-	__u64	size;
-
-	size = offsetof(struct hsm_user_request, hur_user_item[0]) +
-		(__u64)hur->hur_request.hr_itemcount *
-		sizeof(hur->hur_user_item[0]) + hur->hur_request.hr_data_len;
-
-	if (size != (ssize_t)size)
-		return -1;
-
-	return size;
-}
 
 /* Header for HSM action items. A series of action item follow the
  * header, and each 8 bytes aligned. */
@@ -198,8 +203,3 @@ struct hsm_action_item {
 	__u64      hai_gid;
 	char       hai_data[0];
 } __attribute__((packed));
-
-#define UUID_MAX        40
-struct obd_uuid {
-        char uuid[UUID_MAX];
-};
