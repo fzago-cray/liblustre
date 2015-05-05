@@ -82,7 +82,7 @@ struct hsm_copyaction_private {
 	__s32					 data_fd;
 	const struct hsm_copytool_private	*ct_priv;
 	struct hsm_copy				 copy;
-	lstat_t 				 stat;
+	struct stat 				 stat;
 };
 
 enum ct_progress_type {
@@ -975,7 +975,7 @@ out_err:
 /* TODO: move to liblustre_ioctls.c */
 static int ct_md_getattr(const struct lustre_fs_h *lfsh,
 			 const struct lu_fid *fid,
-			 lstat_t *st)
+			 struct stat *st)
 {
 	struct lov_user_mds_data *lmd;
 	size_t lmd_size;

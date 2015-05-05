@@ -108,7 +108,7 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
  * OSTs lists
  */
 struct lustre_ost_info {
-	/* How many OSTs are store */
+	/* How many OSTs are stored */
 	size_t count;
 
 	/* Array of OST names */
@@ -119,26 +119,21 @@ void free_ost_info(struct lustre_ost_info *info);
 int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		   struct lustre_ost_info **info);
 
-/* TODO: isn't everything stat64 these days? Remove and use stat
- * instead? */
-#if defined(__x86_64__) || defined(__ia64__) || defined(__ppc64__) || \
-    defined(__craynv) || defined(__mips64__) || defined(__powerpc64__)
-typedef struct stat     lstat_t;
-# define lstat_f        lstat
-#elif defined(__USE_LARGEFILE64) || defined(__KERNEL__)
-typedef struct stat64   lstat_t;
-# define lstat_f        lstat64
+/* struct stat is used. Make sure we're not on a 32 bits system, where
+ * the size of stat is different. The drivers expect a stat64. */
+#if __WORDSIZE != 64
+#error The library only compiles on 64 bits systems
 #endif
 
 #define lov_user_mds_data lov_user_mds_data_v1
 struct lov_user_mds_data_v1 {
-        lstat_t lmd_st;                 /* MDS stat struct */
-        struct lov_user_md_v1 lmd_lmm;  /* LOV EA V1 user data */
+        struct stat lmd_st;
+        struct lov_user_md_v1 lmd_lmm;
 } __attribute__((packed));
 
 struct lov_user_mds_data_v3 {
-        lstat_t lmd_st;                 /* MDS stat struct */
-        struct lov_user_md_v3 lmd_lmm;  /* LOV EA V3 user data */
+        struct stat lmd_st;
+        struct lov_user_md_v3 lmd_lmm;
 } __attribute__((packed));
 
 /*
