@@ -176,6 +176,8 @@ static inline ssize_t hur_len(struct hsm_user_request *hur)
 	return size;
 }
 
+/* Header for HSM action items. A series of action item follow the
+ * header, and each 8 bytes aligned. */
 struct hsm_action_list {
 	__u32 hal_version;
 	__u32 hal_count;
