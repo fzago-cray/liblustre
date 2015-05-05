@@ -64,6 +64,35 @@
 
 #include <lustre/lustre.h>
 
+/* fid_* function from upstream lustre_idl. Ideally these should go in
+ * the library, however they are GPL so far. However they are short
+ * enough that they might not be copyrightable. */
+enum fid_seq {
+    FID_SEQ_IGIF        = 12,
+    FID_SEQ_IGIF_MAX    = 0x0ffffffffULL,
+    FID_SEQ_NORMAL      = 0x200000400ULL,
+};
+static inline bool fid_seq_is_norm(__u64 seq)
+{
+    return (seq >= FID_SEQ_NORMAL);
+}
+static inline __u64 fid_seq(const struct lu_fid *fid)
+{
+        return fid->f_seq;
+}
+static inline bool fid_is_norm(const struct lu_fid *fid)
+{
+    return fid_seq_is_norm(fid_seq(fid));
+}
+static inline bool fid_seq_is_igif(__u64 seq)
+{
+    return seq >= FID_SEQ_IGIF && seq <= FID_SEQ_IGIF_MAX;
+}
+static inline bool fid_is_igif(const struct lu_fid *fid)
+{
+    return fid_seq_is_igif(fid_seq(fid));
+}
+
 /* Progress reporting period */
 #define REPORT_INTERVAL_DEFAULT 30
 /* HSM hash subdir permissions */

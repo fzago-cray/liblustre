@@ -57,10 +57,6 @@
 		# present on the regular library.
 		unittest_*;
 
-		# NON-LGPL yet
-		fid_is_norm;
-		fid_is_igif;
-
 	# Every other symbol is local to the library and won't be exported
     # to the applications
     local:

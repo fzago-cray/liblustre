@@ -143,10 +143,6 @@ int llapi_path2parent(const char *path, unsigned int linkno,
 		      lustre_fid *parent_fid,
 		      char *parent_name, size_t parent_name_len);
 
-/* TODO */
-bool fid_is_norm(const struct lu_fid *fid);
-bool fid_is_igif(const struct lu_fid *fid);
-
 /*
  * HSM user interface
  */

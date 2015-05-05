@@ -179,12 +179,3 @@ const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh)
 {
 	return lfsh->mount_path;
 }
-
-/********
- * TODO - The following has to be re-implemented - Nothing should
- * remain below that line
- ********/
-
-bool fid_is_norm(const struct lu_fid *fid) { return false; }
-bool fid_is_igif(const struct lu_fid *fid) { return false; }
-
