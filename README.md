@@ -158,6 +158,8 @@ should help porting.
 -   reading an HSM event is non blocking. llapi_hsm_copytool_register()
     can return -EWOULDBLOCK so the caller should handle that
     condition.
+-   llapi_get_data_version is now called llapi_data_version_by_fd and
+    the last two parmeters are swapped, to put the result last.
 
 ### logging
 

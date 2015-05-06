@@ -31,6 +31,7 @@ START_TEST(param_lmv) { unittest_param_lmv(); } END_TEST
 START_TEST(read_procfs_value) { unittest_read_procfs_value(); } END_TEST
 START_TEST(parse_size) { unittest_llapi_parse_size(); } END_TEST
 START_TEST(fid2path) { unittest_llapi_fid2path(); } END_TEST
+START_TEST(data_version_by_fd) { unittest_llapi_data_version_by_fd(); } END_TEST
 
 static Suite *ost_suite(void)
 {
@@ -55,6 +56,7 @@ static Suite *ost_suite(void)
 	tcase_add_test(tc, param_lmv);
 	tcase_add_test(tc, read_procfs_value);
 	tcase_add_test(tc, parse_size);
+	tcase_add_test(tc, data_version_by_fd);
 	suite_add_tcase(s, tc);
 
 	return s;

@@ -135,6 +135,7 @@ int llapi_fid2parent(const struct lustre_fs_h *lfsh,
 int llapi_path2parent(const char *path, unsigned int linkno,
 		      lustre_fid *parent_fid,
 		      char *parent_name, size_t parent_name_len);
+int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
 
 /*
  * HSM user interface

@@ -79,6 +79,10 @@ struct obd_uuid {
 	char uuid[UUID_MAX];
 };
 
+/* Data version flushing options */
+#define LL_DV_RD_FLUSH (1 << 0)
+#define LL_DV_WR_FLUSH (1 << 1)
+
 /*
  * LOV
  */

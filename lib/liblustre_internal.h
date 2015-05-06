@@ -125,5 +125,6 @@ void unittest_param_lmv(void);
 void unittest_read_procfs_value(void);
 void unittest_llapi_parse_size(void);
 void unittest_llapi_fid2path(void);
+void unittest_llapi_data_version_by_fd(void);
 
 #endif /* _LIBLUSTRE_INTERNAL_H_ */

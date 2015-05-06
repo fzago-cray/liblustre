@@ -402,6 +402,31 @@ int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 	return rc;
 }
 
+/**
+ * Return the data version of an opened file.
+ *
+ * \param[in]   fd       an opened file descriptor for a file on Lustre
+ * \param[in]   flags    flush policy (0, LL_DV_RD_FLUSH or LL_DV_WR_FLUSH)
+ * \param[out]  dv       resulting data version
+ *
+ * \retval   0 on success, with dv set
+ * \retval   a negative errno on error
+ */
+int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
+{
+	struct ioc_data_version idv = { .idv_flags = flags };
+	int rc;
+
+	rc = ioctl(fd, LL_IOC_DATA_VERSION, &idv);
+	if (rc == -1)
+		return -errno;
+
+	*dv = idv.idv_version;
+
+	return 0;
+}
+
+
 #ifdef UNIT_TEST
 #include "../tests/liblustre_file2_tests.c"
 #endif

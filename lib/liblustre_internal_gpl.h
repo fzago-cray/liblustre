@@ -241,6 +241,12 @@ enum kuc_generic_message_type {
 
 #define LK_FLG_STOP 0x01
 
+/* File data version */
+struct ioc_data_version {
+        __u64 idv_version;
+        __u64 idv_flags;
+};
+
 /*
  * IOCTLs
  */
@@ -255,6 +261,7 @@ enum kuc_generic_message_type {
 #define LL_IOC_HSM_COPY_END	_IOW ('f', 215, struct hsm_copy *)
 #define LL_IOC_HSM_PROGRESS	_IOW ('f', 216, struct hsm_user_request)
 #define LL_IOC_HSM_REQUEST	_IOW ('f', 217, struct hsm_user_request)
+#define LL_IOC_DATA_VERSION	_IOR ('f', 218, struct ioc_data_version)
 #define LL_IOC_HSM_ACTION	_IOR ('f', 220, struct hsm_current_action)
 #define LL_IOC_HSM_IMPORT	_IOWR('f', 245, struct hsm_user_import)
 #define LL_IOC_FID2MDTIDX	_IOWR('f', 248, struct lu_fid)
