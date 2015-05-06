@@ -299,26 +299,40 @@ static bool is_fully_specified(const struct llapi_layout *layout)
 }
 
 /**
- * Allocate and initialize a new layout.
+ * Allocate and initialize a new layout with \a num_stripes stripes.
+ *
+ * \param[in] num_stripes	number of stripes in new layout
  *
  * \retval	valid llapi_layout pointer on success
- * \retval	NULL if memory allocation fails
+ * \retval	NULL if allocation fails
  */
-struct llapi_layout *llapi_layout_alloc(void)
+struct llapi_layout *llapi_layout_alloc(unsigned int num_stripes)
 {
 	struct llapi_layout *layout;
+	size_t size;
 
-	layout = __llapi_layout_alloc(0);
+	if (num_stripes > LOV_MAX_STRIPE_COUNT)
+		return NULL;
+
+	size = sizeof(*layout) +
+		(num_stripes * sizeof(layout->llot_objects[0]));
+
+	layout = calloc(1, size);
 	if (layout == NULL)
-		return layout;
+		return NULL;
 
 	/* Set defaults. */
 	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
 	layout->llot_pattern = LLAPI_LAYOUT_DEFAULT;
 	layout->llot_stripe_size = LLAPI_LAYOUT_DEFAULT;
-	layout->llot_stripe_count = LLAPI_LAYOUT_DEFAULT;
+	if (num_stripes == 0) {
+		layout->llot_stripe_count = LLAPI_LAYOUT_DEFAULT;
+		layout->llot_objects_are_valid = false;
+	} else {
+		layout->llot_stripe_count = num_stripes;
+		layout->llot_objects_are_valid = true;
+	}
 	layout->llot_stripe_offset = LLAPI_LAYOUT_DEFAULT;
-	layout->llot_objects_are_valid = false;
 	layout->llot_pool_name[0] = '\0';
 
 	return layout;
@@ -417,7 +431,7 @@ struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 		if (errno == EOPNOTSUPP)
 			errno = ENOTTY;
 		else if (errno == ENODATA)
-			layout = llapi_layout_alloc();
+			layout = llapi_layout_alloc(0);
 		goto out;
 	}
 
@@ -499,7 +513,7 @@ static struct llapi_layout *llapi_layout_expected(const char *path)
 		if (errno != ENODATA && errno != ENOENT)
 			return NULL;
 
-		path_layout = llapi_layout_alloc();
+		path_layout = llapi_layout_alloc(0);
 		if (path_layout == NULL)
 			return NULL;
 	}
@@ -843,7 +857,7 @@ int llapi_layout_ost_index_get(const struct llapi_layout *layout,
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
 	    stripe_number >= layout->llot_stripe_count ||
-	    idx == NULL  || layout->llot_objects_are_valid == 0) {
+	    idx == NULL  || layout->llot_objects_are_valid == false) {
 		errno = EINVAL;
 		return -1;
 	}

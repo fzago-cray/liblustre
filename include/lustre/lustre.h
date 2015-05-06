@@ -78,7 +78,7 @@ struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags);
 struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 					     const lustre_fid *fid,
 					     uint32_t flags);
-struct llapi_layout *llapi_layout_alloc(void);
+struct llapi_layout *llapi_layout_alloc(unsigned int num_stripes);
 void llapi_layout_free(struct llapi_layout *layout);
 int llapi_layout_stripe_count_get(const struct llapi_layout *layout,
 				  uint64_t *count);

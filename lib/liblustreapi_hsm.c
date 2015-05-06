@@ -1327,7 +1327,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	stripe_pattern |= LOV_PATTERN_F_RELEASED;
 
 	/* Create a non-striped file */
-	layout = llapi_layout_alloc();
+	layout = llapi_layout_alloc(0);
 	if (layout == NULL) {
 		log_msg(LLAPI_MSG_ERROR, ENOMEM,
 			"cannot allocate a new layout for import");
