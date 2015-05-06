@@ -342,20 +342,39 @@ int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 	int rnumber;
 
 	rnumber = random();
-	if (mdt_idx == -1)
-		rc = snprintf(path, sizeof(path),
-			      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR "::%.4X",
-			      PFID(parent_fid), rnumber);
-	else
-		rc = snprintf(path, sizeof(path),
-			      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
-			      PFID(parent_fid), mdt_idx, rnumber);
-	if (rc == -1 || rc >= sizeof(path))
-		return -ENAMETOOLONG;
 
-	fd = llapi_layout_file_openat(lfsh->fid_fd, path,
-				      open_flags | O_RDWR | O_CREAT,
-				      mode, layout);
+	if (parent_fid == NULL) {
+		if (mdt_idx == -1)
+			rc = snprintf(path, sizeof(path),
+				      LUSTRE_VOLATILE_HDR "::%.4X", rnumber);
+		else
+			rc = snprintf(path, sizeof(path),
+				      LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
+				      mdt_idx, rnumber);
+		if (rc == -1 || rc >= sizeof(path))
+			return -ENAMETOOLONG;
+
+		fd = llapi_layout_file_openat(lfsh->mount_fd, path,
+					      open_flags | O_RDWR | O_CREAT,
+					      mode, layout);
+	} else {
+
+		if (mdt_idx == -1)
+			rc = snprintf(path, sizeof(path),
+				      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR "::%.4X",
+				      PFID(parent_fid), rnumber);
+		else
+			rc = snprintf(path, sizeof(path),
+				      DFID_NOBRACE "/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
+				      PFID(parent_fid), mdt_idx, rnumber);
+		if (rc == -1 || rc >= sizeof(path))
+			return -ENAMETOOLONG;
+
+		fd = llapi_layout_file_openat(lfsh->fid_fd, path,
+					      open_flags | O_RDWR | O_CREAT,
+					      mode, layout);
+	}
+
 	if (fd == -1)
 		return -errno;
 
