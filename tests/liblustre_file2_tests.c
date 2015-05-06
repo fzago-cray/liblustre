@@ -46,18 +46,33 @@ void unittest_fid1(void)
 	int fd;
 	lustre_fid fid;
 	int rc;
+	struct stat stbuf;
+	ssize_t sret;
+	char buf[10] = { 0, };
 
+	/* Create a small file, get its FID, and close it. */
 	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	fd = open(FNAME, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
+
+	sret = write(fd, buf, sizeof(buf));
+	ck_assert_int_eq(sret, sizeof(buf));
 
 	rc = llapi_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
 
+	/* Stat the file by FID and ensure it worked. */
+	memset(&stbuf, 0x55, sizeof(stbuf));
+	rc = llapi_stat_by_fid(lfsh, &fid, &stbuf);
+	ck_assert_int_eq(rc, 0);
+	ck_assert(S_ISREG(stbuf.st_mode));
+	ck_assert_int_eq(stbuf.st_size, sizeof(buf));
+
+	/* Open it agin by FID. */
 	fd = llapi_open_by_fid(lfsh, &fid, O_RDONLY);
 	ck_assert_int_gt(fd, 0);
 	close(fd);

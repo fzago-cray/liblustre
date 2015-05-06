@@ -44,6 +44,25 @@ int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
 }
 
 /**
+ * Stat a file given its FID.
+ *
+ * \param[in]   lfsh   an opened Lustre fs opaque handle
+ * \param[in]   fid    the request fid, contained in the above Lustre fs
+ * \param[out]  stbuf  the stat result. See stat(2)
+ *
+ * \retval   a 0 or positive file descriptor on success
+ * \retval   a negative errno on error
+ */
+int llapi_stat_by_fid(const struct lustre_fs_h *lfsh,
+		      const lustre_fid *fid, struct stat *stbuf)
+{
+	char fidstr[FID_NOBRACE_LEN + 1];
+
+	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(fid));
+	return fstatat(lfsh->fid_fd, fidstr, stbuf, AT_SYMLINK_NOFOLLOW);
+}
+
+/**
  * Returns the parent FID of an opened file
  *
  * \param[in]   fd                  an opened file descriptor for a file

@@ -51,6 +51,7 @@
 		llapi_open_fs;
 		llapi_path2fid;
 		llapi_path2parent;
+		llapi_stat_by_fid;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
