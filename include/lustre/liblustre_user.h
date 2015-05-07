@@ -83,6 +83,13 @@ struct obd_uuid {
 #define LL_DV_RD_FLUSH (1 << 0)
 #define LL_DV_WR_FLUSH (1 << 1)
 
+/* Layout swap flags */
+#define SWAP_LAYOUTS_CHECK_DV1  (1 << 0)
+#define SWAP_LAYOUTS_CHECK_DV2  (1 << 1)
+#define SWAP_LAYOUTS_KEEP_MTIME (1 << 2)
+#define SWAP_LAYOUTS_KEEP_ATIME (1 << 3)
+#define SWAP_LAYOUTS_MDS_HSM    (1 << 31)
+
 /*
  * LOV
  */

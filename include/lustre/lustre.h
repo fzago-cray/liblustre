@@ -103,6 +103,8 @@ int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
 			     mode_t mode, const struct llapi_layout *layout);
 int llapi_layout_file_create(const char *path, int open_flags, int mode,
 			     const struct llapi_layout *layout);
+int llapi_fswap_layouts(int fd1, int fd2, uint64_t dv1, uint64_t dv2,
+			uint64_t flags);
 
 /*
  * Misc

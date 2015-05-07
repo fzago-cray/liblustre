@@ -427,6 +427,45 @@ int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
 }
 
 /**
+ * Swap the layout (ie. the data) of two opened files. Both files must
+ * have been opened in writing mode.
+ *
+ * \param[in]  fd1      an opened file descriptor for a Lustre file
+ * \param[in]  fd2      an opened file descriptor for a Lustre file
+ * \param[in]  dv1      expected file data version for fd1. Used if
+ *                        flags has SWAP_LAYOUTS_CHECK_DV1.
+ * \param[in]  dv2      expected file data version for fd2. Used if
+ *                        flags has SWAP_LAYOUTS_CHECK_DV2.
+ * \param[in]  flags    or'ed SWAP_LAYOUTS_* flags
+ *
+ * \retval   0 on success
+ * \retval   a negative errno on error
+ */
+int llapi_fswap_layouts(int fd1, int fd2,
+			uint64_t dv1, uint64_t dv2,
+			uint64_t flags)
+{
+	struct lustre_swap_layouts lsl = {
+		.sl_flags = flags,
+		.sl_fd2 = fd2,
+		.sl_gid = random(),
+		.sl_dv1 = dv1,
+		.sl_dv2 = dv2,
+	};
+	int rc;
+
+	/* Set a non-zero group lock to flush dirty cache. */
+	while (lsl.sl_gid == 0)
+		lsl.sl_gid = random();
+
+	rc = ioctl(fd1, LL_IOC_LOV_SWAP_LAYOUTS, &lsl);
+	if (rc == -1)
+		return -errno;
+
+	return 0;
+}
+
+/**
  * Get a lock on the file. If the file is already locked, the gid must
  * match the lock.
  *

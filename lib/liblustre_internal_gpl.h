@@ -247,6 +247,15 @@ struct ioc_data_version {
         __u64 idv_flags;
 };
 
+/* Layout swap */
+struct lustre_swap_layouts {
+        __u64   sl_flags;
+        __u32   sl_fd2;
+        __u32   sl_gid;
+        __u64   sl_dv1;
+        __u64   sl_dv2;
+};
+
 /*
  * IOCTLs
  */
@@ -264,6 +273,7 @@ struct ioc_data_version {
 #define LL_IOC_HSM_PROGRESS	_IOW ('f', 216, struct hsm_user_request)
 #define LL_IOC_HSM_REQUEST	_IOW ('f', 217, struct hsm_user_request)
 #define LL_IOC_DATA_VERSION	_IOR ('f', 218, struct ioc_data_version)
+#define LL_IOC_LOV_SWAP_LAYOUTS _IOW ('f', 219, struct lustre_swap_layouts)
 #define LL_IOC_HSM_ACTION	_IOR ('f', 220, struct hsm_current_action)
 #define LL_IOC_HSM_IMPORT	_IOWR('f', 245, struct hsm_user_import)
 #define LL_IOC_FID2MDTIDX	_IOWR('f', 248, struct lu_fid)
