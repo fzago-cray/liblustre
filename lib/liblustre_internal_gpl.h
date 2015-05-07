@@ -253,6 +253,8 @@ struct ioc_data_version {
 #define OBD_IOC_GETMDNAME	_IOR ('f', 131, char[MAX_OBD_NAME])
 #define OBD_IOC_FID2PATH	_IOWR('f', 150, long)
 #define LL_IOC_LOV_SETSTRIPE    _IOW ('f', 154, long)
+#define LL_IOC_GROUP_LOCK	_IOW ('f', 158, long)
+#define LL_IOC_GROUP_UNLOCK	_IOW ('f', 159, long)
 #define LL_IOC_PATH2FID         _IOR ('f', 173, long)
 #define LL_IOC_HSM_STATE_GET	_IOR ('f', 211, struct hsm_user_state)
 #define LL_IOC_HSM_STATE_SET    _IOW ('f', 212, struct hsm_state_set)

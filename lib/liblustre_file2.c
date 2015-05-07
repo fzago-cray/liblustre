@@ -426,6 +426,47 @@ int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
 	return 0;
 }
 
+/**
+ * Get a lock on the file. If the file is already locked, the gid must
+ * match the lock.
+ *
+ * \param[in]  fd     an opened file descriptor for a file on Lustre
+ * \param[in]  gid    a non-zero random number to identify the lock
+ *
+ * \retval  0 on success
+ * \retval  a negative errno on error
+ */
+int llapi_group_lock(int fd, uint64_t gid)
+{
+	int rc;
+
+	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
+	if (rc == -1)
+		return -errno;
+
+	return 0;
+}
+
+/**
+ * Release a lock on a file, previously acquired with
+ * llapi_group_lock. The gid must match.
+ *
+ * \param[in]  fd     an opened file descriptor for a file on Lustre
+ * \param[in]  gid    a non-zero random number to identify the lock
+ *
+ * \retval  0 on success
+ * \retval  a negative errno on error
+ */
+int llapi_group_unlock(int fd, uint64_t gid)
+{
+	int rc;
+
+	rc = ioctl(fd, LL_IOC_GROUP_UNLOCK, gid);
+	if (rc == -1)
+		return -errno;
+
+	return 0;
+}
 
 #ifdef UNIT_TEST
 #include "../tests/liblustre_file2_tests.c"

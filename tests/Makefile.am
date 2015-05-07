@@ -1,8 +1,8 @@
-check_PROGRAMS=lib_test posixct llapi_fid_test
+check_PROGRAMS=lib_test posixct llapi_fid_test group_lock_test
 
 noinst_PROGRAMS=$(check_PROGRAMS)
 
-TESTS = lib_test llapi_fid_test
+TESTS = lib_test llapi_fid_test group_lock_test
 
 posixct_CFLAGS = -I${top_srcdir}/include
 posixct_LDADD = \
@@ -16,6 +16,9 @@ lib_test_LDADD = \
 
 llapi_fid_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
 llapi_fid_test_LDADD=${top_builddir}/lib/liblustre_unittest.la ${CHECK_LIBS} -lbsd
+
+group_lock_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+group_lock_test_LDADD=${top_builddir}/lib/liblustre_unittest.la ${CHECK_LIBS} -lbsd
 
 EXTRA_DIST = \
 	liblustre_file2_tests.c \

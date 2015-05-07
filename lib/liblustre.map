@@ -11,6 +11,8 @@
 		llapi_get_fsname;
 		llapi_get_mdt_index_by_fid;
 		llapi_get_mountpoint;
+		llapi_group_lock;
+		llapi_group_unlock;
 		llapi_hsm_action_begin;
 		llapi_hsm_action_end;
 		llapi_hsm_action_get_dfid;
