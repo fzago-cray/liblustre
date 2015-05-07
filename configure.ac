@@ -28,7 +28,7 @@ AC_SUBST(GIT_HASH, [githash])
 
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([-Wall -Wno-portability tar-pax foreign dist-xz no-dist-gzip])
+AM_INIT_AUTOMAKE([-Wall -Wno-portability tar-pax foreign dist-xz no-dist-gzip subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 # Default flags
