@@ -10,16 +10,16 @@ noinst_LTLIBRARIES = liblustre_unittest.la liblustre_support.la
 
 # LGPL
 liblustre_la_SOURCES = \
+	file.c \
 	liblustre.c \
-	liblustre_file2.c \
 	liblustre_internal.h \
-	liblustre_logging.c \
-	liblustre_misc.c \
-	liblustre_osts.c \
-	liblustre_params.c \
 	liblustreapi_hsm.c \
 	liblustreapi_json.c \
-	liblustreapi_layout.c
+	liblustreapi_layout.c \
+	logging.c \
+	misc.c \
+	osts.c \
+	params.c
 
 # Not LGPL yet
 liblustre_la_SOURCES += \
@@ -30,7 +30,7 @@ liblustre_la_CFLAGS = -I${top_srcdir}/include -I.
 
 # Support library - Not exported
 liblustre_support_la_SOURCES = \
-	liblustre_support.c
+	support.c
 
 # file for pkg-config
 pkgconfigdir = $(libdir)/pkgconfig
