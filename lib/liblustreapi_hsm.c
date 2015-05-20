@@ -61,7 +61,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /****** HSM Copytool API ********/
 #define CT_PRIV_MAGIC 0xC0BE2001

@@ -1,44 +1,74 @@
 /*
- * GPL HEADER START
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 only,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License version 2 for more details (a copy is included
- * in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License
- * version 2 along with this program; If not, see
- * http://www.sun.com/software/products/lustre/docs/GPLv2.pdf
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
- * CA 95054 USA or visit www.sun.com if you need additional information or
- * have any questions.
- *
- * GPL HEADER END
+ * Internal header for liblustre. None of these declarations are
+ * necessary for an application.
  */
-/*
- * Copyright (c) 2003, 2004, 2007, 2010, Oracle and/or its affiliates. All rights reserved.
- * Use is subject to license terms.
- *
- * Copyright (c) 2010, 2011, 2014, Intel Corporation.
- */
-
-/* This file has definitions from upstream lustre_user.h, lustre_idl.h
- * and lustreapi.h. */
 
 #ifndef _LIBLUSTRE_INTERNAL_H_
-#error Do not include directly - include liblustre_internal.h
-#endif
+#define _LIBLUSTRE_INTERNAL_H_
 
-#ifndef _LIBLUSTRE_INTERNAL_GPL_H_
-#define _LIBLUSTRE_INTERNAL_GPL_H_
+#include <stdio.h>
+#include <sys/ioctl.h>
+
+/*
+ * Logging
+ */
+unsigned int log_level;
+llapi_log_callback_t log_msg_callback;
+
+void
+log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...);
+
+/* We don't want to evaluate arguments if the output is not used */
+#define log_msg(level, err, fmt, ...)					\
+	do {								\
+		if (level <= log_level && log_msg_callback != NULL)	\
+			log_msg_internal(level, err, fmt, ## __VA_ARGS__); \
+	} while(0)
+
+/*
+ * Layouts
+ */
+#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
+#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
+#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
+
+#define LLAPI_LAYOUT_RAID0    0
+
+#define LAYOUT_GET_EXPECTED 0x1
+
+#define LLAPI_LAYOUT_MAGIC 0x11AD1107
+
+#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
+#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
+#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
+
+#define LLAPI_LAYOUT_RAID0    0
+
+#define LAYOUT_GET_EXPECTED 0x1
+
+/* Layout swap */
+struct lustre_swap_layouts {
+        __u64   sl_flags;
+        __u32   sl_fd2;
+        __u32   sl_gid;
+        __u64   sl_dv1;
+        __u64   sl_dv2;
+};
+
+/*
+ * OSTs lists
+ */
+struct lustre_ost_info {
+	/* How many OSTs are stored */
+	size_t count;
+
+	/* Array of OST names */
+	char *osts[0];
+};
+
+void free_ost_info(struct lustre_ost_info *info);
+int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
+		   struct lustre_ost_info **info);
 
 /*
  * LOV
@@ -57,6 +87,18 @@
 #define LOV_PATTERN_F_RELEASED  0x80000000
 
 #define LOV_MAXPOOLNAME 15
+
+/* struct stat is used. Make sure we're not on a 32 bits system, where
+ * the size of stat is different. The drivers expect a stat64. */
+#if __WORDSIZE != 64
+#error The library only compiles on 64 bits systems
+#endif
+
+#define lov_user_mds_data lov_user_mds_data_v1
+struct lov_user_mds_data_v1 {
+        struct stat lmd_st;
+        struct lov_user_md_v1 lmd_lmm;
+} __attribute__((packed));
 
 struct lov_user_md_v3 {
         __u32 lmm_magic;
@@ -83,36 +125,29 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 }
 
 /*
- * Layouts
+ * Misc
  */
-#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
-#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
-#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
-
-#define LLAPI_LAYOUT_RAID0    0
-
-#define LAYOUT_GET_EXPECTED 0x1
-
-/* struct stat is used. Make sure we're not on a 32 bits system, where
- * the size of stat is different. The drivers expect a stat64. */
-#if __WORDSIZE != 64
-#error The library only compiles on 64 bits systems
-#endif
-
-#define lov_user_mds_data lov_user_mds_data_v1
-struct lov_user_mds_data_v1 {
-        struct stat lmd_st;
-        struct lov_user_md_v1 lmd_lmm;
-} __attribute__((packed));
-
-
-#define KUC_MAGIC  0x191C /*Lustre9etLinC */
 
 #define XATTR_NAME_LMA          "trusted.lma"
 
 #define LUSTRE_VOLATILE_HDR ".\x0c\x13\x14\x12:VOLATILE"
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
+struct lustre_fs_h {
+	/* Lustre mountpoint, as given to llapi_open_fs. */
+	char *mount_path;
+	char fs_name[8 + 1];	/* filesystem name */
+	int mount_fd;
+	int fid_fd;
+};
+
+/* File data version */
+struct ioc_data_version {
+        __u64 idv_version;
+        __u64 idv_flags;
+};
+
+void chomp_string(char *buf);
 int get_param_lmv(int fd, const char *param, char **value);
 
 /*
@@ -132,6 +167,27 @@ struct getparent {
         __u32           gp_name_size;
         char            gp_name[0];
 } __attribute__((packed));
+
+/* Helper functions for testing the validity of stripe attributes. */
+static inline bool llapi_stripe_size_is_aligned(uint64_t size)
+{
+	return (size & (LOV_MIN_STRIPE_SIZE - 1)) == 0;
+}
+
+static inline bool llapi_stripe_size_is_too_big(uint64_t size)
+{
+	return size >= (1ULL << 32);
+}
+
+static inline bool llapi_stripe_count_is_valid(int64_t count)
+{
+	return count >= -1 && count <= LOV_MAX_STRIPE_COUNT;
+}
+
+static inline bool llapi_stripe_index_is_valid(int64_t idx)
+{
+	return idx >= -1 && idx <= LOV_V1_INSANE_STRIPE_COUNT;
+}
 
 /*
  * HSM
@@ -182,34 +238,14 @@ struct hsm_progress {
 	__u32		  padding;
 };
 
-/* JSON handling */
-enum llapi_json_types {
-	LLAPI_JSON_INTEGER = 1,
-	LLAPI_JSON_BIGNUM,
-	LLAPI_JSON_REAL,
-	LLAPI_JSON_STRING
-};
-
-struct llapi_json_item {
-	char		*lji_key;
-	__u32		 lji_type;
-	union {
-		int	 lji_integer;
-		__u64	 lji_u64;
-		double	 lji_real;
-		char	*lji_string;
-	};
-	struct llapi_json_item	*lji_next;
-};
-
-struct llapi_json_item_list {
-	int			ljil_item_count;
-	struct llapi_json_item	*ljil_items;
-};
-
 /*
  * Communication with kernel.
  */
+
+#define KUC_MAGIC 0x191C
+#define KUC_GRP_HSM 0x02
+#define LK_FLG_STOP 0x01
+
 struct lustre_kernelcomm {
 	__u32 lk_wfd;
 	__u32 lk_rfd;
@@ -237,24 +273,38 @@ enum kuc_generic_message_type {
 	KUC_MSG_SHUTDOWN = 1,
 };
 
-#define KUC_GRP_HSM	   0x02
-
-#define LK_FLG_STOP 0x01
-
-/* File data version */
-struct ioc_data_version {
-        __u64 idv_version;
-        __u64 idv_flags;
+/*
+ * JSON
+ */
+enum llapi_json_types {
+	LLAPI_JSON_INTEGER = 1,
+	LLAPI_JSON_BIGNUM,
+	LLAPI_JSON_REAL,
+	LLAPI_JSON_STRING
 };
 
-/* Layout swap */
-struct lustre_swap_layouts {
-        __u64   sl_flags;
-        __u32   sl_fd2;
-        __u32   sl_gid;
-        __u64   sl_dv1;
-        __u64   sl_dv2;
+struct llapi_json_item {
+	char		*lji_key;
+	__u32		 lji_type;
+	union {
+		int	 lji_integer;
+		__u64	 lji_u64;
+		double	 lji_real;
+		char	*lji_string;
+	};
+	struct llapi_json_item	*lji_next;
 };
+
+struct llapi_json_item_list {
+	int			ljil_item_count;
+	struct llapi_json_item	*ljil_items;
+};
+
+int llapi_json_init_list(struct llapi_json_item_list **item_list);
+int llapi_json_destroy_list(struct llapi_json_item_list **item_list);
+int llapi_json_add_item(struct llapi_json_item_list **item_list,
+			const char *key, __u32 type, const void *val);
+int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
 
 /*
  * IOCTLs
@@ -279,7 +329,21 @@ struct lustre_swap_layouts {
 #define LL_IOC_FID2MDTIDX	_IOWR('f', 248, struct lu_fid)
 #define LL_IOC_GETPARENT	_IOWR('f', 249, struct getparent)
 
-#define IOC_MDC_TYPE            'i'
-#define IOC_MDC_GETFILEINFO     _IOWR(IOC_MDC_TYPE, 22, struct lov_user_mds_data *)
+#define IOC_MDC_GETFILEINFO     _IOWR('i', 22, struct lov_user_mds_data *)
 
-#endif /* _LIBLUSTRE_INTERNAL_GPL_H_ */
+/*
+ * Unit testing
+ */
+void unittest_ost1(void);
+void unittest_ost2(void);
+void unittest_fid1(void);
+void unittest_fid2(void);
+void unittest_chomp(void);
+void unittest_mdt_index(void);
+void unittest_param_lmv(void);
+void unittest_read_procfs_value(void);
+void unittest_llapi_parse_size(void);
+void unittest_llapi_fid2path(void);
+void unittest_llapi_data_version_by_fd(void);
+
+#endif /* _LIBLUSTRE_INTERNAL_H_ */

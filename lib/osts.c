@@ -21,7 +21,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /**
  * Returns the path to the pools for a filesystem.

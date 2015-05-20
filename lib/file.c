@@ -22,7 +22,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /**
  * Open a file given its FID.

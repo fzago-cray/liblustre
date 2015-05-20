@@ -26,7 +26,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /**
  * Closes a Lustre filesystem opened with llapi_open_fs()

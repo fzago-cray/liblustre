@@ -18,7 +18,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 unsigned int log_level = LLAPI_MSG_OFF;
 llapi_log_callback_t log_msg_callback = NULL;

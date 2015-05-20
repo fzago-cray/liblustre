@@ -24,7 +24,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /* Read a single line from a file in procfs. Returns 0 on success, or
  * a negative errno on failure. The output parameter must be large

@@ -22,7 +22,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /**
  * Parse a user given string containing a size with or without a

@@ -21,10 +21,6 @@ liblustre_la_SOURCES = \
 	osts.c \
 	params.c
 
-# Not LGPL yet
-liblustre_la_SOURCES += \
-	liblustre_internal_gpl.h
-
 liblustre_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/lib/liblustre.map
 liblustre_la_CFLAGS = -I${top_srcdir}/include -I.
 

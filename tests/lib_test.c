@@ -19,7 +19,7 @@
 
 #include <lustre/lustre.h>
 
-#include "../lib/liblustre_internal.h"
+#include "../lib/internal.h"
 
 START_TEST(ost1) { unittest_ost1(); } END_TEST
 START_TEST(ost2) { unittest_ost2(); } END_TEST

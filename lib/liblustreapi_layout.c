@@ -37,7 +37,7 @@
 
 #include <lustre/lustre.h>
 
-#include "liblustre_internal.h"
+#include "internal.h"
 
 /**
  * An Opaque data type abstracting the layout of a Lustre file.
