@@ -41,5 +41,5 @@ void chomp_string(char *buf)
 }
 
 #ifdef UNIT_TEST
-#include "../tests/liblustre_misc_tests.c"
+#include "../tests/test_misc.c"
 #endif

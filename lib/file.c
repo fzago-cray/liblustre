@@ -508,5 +508,5 @@ int llapi_group_unlock(int fd, uint64_t gid)
 }
 
 #ifdef UNIT_TEST
-#include "../tests/liblustre_file2_tests.c"
+#include "../tests/test_file.c"
 #endif

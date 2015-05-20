@@ -124,5 +124,5 @@ int llapi_parse_size(const char *string, unsigned long long *size,
 }
 
 #ifdef UNIT_TEST
-#include "../tests/liblustre_support_tests.c"
+#include "../tests/test_support.c"
 #endif

@@ -21,13 +21,13 @@ group_lock_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
 group_lock_test_LDADD=${top_builddir}/lib/liblustre_unittest.la ${CHECK_LIBS} -lbsd
 
 EXTRA_DIST = \
-	liblustre_file2_tests.c \
-	liblustre_misc_tests.c \
-	liblustre_support_tests.c \
-	liblustre_osts_tests.c \
-	liblustre_params_tests.c \
 	lib_test.c \
-	llapi_fid_test.c
+	llapi_fid_test.c \
+	test_file.c \
+	test_misc.c \
+	test_osts.c \
+	test_params.c \
+	test_support.c
 
 # See m4/ax_valgrind_check.m4 for documentation
 @VALGRIND_CHECK_RULES@

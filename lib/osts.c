@@ -148,5 +148,5 @@ done:
 }
 
 #ifdef UNIT_TEST
-#include "../tests/liblustre_osts_tests.c"
+#include "../tests/test_osts.c"
 #endif

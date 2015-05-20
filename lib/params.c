@@ -102,7 +102,7 @@ int get_param_lmv(int fd, const char *param, char **value)
 }
 
 #ifdef UNIT_TEST
-#include "../tests/liblustre_params_tests.c"
+#include "../tests/test_params.c"
 #endif
 
 
