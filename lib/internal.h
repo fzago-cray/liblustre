@@ -168,27 +168,6 @@ struct getparent {
         char            gp_name[0];
 } __attribute__((packed));
 
-/* Helper functions for testing the validity of stripe attributes. */
-static inline bool llapi_stripe_size_is_aligned(uint64_t size)
-{
-	return (size & (LOV_MIN_STRIPE_SIZE - 1)) == 0;
-}
-
-static inline bool llapi_stripe_size_is_too_big(uint64_t size)
-{
-	return size >= (1ULL << 32);
-}
-
-static inline bool llapi_stripe_count_is_valid(int64_t count)
-{
-	return count >= -1 && count <= LOV_MAX_STRIPE_COUNT;
-}
-
-static inline bool llapi_stripe_index_is_valid(int64_t idx)
-{
-	return idx >= -1 && idx <= LOV_V1_INSANE_STRIPE_COUNT;
-}
-
 /*
  * HSM
  */

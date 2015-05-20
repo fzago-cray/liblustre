@@ -59,6 +59,27 @@ struct llapi_layout {
 	struct		lov_user_ost_data_v1 llot_objects[0];
 };
 
+/* Helper functions for testing the validity of stripe attributes. */
+static bool llapi_stripe_size_is_aligned(uint64_t size)
+{
+	return (size & (LOV_MIN_STRIPE_SIZE - 1)) == 0;
+}
+
+static bool llapi_stripe_size_is_too_big(uint64_t size)
+{
+	return size >= (1ULL << 32);
+}
+
+static bool llapi_stripe_count_is_valid(int64_t count)
+{
+	return count >= -1 && count <= LOV_MAX_STRIPE_COUNT;
+}
+
+static bool llapi_stripe_index_is_valid(int64_t idx)
+{
+	return idx >= -1 && idx <= LOV_V1_INSANE_STRIPE_COUNT;
+}
+
 /**
  * Byte-swap the fields of struct lov_user_md.
  *
