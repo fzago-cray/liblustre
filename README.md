@@ -129,8 +129,6 @@ TODO
 -   llapi_hsm_import is not working. The layout interface doesn't have
     an equivalent for LOV_PATTERN_F_RELEASED. Lustre HSM test 12a
     fails.
--   Should the license for the public headers be LGPL or should it be
-    something more relaxed like BSD 2 clauses.
 -   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
     of the work done by the caller could be done inside, like bound
     checking and. Return the hai or NULL is no more are available in
