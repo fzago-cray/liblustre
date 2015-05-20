@@ -27,10 +27,10 @@ The new header to include by applications is \<lustre/lustre.h\>. No
 other file need to be included. \<lustre/lustre.h\> will itself include
 \<lustre/lustre\_user.h\>, but that file cannot be included directly.
 
-The library itself includes \<lustre/lustre.h\>, but also
-"lustre\_internal.h" which contains various definitions and helpers that
-are needed for the library but need not be exported, such as private
-structures, ioctls definitions, ...
+The library itself includes \<lustre/lustre.h\>, but also "internal.h"
+which contains various definitions that are needed for the library but
+need not be exported, such as private structures, ioctls definitions,
+...
 
 No application should communicate directly with lustre, through ioctls
 for instance. Instead simple functions must be provided.
@@ -137,8 +137,8 @@ TODO
 Changes from liblustreapi
 -------------------------
 
-Some function have disappeared and other have been renamed. This section
-should help porting.
+Some functions have disappeared and other have been renamed. This
+section should help porting.
 
 -   LPU64 is gone. Use "%llu". Cast if necessary.
 -   LPX64 is gone. Use "%\#llx". Cast if necessary.
@@ -146,8 +146,7 @@ should help porting.
 -   llapi\_file\_open\_pool and llapi\_file\_open\_param are gone. Use
     llapi\_layout\_file\_open or llapi\_layout\_file\_openat. Careful
     with the return code. The former function returned negative errno,
-    while the new one return -1 and sets errno.
--   llapi\_file\_open\_param is gone. Use llapi\_file\_open.
+    while the new one returns -1 and sets errno.
 -   llapi\_create\_volatile\_idx is gone, and is replaced with
     llapi\_create\_volatile\_by\_fid and a layout parameters.
 -   llapi\_chomp\_string is not exported anymore.
@@ -174,9 +173,9 @@ application to emit these logs. By default no logs are evaluated. To
 retrieve the log messages, the application has to set a callback with
 llapi\_msg\_callback\_set() and set a log level with
 llapi\_msg\_set\_level(). When the callback is called, the application
-can then emit the messages if it wishes. lhsmtool\_posix.c has been
-modified to use that interface. The posix copytool will output all its
-messages on stdout.
+can then emit the messages if it wishes. The posix copytool, renamed
+posixct.c, has been modified to use that interface and will output all
+its messages on stdout.
 
 Package dependencies
 --------------------
