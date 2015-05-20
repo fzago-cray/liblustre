@@ -131,6 +131,10 @@ TODO
     fails.
 -   Should the license for the public headers be LGPL or should it be
     something more relaxed like BSD 2 clauses.
+-   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
+    of the work done by the caller could be done inside, like bound
+    checking and. Return the hai or NULL is no more are available in
+    that hal.
 
 Changes from liblustreapi
 -------------------------
@@ -162,6 +166,8 @@ should help porting.
     the last two parmeters are swapped, to put the result last.
 -   the gid given to llapi_group_lock / llapi_group_unlock is now an
     uint64_t instead of an int.
+-   hai_first and hai_next are now functions called llapi_hsm_hai_first
+    and llapi_hsm_hai_next
 
 ### logging
 

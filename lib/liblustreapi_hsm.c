@@ -1551,3 +1551,39 @@ int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 
 	return rc;
 }
+
+/**
+ * Returns the first action item after the action list header.
+ *
+ * \param[in]  hal    the action list
+ *
+ * \retval  a pointer to the first action item in the list
+ */
+const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *hal)
+{
+	const char *p;
+
+	/* Find end of string. */
+	p = hal->hal_fsname;
+	while (*p)
+		p++;
+
+	/* Add 1 for the NUL character, plus 7 for the rounding to the
+	 * 8 bytes boundary operation */
+	p += 8;
+
+	return (struct hsm_action_item *)((uintptr_t)p & ~7);
+}
+
+/**
+ * Returns the next action item in the action list.
+ *
+ * \param[in]  hai    the previous action item
+ *
+ * \retval  a pointer to the next action item in the list
+ */
+const struct hsm_action_item *llapi_hsm_hai_next(const struct hsm_action_item *hai)
+{
+	return (struct hsm_action_item *)
+		(((uintptr_t)hai + hai->hai_len + 7) & ~7);
+}

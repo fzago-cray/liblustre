@@ -1919,7 +1919,7 @@ static int ct_run(void)
 				continue;
 		}
 
-		hai = hai_first(hal);
+		hai = llapi_hsm_hai_first(hal);
 		while (++i <= hal->hal_count) {
 			if ((char *)hai - (char *)hal > msgsize) {
 				rc = -EPROTO;
@@ -1935,7 +1935,7 @@ static int ct_run(void)
 					 opt.o_mnt, i);
 			if (opt.o_abort_on_error && err_major)
 				break;
-			hai = hai_next(hai);
+			hai = llapi_hsm_hai_next(hai);
 		}
 
 		if (opt.o_abort_on_error && err_major)

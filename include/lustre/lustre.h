@@ -165,32 +165,6 @@ int llapi_hsm_unregister_event_fifo(const char *path);
 void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 			 const char *fmt, va_list args);
 
-/* Returns the first action item after the action list header. */
-static inline
-const struct hsm_action_item *hai_first(const struct hsm_action_list *hal)
-{
-	const char *p;
-
-	/* Find end of string. */
-	p = hal->hal_fsname;
-	while (*p)
-		p++;
-
-	/* Add 1 for the NUL character, plus 7 for the rounding to the
-	 * 8 bytes boundary operation */
-	p += 8;
-
-	return (struct hsm_action_item *)((uintptr_t)p & ~7);
-}
-
-/* Returns the next action item. */
-static inline
-const struct hsm_action_item *hai_next(const struct hsm_action_item *hai)
-{
-	return (struct hsm_action_item *)
-		(((uintptr_t)hai + hai->hai_len + 7) & ~7);
-}
-
 /*
  * HSM copytool interface.
  * priv is private state, managed internally by these functions
@@ -224,5 +198,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     unsigned long long stripe_size, int stripe_offset,
 		     int stripe_count, int stripe_pattern,
 		     const char *pool_name, lustre_fid *newfid);
+const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *hal);
+const struct hsm_action_item *llapi_hsm_hai_next(const struct hsm_action_item *hai);
 
 #endif
