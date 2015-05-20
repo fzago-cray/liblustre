@@ -36,11 +36,11 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <bsd/string.h>
 
 #include <lustre/lustre.h>
 
 #include "internal.h"
+#include "support.h"
 
 /** Quick-n'-dirty JSON string escape routine.
  * \param[out]	out_string	JSON-escaped string, allocated here
@@ -256,6 +256,7 @@ int llapi_json_add_item(struct llapi_json_item_list **json_items,
 	struct llapi_json_item_list	*list;
 	struct llapi_json_item		*new_item;
 	size_t len;
+	ssize_t rc;
 
 	if (json_items == NULL || *json_items == NULL)
 		return -EINVAL;
@@ -274,7 +275,9 @@ int llapi_json_add_item(struct llapi_json_item_list **json_items,
 	if (new_item->lji_key == NULL)
 		return -ENOMEM;
 
-	strlcpy(new_item->lji_key, key, len);
+	rc = strscpy(new_item->lji_key, key, len);
+	if (rc == -1)
+		return -EINVAL;
 	new_item->lji_type = type;
 	new_item->lji_next = NULL;
 
@@ -293,7 +296,9 @@ int llapi_json_add_item(struct llapi_json_item_list **json_items,
 		new_item->lji_string = calloc(len, sizeof(char));
 		if (new_item->lji_string == NULL)
 			return -ENOMEM;
-		strlcpy(new_item->lji_string, (const char *)val, len);
+		rc = strscpy(new_item->lji_string, (const char *)val, len);
+		if (rc == -1)
+			return -EINVAL;
 		break;
 	default:
 		log_msg(LLAPI_MSG_ERROR, 0, "Unknown JSON type: %d",

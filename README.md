@@ -133,6 +133,8 @@ TODO
     of the work done by the caller could be done inside, like bound
     checking and. Return the hai or NULL is no more are available in
     that hal.
+-   inspect strcpy/strncpy/strcat/... and replace with strscpy/strscat
+    if possible
 
 Changes from liblustreapi
 -------------------------

@@ -58,11 +58,11 @@
 #include <pthread.h>
 #include <ctype.h>
 #include <signal.h>
-#include <bsd/bsd.h>
 #include <sys/syscall.h>   /* For SYS_xxx definitions */
-#include <bsd/string.h>
 
 #include <lustre/lustre.h>
+
+#include "../lib/support.h"
 
 /* fid_* function from upstream lustre_idl. Ideally these should go in
  * the library, however they are GPL so far. However they are short
@@ -942,7 +942,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 	if (hai->hai_extent.length == -1) {
 		/* whole file, write it to tmp location and atomically
 		 * replace old archived file */
-		strlcat(dst, "_tmp", sizeof(dst));
+		strscat(dst, "_tmp", sizeof(dst));
 		/* we cannot rely on the same test because ct_copy_data()
 		 * updates hai_extent.length */
 		rename_needed = true;
@@ -1298,7 +1298,7 @@ static int ct_remove(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini;
 	}
 
-	strlcat(dst, ".lov", sizeof(dst));
+	strscat(dst, ".lov", sizeof(dst));
 	rc = unlink(dst);
 	if (rc < 0) {
 		rc = -errno;
@@ -1636,8 +1636,8 @@ static int ct_rebind_one(const lustre_fid *old_fid, const lustre_fid *new_fid)
 			return -errno;
 		}
 		/* rename lov file */
-		strlcat(src, ".lov", sizeof(src));
-		strlcat(dst, ".lov", sizeof(dst));
+		strscat(src, ".lov", sizeof(src));
+		strscat(dst, ".lov", sizeof(dst));
 		if (rename(src, dst))
 			CT_ERROR(errno, "cannot rename '%s' to '%s'", src, dst);
 
@@ -1801,8 +1801,12 @@ static int ct_max_sequence(void)
 	char	path[PATH_MAX];
 	__u64	seq = 0;
 	__u16	subseq;
+	ssize_t len;
 
-	strlcpy(path, opt.o_hsm_root, sizeof(path));
+	len = strscpy(path, opt.o_hsm_root, sizeof(path));
+	if (len == -1)
+		return -EINVAL;
+
 	/* FID sequence is stored in top-level directory names:
 	 * hsm_root/16bits (high weight)/16 bits/16 bits/16 bits (low weight).
 	 */
@@ -1984,8 +1988,12 @@ static int ct_cleanup(void)
 int main(int argc, char **argv)
 {
 	int	rc;
+	ssize_t len;
 
-	strlcpy(cmd_name, basename(argv[0]), sizeof(cmd_name));
+	len = strscpy(cmd_name, basename(argv[0]), sizeof(cmd_name));
+	if (len == -1)
+		return EINVAL;
+
 	rc = ct_parseopts(argc, argv);
 	if (rc < 0) {
 		CT_WARN("try '%s --help' for more information", cmd_name);

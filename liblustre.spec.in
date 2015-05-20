@@ -7,7 +7,7 @@ Group:		System Environment/Libraries
 License:	GPLv2+
 URL:		https://github.com/fzago-cray/liblustre
 Source0:	%{name}-%{version}.tar.xz
-BuildRequires: python-docutils check-devel libattr-devel libbsd-devel
+BuildRequires: python-docutils check-devel libattr-devel
 
 %description
 

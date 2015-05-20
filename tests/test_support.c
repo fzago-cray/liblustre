@@ -17,6 +17,7 @@
  * Tests some miscellaneous functions.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <check.h>
@@ -186,4 +187,74 @@ void unittest_llapi_parse_size(void)
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(size, 017);
 	ck_assert_int_eq(size_units, 1);
+}
+
+/* Test strscpy */
+void unittest_strscpy(void)
+{
+	char dst[100];
+	size_t rc;
+
+	rc = strscpy(dst, "", 0);
+	ck_assert_int_eq(rc, -1);
+
+	rc = strscpy(dst, "", 1);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(dst, "");
+
+	rc = strscpy(dst, "", 2);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(dst, "");
+
+	rc = strscpy(dst, "", sizeof(dst));
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(dst, "");
+
+	rc = strscpy(dst, "hello", sizeof(dst));
+	ck_assert_int_eq(rc, 5);
+	ck_assert_str_eq(dst, "hello");
+
+	rc = strscpy(dst, "hello", 4);
+	ck_assert_int_eq(rc, -1);
+
+	rc = strscpy(dst, "hello", 5);
+	ck_assert_int_eq(rc, -1);
+
+	rc = strscpy(dst, "hello", 6);
+	ck_assert_int_eq(rc, 5);
+	ck_assert_str_eq(dst, "hello");
+}
+
+/* Test strscat */
+void unittest_strscat(void)
+{
+	char dst[100];
+	size_t rc;
+
+	dst[0] = 0;
+
+	rc = strscat(dst, "", sizeof(dst));
+	ck_assert_int_eq(rc, 0);
+
+	rc = strscat(dst, "a", sizeof(dst));
+	ck_assert_int_eq(rc, 1);
+	ck_assert_str_eq(dst, "a");
+
+	rc = strscat(dst, "b", sizeof(dst));
+	ck_assert_int_eq(rc, 2);
+	ck_assert_str_eq(dst, "ab");
+
+	rc = strscat(dst, "c", sizeof(dst));
+	ck_assert_int_eq(rc, 3);
+	ck_assert_str_eq(dst, "abc");
+
+	strcpy(dst, "hello");
+
+	rc = strscat(dst, "", sizeof(dst));
+	ck_assert_int_eq(rc, 5);
+	ck_assert_str_eq(dst, "hello");
+
+	rc = strscat(dst, " me", sizeof(dst));
+	ck_assert_int_eq(rc, 8);
+	ck_assert_str_eq(dst, "hello me");
 }

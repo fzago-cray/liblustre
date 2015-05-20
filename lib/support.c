@@ -23,6 +23,7 @@
 #include <lustre/lustre.h>
 
 #include "internal.h"
+#include "support.h"
 
 /**
  * Parse a user given string containing a size with or without a
@@ -121,6 +122,55 @@ int llapi_parse_size(const char *string, unsigned long long *size,
 	}
 
 	return -1;
+}
+
+/**
+ * A truncation safe version of strcpy.
+ *
+ * \param[in]  dst         a pointer to a buffer, of size dst_len
+ * \param[in]  src         a NUL terminated C string
+ * \param[in]  dst_size    size in bytes of dst
+ *
+ * \retval  -1 if truncation would occur. dst is left untouched.
+ * \retval  size of the string copied, not including the NUL
+ *          terminator. The copy was successful, NUL terminated and
+ *          not truncated.
+ */
+ssize_t strscpy(char *dst, const char *src, size_t dst_size)
+{
+	ssize_t src_len = strlen(src);
+
+	if ((src_len + 1) > dst_size)
+		return -1;
+
+	memcpy(dst, src, src_len + 1);
+
+	return src_len;
+}
+
+/**
+ * A truncation safe version of strcat.
+ *
+ * \param[in]  dst         a pointer to a buffer, of size dst_len
+ * \param[in]  src         a NUL terminated C string
+ * \param[in]  dst_size    size in bytes of dst
+ *
+ * \retval  -1 if truncation would occur. dst is left untouched.
+ * \retval  size of the new string, not including the NUL
+ *          terminator. The concatenation was successful, NUL
+ *          terminated and not truncated.
+ */
+ssize_t strscat(char *dst, const char *src, size_t dst_size)
+{
+	ssize_t src_len = strlen(src);
+	size_t dst_len = strlen(dst);
+
+	if ((src_len + 1) > (dst_size - dst_len))
+		return -1;
+
+	memcpy(dst + dst_len, src, src_len + 1);
+
+	return src_len + dst_len;
 }
 
 #ifdef UNIT_TEST
