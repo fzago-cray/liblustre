@@ -82,6 +82,17 @@ struct obd_uuid {
 #define SWAP_LAYOUTS_MDS_HSM    (1 << 31)
 
 /*
+ * Layouts
+ */
+#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
+#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
+#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
+
+#define LLAPI_LAYOUT_RAID0    0
+
+#define LAYOUT_GET_EXPECTED 0x1
+
+/*
  * Logging
  */
 
