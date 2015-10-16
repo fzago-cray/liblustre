@@ -34,31 +34,32 @@
  * \retval -EINVAL     if the path doesn't exist
  */
 static int find_poolpath(const struct lustre_fs_h *lfsh, const char *poolname,
-		  char *path, size_t pathlen)
+			 char *path, size_t pathlen)
 {
 	glob_t globbuf;
 	char pattern[200];
 	int rc;
 
-        rc = snprintf(pattern, sizeof(pattern), "/proc/fs/lustre/lov/%s-*/pools/%s",
+	rc = snprintf(pattern, sizeof(pattern),
+		      "/proc/fs/lustre/lov/%s-*/pools/%s",
 		      lfsh->fs_name, poolname);
 	if (rc < 0 || rc >= sizeof(pattern))
 		return -EINVAL;
 
-        rc = glob(pattern, GLOB_NOSORT | GLOB_ONLYDIR, NULL, &globbuf);
+	rc = glob(pattern, GLOB_NOSORT | GLOB_ONLYDIR, NULL, &globbuf);
 	if (rc == GLOB_NOMATCH) {
 		/* TODO: the original also used
 		 * find_target_obdpath. Is that really necessary? */
 		return -EINVAL;
 	}
 
-        rc = snprintf(path, pathlen, "%s", globbuf.gl_pathv[0]);
-        globfree(&globbuf);
+	rc = snprintf(path, pathlen, "%s", globbuf.gl_pathv[0]);
+	globfree(&globbuf);
 
 	if (rc < 0 || rc >= pathlen)
 		return -EINVAL;
 
-        return 0;
+	return 0;
 }
 
 /**

@@ -294,10 +294,10 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	if (path_len == 0)
 		return -EINVAL;
 
-        x.gf.gf_fid = *fid;
-        x.gf.gf_recno = recno ? *recno : -1;
-        x.gf.gf_linkno = linkno ? *linkno : 0;
-        x.gf.gf_pathlen = path_len;
+	x.gf.gf_fid = *fid;
+	x.gf.gf_recno = recno ? *recno : -1;
+	x.gf.gf_linkno = linkno ? *linkno : 0;
+	x.gf.gf_pathlen = path_len;
 
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
 	if (rc == 0) {
