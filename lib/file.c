@@ -13,12 +13,12 @@
  * Lesser General Public License for more details.
  */
 
-#include <stdlib.h>
-#include <limits.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <attr/xattr.h>
-#include <errno.h>
 
 #include <lustre/lustre.h>
 

@@ -15,10 +15,10 @@
 
 /* Miscellaneous functions. */
 
-#include <stdlib.h>
+#include <ctype.h>
 #include <errno.h>
 #include <limits.h>
-#include <ctype.h>
+#include <stdlib.h>
 
 #include <lustre/lustre.h>
 

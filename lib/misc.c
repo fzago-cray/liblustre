@@ -15,9 +15,9 @@
 
 /* Miscellaneous functions. */
 
-#include <stdlib.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include <lustre/lustre.h>
 

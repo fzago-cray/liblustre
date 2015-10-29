@@ -3,13 +3,13 @@
 #ifndef _LUSTRE_H_
 #define _LUSTRE_H_
 
-#include <stdint.h>
-#include <stdbool.h>
 #include <asm/types.h>
-#include <sys/stat.h>
-#include <stddef.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 /*

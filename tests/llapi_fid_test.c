@@ -18,15 +18,16 @@
  * Tests for the FID related functions.
  */
 
-#include <stdlib.h>
 #include <errno.h>
-#include <getopt.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <poll.h>
-#include <time.h>
+#include <getopt.h>
 #include <limits.h>
+#include <poll.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
 #include <check.h>
 
 #include <lustre/lustre.h>

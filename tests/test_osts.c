@@ -20,8 +20,9 @@
  * not empty.
  */
 
-#include <stdlib.h>
 #include <limits.h>
+#include <stdlib.h>
+
 #include <check.h>
 
 /* Not defined in check 0.9.8 - license is LGPL 2.1 or later */

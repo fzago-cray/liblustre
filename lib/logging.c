@@ -13,8 +13,8 @@
  * Lesser General Public License for more details.
  */
 
-#include <stdlib.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include <lustre/lustre.h>
 

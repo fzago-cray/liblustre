@@ -13,11 +13,11 @@
  * Lesser General Public License for more details.
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include <glob.h>
 #include <errno.h>
+#include <glob.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <lustre/lustre.h>
 
