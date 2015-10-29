@@ -88,13 +88,7 @@ int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 	} x;
 	int rc;
 
-	/* Even if the user doesn't want the path, we still have to
-	 * get it. Make sure it's not going to break the request. */
-	if (parent_name)
-		x.gp.gp_name_size = parent_name_len;
-	else
-		x.gp.gp_name_size = sizeof(x.filler);
-
+	x.gp.gp_name_size = sizeof(x.filler);
 	x.gp.gp_linkno = linkno;
 
 	rc = ioctl(fd, LL_IOC_GETPARENT, &x.gp);
@@ -102,8 +96,12 @@ int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		if (parent_fid)
 			*parent_fid = x.gp.gp_fid;
 		if (parent_name) {
-			/* We know the data fits. */
-			strcpy(parent_name, x.gp.gp_name);
+			rc = strscpy(parent_name, x.gp.gp_name,
+				     parent_name_len);
+			if (rc == -1)
+				rc = -ENOSPC;
+			else
+				rc = 0;
 		}
 	} else {
 		rc = -errno;

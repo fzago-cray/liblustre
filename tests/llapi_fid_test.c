@@ -457,13 +457,13 @@ static void help_test40(void)
 
 	/* Name too short */
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 0);
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 5);
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, strlen(maindir));
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf,
 			       strlen(maindir)+1);

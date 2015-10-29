@@ -94,14 +94,30 @@ void unittest_fid2(void)
 {
 	struct lustre_fs_h *lfsh;
 	int fd;
+	lustre_fid mnt_fid;
 	lustre_fid fid;
 	lustre_fid parent_fid;
 	int rc;
 	char name[PATH_MAX];
 
+	/*
+	 * On the mountpoint
+	 */
 	rc = llapi_open_fs("/mnt/lustre", &lfsh);
 	ck_assert_int_eq(rc, 0);
 
+	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &mnt_fid);
+	ck_assert_int_eq(rc, 0);
+
+	/* Doesn't work on mountpoint. */
+	rc = llapi_fid2parent(lfsh, &mnt_fid, 0, &parent_fid, NULL, 0);
+	ck_assert_int_eq(rc, -ENODATA);
+
+	/*
+	 * On a regular file, under the mountpoint
+	 */
+
+	/* On a file */
 	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
@@ -110,21 +126,53 @@ void unittest_fid2(void)
 
 	close(fd);
 
-	/* Several times the same request, with varying arguments. */
-	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, NULL, 0);
-	ck_assert_int_eq(rc, 0);
-
 	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, NULL, 0);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, name, 5);
-	ck_assert_int_eq(rc, -EOVERFLOW);
-
-	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, name, sizeof(name));
+	rc = llapi_fid2parent(lfsh, &fid, 0, NULL, NULL, sizeof(name));
 	ck_assert_int_eq(rc, 0);
 
+	memset(&parent_fid, 0xaa, sizeof(parent_fid));
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, NULL, 0);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
+
+	memset(name, 0x5a, sizeof(name));
+	memset(&parent_fid, 0xaa, sizeof(parent_fid));
 	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
 	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(name, "unittest_fid");
+	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
+
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, 0);
+	ck_assert_int_eq(rc, -ENOSPC);
+
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, 5);
+	ck_assert_int_eq(rc, -ENOSPC);
+
+	memset(name, 0x5a, sizeof(name));
+	memset(&parent_fid, 0xaa, sizeof(parent_fid));
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, 50);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(name, "unittest_fid");
+	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
+
+	memset(name, 0x5a, sizeof(name));
+	memset(&parent_fid, 0xaa, sizeof(parent_fid));
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, PATH_MAX);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(name, "unittest_fid");
+	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
+
+	memset(name, 0x5a, sizeof(name));
+	memset(&parent_fid, 0xaa, sizeof(parent_fid));
+	rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, PATH_MAX+1);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_str_eq(name, "unittest_fid");
+	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
+
+	rc = unlink(FNAME);
+	ck_assert(rc == 0);
 
 	if (0) {
 		/* Try with a symlink */
