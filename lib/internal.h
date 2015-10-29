@@ -50,7 +50,7 @@ struct lustre_ost_info {
 	char *osts[0];
 };
 
-void free_ost_info(struct lustre_ost_info *info);
+void free_ost_info(struct lustre_ost_info **info);
 int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		   struct lustre_ost_info **info);
 
