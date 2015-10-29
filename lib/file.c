@@ -23,6 +23,7 @@
 #include <lustre/lustre.h>
 
 #include "internal.h"
+#include "support.h"
 
 /**
  * Open a file given its FID.
@@ -276,7 +277,7 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
  * \param[in][out]   linkno    which name to return; may be NULL
  *
  * \retval    0 on success
- * \retval    a negative errno on error
+ * \retval    a negative errno on error.
  */
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		   char *path, size_t path_len,
@@ -289,23 +290,28 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	} x;
 	int rc;
 
-	/* The returned path is NUL terminated. */
+	/* The returned path is NUL terminated, so we need at least 1
+	 * byte in it. */
 	if (path_len == 0)
-		return -EINVAL;
+		return -ENOSPC;
 
 	x.gf.gf_fid = *fid;
 	x.gf.gf_recno = recno ? *recno : -1;
 	x.gf.gf_linkno = linkno ? *linkno : 0;
-	x.gf.gf_pathlen = path_len;
+	x.gf.gf_pathlen = sizeof(x.filler);
 
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
 	if (rc == 0) {
-		/* We know the path fits. */
-		strcpy(path, x.gf.gf_path);
-		if (recno)
-			*recno = x.gf.gf_recno;
-		if (linkno)
-			*linkno = x.gf.gf_linkno;
+		rc = strscpy(path, x.gf.gf_path, path_len);
+		if (rc == -1) {
+			rc = -ENOSPC;
+		} else {
+			rc = 0;
+			if (recno)
+				*recno = x.gf.gf_recno;
+			if (linkno)
+				*linkno = x.gf.gf_linkno;
+		}
 	} else {
 		rc = -errno;
 	}
