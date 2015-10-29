@@ -147,7 +147,3 @@ done:
 
 	return rc;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_osts.c"
-#endif

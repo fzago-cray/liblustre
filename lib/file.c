@@ -505,7 +505,3 @@ int llapi_group_unlock(int fd, uint64_t gid)
 
 	return 0;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_file.c"
-#endif

@@ -22,6 +22,8 @@
 
 #include <check.h>
 
+#include "../lib/misc.c"
+
 /* Not defined in check 0.9.8 - license is LGPL 2.1 or later */
 #ifndef ck_assert_ptr_ne
 #define _ck_assert_ptr(X, OP, Y) do { \

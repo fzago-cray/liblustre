@@ -40,6 +40,3 @@ void chomp_string(char *buf)
 		*p = '\0';
 }
 
-#ifdef UNIT_TEST
-#include "../tests/test_misc.c"
-#endif

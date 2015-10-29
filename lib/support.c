@@ -172,7 +172,3 @@ ssize_t strscat(char *dst, const char *src, size_t dst_size)
 
 	return src_len + dst_len;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_support.c"
-#endif

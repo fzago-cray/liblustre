@@ -100,8 +100,4 @@ int get_param_lmv(int fd, const char *param, char **value)
 	return read_procfs_value("lmv", uuid.uuid, param, value);
 }
 
-#ifdef UNIT_TEST
-#include "../tests/test_params.c"
-#endif
-
 
