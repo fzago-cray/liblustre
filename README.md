@@ -254,10 +254,7 @@ See the documentation for more information:
 The testsuite can also be run under valgrind. Use valgrind 3.11 or
 later since it has support for a few Lustre ioctls. As of writing,
 this version hasn't been released; its sources can be retrieved from
-subversion (see http://valgrind.org/downloads/repository.html). If the
-patch attached to the bug report at
-https://bugs.kde.org/show_bug.cgi?id=346416 is not in svn yet,
-download and apply it.
+subversion (see http://valgrind.org/downloads/repository.html).
 
 For that purpose, under Centos 6, the following packages need to be
 updated: autoconf, automake, libtool. The packages from CentOS 7 can
