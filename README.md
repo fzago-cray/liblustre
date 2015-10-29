@@ -231,12 +231,18 @@ testsuite to /mnt/lustre.
 ### Check
 
 The tests are written with the "check" framework (see
-http://check.sourceforge.net/). Some arguments, such as no forking can
-be passed on the command line while testing:
+http://check.sourceforge.net/). check is available in CentOS
+in the rpm "check-devel", and in Debian/Ubuntu in the deb package
+"check".
+
+Some arguments, such as no forking can be passed on the command line
+while testing:
 
     CK_FORK=no make check
 
 See the documentation for more information:
+
+    http://check.sourceforge.net/
 
 
 ### Valgrind
