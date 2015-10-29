@@ -193,8 +193,7 @@ static int get_fid_from_xattr(const char *path, int fd, lustre_fid *fid)
 
 	if (rc == -1) {
 		return -errno;
-	}
-	else if (rc == sizeof(struct lustre_mdt_attrs)) {
+	} else if (rc == sizeof(struct lustre_mdt_attrs)) {
 		/* FID is stored in little endian. */
 		fid->f_seq = le64toh(lma.lma_self_fid.f_seq);
 		fid->f_oid = le32toh(lma.lma_self_fid.f_oid);
