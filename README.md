@@ -134,7 +134,11 @@ TODO
     checking and. Return the hai or NULL is no more are available in
     that hal.
 -   inspect strcpy/strncpy/strcat/... and replace with strscpy/strscat
-    if possible
+    if possible.
+-   move strscpy/strscat from libsupport into liblustre. Build the
+    copytool with its own copy.
+-   move the copytool to a different tree. It's in this library for
+    convenience only.
 
 Changes from liblustreapi
 -------------------------
