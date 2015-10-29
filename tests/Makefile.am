@@ -39,7 +39,7 @@ liblustre_unittest_la_SOURCES = \
 	test_params.c \
 	test_support.c \
 	$(top_srcdir)/lib/liblustre.c \
-	$(top_srcdir)/lib/liblustre_internal.h \
+	$(top_srcdir)/lib/internal.h \
 	$(top_srcdir)/lib/liblustreapi_hsm.c \
 	$(top_srcdir)/lib/liblustreapi_json.c \
 	$(top_srcdir)/lib/liblustreapi_layout.c \
