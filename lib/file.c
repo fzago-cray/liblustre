@@ -294,8 +294,8 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		return -ENOSPC;
 
 	x.gf.gf_fid = *fid;
-	x.gf.gf_recno = recno ? *recno : -1;
-	x.gf.gf_linkno = linkno ? *linkno : 0;
+	x.gf.gf_recno = (recno != NULL) ? *recno : -1;
+	x.gf.gf_linkno = (linkno != NULL) ? *linkno : 0;
 	x.gf.gf_pathlen = sizeof(x.filler);
 
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
@@ -305,9 +305,9 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 			rc = -ENOSPC;
 		} else {
 			rc = 0;
-			if (recno)
+			if (recno != NULL)
 				*recno = x.gf.gf_recno;
-			if (linkno)
+			if (linkno != NULL)
 				*linkno = x.gf.gf_linkno;
 		}
 	} else {
