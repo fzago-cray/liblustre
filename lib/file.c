@@ -201,7 +201,7 @@ static int get_fid_from_xattr(const char *path, int fd, lustre_fid *fid)
 
 		return 0;
 	} else {
-		/* Attribute is shorter. API change? */
+		/* Attribute is not the expected size. API change? */
 		return -EINVAL;
 	}
 }
