@@ -15,9 +15,9 @@
 
 /* Miscellaneous functions. */
 
-#include <stdlib.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include <lustre/lustre.h>
 
@@ -40,6 +40,3 @@ void chomp_string(char *buf)
 		*p = '\0';
 }
 
-#ifdef UNIT_TEST
-#include "../tests/test_misc.c"
-#endif

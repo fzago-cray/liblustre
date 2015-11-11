@@ -28,23 +28,7 @@ log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...);
 /*
  * Layouts
  */
-#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
-#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
-#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
-
-#define LLAPI_LAYOUT_RAID0    0
-
-#define LAYOUT_GET_EXPECTED 0x1
-
 #define LLAPI_LAYOUT_MAGIC 0x11AD1107
-
-#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
-#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
-#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
-
-#define LLAPI_LAYOUT_RAID0    0
-
-#define LAYOUT_GET_EXPECTED 0x1
 
 /* Layout swap */
 struct lustre_swap_layouts {
@@ -66,7 +50,7 @@ struct lustre_ost_info {
 	char *osts[0];
 };
 
-void free_ost_info(struct lustre_ost_info *info);
+void free_ost_info(struct lustre_ost_info **info);
 int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 		   struct lustre_ost_info **info);
 

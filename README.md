@@ -134,7 +134,11 @@ TODO
     checking and. Return the hai or NULL is no more are available in
     that hal.
 -   inspect strcpy/strncpy/strcat/... and replace with strscpy/strscat
-    if possible
+    if possible.
+-   move strscpy/strscat from libsupport into liblustre. Build the
+    copytool with its own copy.
+-   move the copytool to a different tree. It's in this library for
+    convenience only.
 
 Changes from liblustreapi
 -------------------------
@@ -231,12 +235,18 @@ testsuite to /mnt/lustre.
 ### Check
 
 The tests are written with the "check" framework (see
-http://check.sourceforge.net/). Some arguments, such as no forking can
-be passed on the command line while testing:
+http://check.sourceforge.net/). check is available in CentOS
+in the rpm "check-devel", and in Debian/Ubuntu in the deb package
+"check".
+
+Some arguments, such as no forking can be passed on the command line
+while testing:
 
     CK_FORK=no make check
 
 See the documentation for more information:
+
+    http://check.sourceforge.net/
 
 
 ### Valgrind
@@ -244,10 +254,7 @@ See the documentation for more information:
 The testsuite can also be run under valgrind. Use valgrind 3.11 or
 later since it has support for a few Lustre ioctls. As of writing,
 this version hasn't been released; its sources can be retrieved from
-subversion (see http://valgrind.org/downloads/repository.html). If the
-patch attached to the bug report at
-https://bugs.kde.org/show_bug.cgi?id=346416 is not in svn yet,
-download and apply it.
+subversion (see http://valgrind.org/downloads/repository.html).
 
 For that purpose, under Centos 6, the following packages need to be
 updated: autoconf, automake, libtool. The packages from CentOS 7 can

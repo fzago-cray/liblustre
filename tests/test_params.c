@@ -19,10 +19,13 @@
  * Assumptions: /mnt/lustre exists.
  */
 
-#include <stdlib.h>
-#include <limits.h>
 #include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+
 #include <check.h>
+
+#include "../lib/params.c"
 
 /* Not defined in check 0.9.8 - license is LGPL 2.1 or later */
 #ifndef ck_assert_ptr_ne

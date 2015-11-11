@@ -13,11 +13,11 @@
  * Lesser General Public License for more details.
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include <glob.h>
 #include <errno.h>
+#include <glob.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <lustre/lustre.h>
 
@@ -65,17 +65,19 @@ static int find_poolpath(const struct lustre_fs_h *lfsh, const char *poolname,
 /**
  * Free a lustre_ost_info structure
  */
-void free_ost_info(struct lustre_ost_info *info)
+void free_ost_info(struct lustre_ost_info **info)
 {
 	int i;
+	struct lustre_ost_info *loi = *info;
 
-	if (info == NULL)
+	if (*info == NULL)
 		return;
 
-	for(i=0; i<info->count; i++)
-		free(info->osts[i]);
+	for (i = 0; i < loi->count; i++)
+		free(loi->osts[i]);
 
-	free(info);
+	free(loi);
+	*info = NULL;
 }
 
 /**
@@ -135,19 +137,14 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 	free(line);
 
 	rc = 0;
+	*info = myinfo;
 
 done:
 	if (f)
 		fclose(f);
 
-	if (rc == 0)
-		*info = myinfo;
-	else
-		free_ost_info(myinfo);
+	if (rc != 0)
+		free_ost_info(&myinfo);
 
 	return rc;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_osts.c"
-#endif

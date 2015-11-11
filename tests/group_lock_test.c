@@ -24,16 +24,17 @@
 
 #define _GNU_SOURCE
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <errno.h>
-#include <getopt.h>
 #include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <poll.h>
+#include <getopt.h>
 #include <limits.h>
+#include <poll.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <check.h>
 
 #include <lustre/lustre.h>
@@ -206,6 +207,84 @@ START_TEST(test11)
 }
 END_TEST
 
+/* Test writing to a locked file */
+START_TEST(test12)
+{
+	int rc;
+	int fd1;
+	int fd2;
+	const int gid = 1234;
+	char buf[10000];
+
+	cleanup();
+
+	/* Create a test file, lock and write to it. */
+	fd1 = creat(mainpath, 0);
+	ck_assert_int_ge(fd1, 0);
+
+	rc = llapi_group_lock(fd1, gid);
+	ck_assert_int_eq(rc, 0);
+
+	memset(buf, 0x5a, sizeof(buf));
+	rc = write(fd1, buf, sizeof(buf));
+	ck_assert_int_eq(rc, sizeof(buf));
+
+	/* Open a second fd to that file, lock it too and write. */
+	fd2 = open(mainpath, O_WRONLY);
+	rc = llapi_group_lock(fd2, gid);
+	ck_assert_int_eq(rc, 0);
+
+	memset(buf, 0xa5, sizeof(buf));
+	rc = write(fd2, buf, sizeof(buf));
+	ck_assert_int_eq(rc, sizeof(buf));
+
+	/* Finish */
+	rc = llapi_group_unlock(fd1, gid);
+	ck_assert_int_eq(rc, 0);
+
+	rc = llapi_group_unlock(fd2, gid);
+	ck_assert_int_eq(rc, 0);
+
+	close(fd1);
+	close(fd2);
+}
+END_TEST
+
+/* Create a volatile file with 2 stripes, lock it and write to it. */
+START_TEST(test13)
+{
+	int rc;
+	int fd;
+	const int gid = 1234;
+	char buf[10000];
+	struct llapi_layout *layout;
+
+	cleanup();
+
+	layout = llapi_layout_alloc(0);
+	ck_assert_ptr_ne(layout, 0);
+	rc = llapi_layout_stripe_count_set(layout, 2);
+	ck_assert_int_eq(rc, 0);
+
+	fd = llapi_create_volatile_by_fid(lfsh, NULL, -1,
+					  0, S_IRUSR | S_IWUSR,
+					  layout);
+	ck_assert_int_ge(fd, 0);
+
+	rc = llapi_group_lock(fd, gid);
+	ck_assert_int_eq(rc, 0);
+
+	memset(buf, 0x5a, sizeof(buf));
+	rc = write(fd, buf, sizeof(buf));
+	ck_assert_int_eq(rc, sizeof(buf));
+
+	rc = llapi_group_unlock(fd, gid);
+	ck_assert_int_eq(rc, 0);
+
+	close(fd);
+}
+END_TEST
+
 static void helper_test20(int fd)
 {
 	int gid;
@@ -356,6 +435,8 @@ static Suite *gl_suite(void)
 	tcase_add_checked_fixture(tc, setup, teardown);
 	tcase_add_test(tc, test10);
 	tcase_add_test(tc, test11);
+	tcase_add_test(tc, test12);
+	tcase_add_test(tc, test13);
 	tcase_add_test(tc, test20);
 	tcase_add_test(tc, test30);
 	suite_add_tcase(s, tc);

@@ -13,12 +13,23 @@
  * Lesser General Public License for more details.
  */
 
-/* Miscellaneous functions. */
+/*
+ * Miscellaneous functions.
+ *
+ * strscpy and strscat should not be exported, but the copytool needs
+ * them. Eventually they should be rolled in the library, and copytool
+ * could use its own copy, or just compile support.c too.
+ *
+ * llapi_parse_size should not be provided by the lustre library
+ * because it is not specifically a lustre function to parse command
+ * line arguments. But this function may also be used by other lustre
+ * tools such as lfs. So put it there too.
+ */
 
-#include <stdlib.h>
+#include <ctype.h>
 #include <errno.h>
 #include <limits.h>
-#include <ctype.h>
+#include <stdlib.h>
 
 #include <lustre/lustre.h>
 
@@ -172,7 +183,3 @@ ssize_t strscat(char *dst, const char *src, size_t dst_size)
 
 	return src_len + dst_len;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_support.c"
-#endif

@@ -3,13 +3,13 @@
 #ifndef _LUSTRE_H_
 #define _LUSTRE_H_
 
-#include <stdint.h>
-#include <stdbool.h>
 #include <asm/types.h>
-#include <sys/stat.h>
-#include <stddef.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 /*
@@ -80,6 +80,17 @@ struct obd_uuid {
 #define SWAP_LAYOUTS_KEEP_MTIME (1 << 2)
 #define SWAP_LAYOUTS_KEEP_ATIME (1 << 3)
 #define SWAP_LAYOUTS_MDS_HSM    (1 << 31)
+
+/*
+ * Layouts
+ */
+#define LLAPI_LAYOUT_INVALID    0x1000000000000001ULL
+#define LLAPI_LAYOUT_DEFAULT    (LLAPI_LAYOUT_INVALID + 1)
+#define LLAPI_LAYOUT_WIDE       (LLAPI_LAYOUT_INVALID + 2)
+
+#define LLAPI_LAYOUT_RAID0    0
+
+#define LAYOUT_GET_EXPECTED 0x1
 
 /*
  * Logging

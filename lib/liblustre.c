@@ -13,16 +13,16 @@
  * Lesser General Public License for more details.
  */
 
-#include <stdlib.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <mntent.h>
 #include <limits.h>
+#include <mntent.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/vfs.h>
+#include <unistd.h>
 
 #include <lustre/lustre.h>
 

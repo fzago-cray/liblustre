@@ -237,6 +237,8 @@ llapi_layout_to_lum(const struct llapi_layout *layout)
 	else
 		lum->lmm_pattern = layout->llot_pattern;
 
+	memset(&lum->lmm_oi, 0, sizeof(lum->lmm_oi));
+
 	if (layout->llot_stripe_size == LLAPI_LAYOUT_DEFAULT)
 		lum->lmm_stripe_size = 0;
 	else
@@ -818,7 +820,7 @@ int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern)
 		return -1;
 	}
 
-	if (pattern != LLAPI_LAYOUT_DEFAULT ||
+	if (pattern != LLAPI_LAYOUT_DEFAULT &&
 	    pattern != LLAPI_LAYOUT_RAID0) {
 		errno = EOPNOTSUPP;
 		return -1;
@@ -1073,4 +1075,3 @@ int llapi_layout_file_create(const char *path, int open_flags, int mode,
 					 open_flags | O_CREAT | O_EXCL,
 					 mode, layout);
 }
-

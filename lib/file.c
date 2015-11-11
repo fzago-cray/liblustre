@@ -13,16 +13,17 @@
  * Lesser General Public License for more details.
  */
 
-#include <stdlib.h>
-#include <limits.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <attr/xattr.h>
-#include <errno.h>
 
 #include <lustre/lustre.h>
 
 #include "internal.h"
+#include "support.h"
 
 /**
  * Open a file given its FID.
@@ -87,13 +88,7 @@ int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 	} x;
 	int rc;
 
-	/* Even if the user doesn't want the path, we still have to
-	 * get it. Make sure it's not going to break the request. */
-	if (parent_name)
-		x.gp.gp_name_size = parent_name_len;
-	else
-		x.gp.gp_name_size = sizeof(x.filler);
-
+	x.gp.gp_name_size = sizeof(x.filler);
 	x.gp.gp_linkno = linkno;
 
 	rc = ioctl(fd, LL_IOC_GETPARENT, &x.gp);
@@ -101,8 +96,12 @@ int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		if (parent_fid)
 			*parent_fid = x.gp.gp_fid;
 		if (parent_name) {
-			/* We know the data fits. */
-			strcpy(parent_name, x.gp.gp_name);
+			rc = strscpy(parent_name, x.gp.gp_name,
+				     parent_name_len);
+			if (rc == -1)
+				rc = -ENOSPC;
+			else
+				rc = 0;
 		}
 	} else {
 		rc = -errno;
@@ -193,8 +192,7 @@ static int get_fid_from_xattr(const char *path, int fd, lustre_fid *fid)
 
 	if (rc == -1) {
 		return -errno;
-	}
-	else if (rc == sizeof(struct lustre_mdt_attrs)) {
+	} else if (rc == sizeof(struct lustre_mdt_attrs)) {
 		/* FID is stored in little endian. */
 		fid->f_seq = le64toh(lma.lma_self_fid.f_seq);
 		fid->f_oid = le32toh(lma.lma_self_fid.f_oid);
@@ -202,7 +200,7 @@ static int get_fid_from_xattr(const char *path, int fd, lustre_fid *fid)
 
 		return 0;
 	} else {
-		/* Attribute is shorter. API change? */
+		/* Attribute is not the expected size. API change? */
 		return -EINVAL;
 	}
 }
@@ -277,7 +275,7 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
  * \param[in][out]   linkno    which name to return; may be NULL
  *
  * \retval    0 on success
- * \retval    a negative errno on error
+ * \retval    a negative errno on error.
  */
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		   char *path, size_t path_len,
@@ -290,23 +288,28 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	} x;
 	int rc;
 
-	/* The returned path is NUL terminated. */
+	/* The returned path is NUL terminated, so we need at least 1
+	 * byte in it. */
 	if (path_len == 0)
-		return -EINVAL;
+		return -ENOSPC;
 
 	x.gf.gf_fid = *fid;
-	x.gf.gf_recno = recno ? *recno : -1;
-	x.gf.gf_linkno = linkno ? *linkno : 0;
-	x.gf.gf_pathlen = path_len;
+	x.gf.gf_recno = (recno != NULL) ? *recno : -1;
+	x.gf.gf_linkno = (linkno != NULL) ? *linkno : 0;
+	x.gf.gf_pathlen = sizeof(x.filler);
 
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
 	if (rc == 0) {
-		/* We know the path fits. */
-		strcpy(path, x.gf.gf_path);
-		if (recno)
-			*recno = x.gf.gf_recno;
-		if (linkno)
-			*linkno = x.gf.gf_linkno;
+		rc = strscpy(path, x.gf.gf_path, path_len);
+		if (rc == -1) {
+			rc = -ENOSPC;
+		} else {
+			rc = 0;
+			if (recno != NULL)
+				*recno = x.gf.gf_recno;
+			if (linkno != NULL)
+				*linkno = x.gf.gf_linkno;
+		}
 	} else {
 		rc = -errno;
 	}
@@ -506,7 +509,3 @@ int llapi_group_unlock(int fd, uint64_t gid)
 
 	return 0;
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_file.c"
-#endif

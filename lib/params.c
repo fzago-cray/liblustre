@@ -15,12 +15,11 @@
 
 /* Read values from procfs. */
 
-#include <stdlib.h>
-#include <limits.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <attr/xattr.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <sys/types.h>
 
 #include <lustre/lustre.h>
 
@@ -100,9 +99,5 @@ int get_param_lmv(int fd, const char *param, char **value)
 
 	return read_procfs_value("lmv", uuid.uuid, param, value);
 }
-
-#ifdef UNIT_TEST
-#include "../tests/test_params.c"
-#endif
 
 

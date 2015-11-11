@@ -18,15 +18,16 @@
  * Tests for the FID related functions.
  */
 
-#include <stdlib.h>
 #include <errno.h>
-#include <getopt.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <poll.h>
-#include <time.h>
+#include <getopt.h>
 #include <limits.h>
+#include <poll.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
 #include <check.h>
 
 #include <lustre/lustre.h>
@@ -456,13 +457,13 @@ static void help_test40(void)
 
 	/* Name too short */
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 0);
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 5);
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, strlen(maindir));
-	ck_assert_int_eq(rc, -EOVERFLOW);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf,
 			       strlen(maindir)+1);

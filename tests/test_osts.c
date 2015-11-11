@@ -20,9 +20,12 @@
  * not empty.
  */
 
-#include <stdlib.h>
 #include <limits.h>
+#include <stdlib.h>
+
 #include <check.h>
+
+#include "../lib/osts.c"
 
 /* Not defined in check 0.9.8 - license is LGPL 2.1 or later */
 #ifndef ck_assert_ptr_ne
@@ -83,11 +86,11 @@ void unittest_ost2(void)
 
 	ck_assert_int_eq(strncmp(info->osts[0], "lustre-OST", 10), 0);
 
-	free_ost_info(info);
-	info = NULL;
+	free_ost_info(&info);
+	ck_assert_ptr_eq(info, NULL);
 
 	/* Ensure this doesn't crash */
-	free_ost_info(NULL);
+	free_ost_info(&info);
 
 	llapi_close_fs(lfsh);
 }
