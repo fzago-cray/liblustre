@@ -1,5 +1,5 @@
 Name:		liblustre
-Version:	0.1.0
+Version:	0.2.0
 Release:	g@GIT_HASH@
 Summary:	An alternate user space library for Lustre
 Group:		System Environment/Libraries
