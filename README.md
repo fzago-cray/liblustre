@@ -1,7 +1,7 @@
-liblustre: A (not yet LGPL) lustre API
-======================================
+liblustre: An LGPL'ed lustre API
+================================
 
-This is work in progress. NOT ALL FILES ARE UNDER LGPL YET.
+This is work in progress.
 
 See
 [https://jira.hpdd.intel.com/browse/LU-5969](https://jira.hpdd.intel.com/browse/LU-5969)
@@ -42,8 +42,8 @@ An updated API
 --------------
 
 The current liblustreapi has some shortcomings. For instance many
-function will search for the mountpoint of a lustre filesystem, open it,
-issue an ioctl, then close it. This is not always necessary. For
+functions will search for the mountpoint of a lustre filesystem, open
+it, issue an ioctl, then close it. This is not always necessary. For
 instance when using the copytool, we already know everything we need
 about the filesystem, thus we should be able to open it once.
 
