@@ -40,7 +40,6 @@
 #include <lustre/lustre.h>
 
 #include "internal.h"
-#include "support.h"
 
 /** Quick-n'-dirty JSON string escape routine.
  * \param[out]	out_string	JSON-escaped string, allocated here

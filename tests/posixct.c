@@ -62,7 +62,7 @@
 
 #include <lustre/lustre.h>
 
-#include "../lib/support.h"
+#include "support.h"
 
 /* fid_* function from upstream lustre_idl. Ideally these should go in
  * the library, however they are GPL so far. However they are short

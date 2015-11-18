@@ -23,7 +23,8 @@
 
 #include <check.h>
 
-#include "../lib/support.c"
+#include "support.h"
+#include "support.c"
 
 /* Not defined in check 0.9.8 - license is LGPL 2.1 or later */
 #ifndef ck_assert_ptr_ne

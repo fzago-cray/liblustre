@@ -294,6 +294,10 @@ int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
 
 #define IOC_MDC_GETFILEINFO     _IOWR('i', 22, struct lov_user_mds_data *)
 
+/* String helpers. */
+ssize_t strscpy(char *dst, const char *src, size_t dst_size);
+ssize_t strscat(char *dst, const char *src, size_t dst_size);
+
 /*
  * Unit testing
  */
@@ -305,7 +309,6 @@ void unittest_chomp(void);
 void unittest_mdt_index(void);
 void unittest_param_lmv(void);
 void unittest_read_procfs_value(void);
-void unittest_llapi_parse_size(void);
 void unittest_strscpy(void);
 void unittest_strscat(void);
 void unittest_llapi_fid2path(void);

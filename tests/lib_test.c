@@ -20,6 +20,7 @@
 #include <lustre/lustre.h>
 
 #include "../lib/internal.h"
+#include "support.h"
 
 START_TEST(ost1) { unittest_ost1(); } END_TEST
 START_TEST(ost2) { unittest_ost2(); } END_TEST
@@ -30,8 +31,8 @@ START_TEST(mdt_index) { unittest_mdt_index(); } END_TEST
 START_TEST(param_lmv) { unittest_param_lmv(); } END_TEST
 START_TEST(read_procfs_value) { unittest_read_procfs_value(); } END_TEST
 START_TEST(parse_size) { unittest_llapi_parse_size(); } END_TEST
-START_TEST(strscpy) { unittest_strscpy(); } END_TEST
-START_TEST(strscat) { unittest_strscat(); } END_TEST
+START_TEST(t_strscpy) { unittest_strscpy(); } END_TEST
+START_TEST(t_strscat) { unittest_strscat(); } END_TEST
 START_TEST(fid2path) { unittest_llapi_fid2path(); } END_TEST
 START_TEST(data_version_by_fd) { unittest_llapi_data_version_by_fd(); } END_TEST
 
@@ -54,8 +55,8 @@ static Suite *ost_suite(void)
 
 	tc = tcase_create("MISC");
 	tcase_add_test(tc, chomp);
-	tcase_add_test(tc, strscpy);
-	tcase_add_test(tc, strscat);
+	tcase_add_test(tc, t_strscpy);
+	tcase_add_test(tc, t_strscat);
 	tcase_add_test(tc, mdt_index);
 	tcase_add_test(tc, param_lmv);
 	tcase_add_test(tc, read_procfs_value);

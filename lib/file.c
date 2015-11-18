@@ -23,7 +23,6 @@
 #include <lustre/lustre.h>
 
 #include "internal.h"
-#include "support.h"
 
 /**
  * Open a file given its FID.
