@@ -34,6 +34,8 @@
 		llapi_hsm_state_set;
 		llapi_hsm_unregister_event_fifo;
 		llapi_hsm_user_request_alloc;
+		llapi_init;
+		llapi_initialized;
 		llapi_layout_alloc;
 		llapi_layout_file_create;
 		llapi_layout_file_open;

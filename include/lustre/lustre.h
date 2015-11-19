@@ -222,6 +222,10 @@ int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
 int llapi_group_lock(int fd, uint64_t gid);
 int llapi_group_unlock(int fd, uint64_t gid);
 
+/* Library initialization */
+bool llapi_initialized;
+void llapi_init(void);
+
 /*
  * HSM
  */
