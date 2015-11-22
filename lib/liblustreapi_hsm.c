@@ -1313,8 +1313,8 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
  * \param newfid[out] Filled with new Lustre fid.
  */
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
-		     unsigned long long stripe_size, int stripe_offset,
-		     int stripe_count, int stripe_pattern,
+		     uint64_t stripe_size, uint64_t stripe_offset,
+		     uint64_t stripe_count, uint64_t stripe_pattern,
 		     const char *pool_name, lustre_fid *newfid)
 {
 	struct hsm_user_import	 hui;
@@ -1322,9 +1322,8 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	int			 rc = 0;
 	struct llapi_layout *layout;
 
-	if (stripe_pattern == 0)
-		stripe_pattern = LOV_PATTERN_RAID0;
-	stripe_pattern |= LOV_PATTERN_F_RELEASED;
+        if (stripe_pattern == LLAPI_LAYOUT_DEFAULT)
+                stripe_pattern = LLAPI_LAYOUT_RAID0;
 
 	/* Create a non-striped file */
 	layout = llapi_layout_alloc(0);

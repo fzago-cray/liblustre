@@ -1456,7 +1456,9 @@ static int ct_import_one(const char *src, const char *dst)
 
 	rc = llapi_hsm_import(dst,
 			      opt.o_archive_cnt ? opt.o_archive_id[0] : 0,
-			      &st, 0, 0, 0, 0, NULL, &fid);
+			      &st, LLAPI_LAYOUT_DEFAULT, LLAPI_LAYOUT_DEFAULT,
+			      LLAPI_LAYOUT_DEFAULT, LLAPI_LAYOUT_DEFAULT,
+			      NULL, &fid);
 	if (rc < 0) {
 		CT_ERROR(rc, "cannot import '%s' from '%s'", dst, src);
 		return rc;
