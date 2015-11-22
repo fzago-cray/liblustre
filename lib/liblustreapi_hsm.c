@@ -1336,11 +1336,19 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	if (llapi_layout_stripe_size_set(layout, stripe_size) != 0 ||
 	    llapi_layout_stripe_count_set(layout, stripe_count) != 0 ||
 	    llapi_layout_pattern_set(layout, stripe_pattern) != 0 ||
-	    llapi_layout_ost_index_set(layout, 0, stripe_offset) != 0 ||
-	    llapi_layout_pool_name_set(layout, pool_name) != 0) {
+	    llapi_layout_pattern_flags_set(layout, LLAPI_LAYOUT_RELEASED) != 0 ||
+	    llapi_layout_ost_index_set(layout, 0, stripe_offset) != 0) {
 		log_msg(LLAPI_MSG_ERROR, EINVAL,
 			"invalid striping information for importing '%s'",
 			dst);
+		rc = -1;
+		goto free_layout;
+	}
+
+	if (pool_name != NULL &&
+	    llapi_layout_pool_name_set(layout, pool_name) != 0) {
+		log_msg(LLAPI_MSG_ERROR, EINVAL,
+			"invalid pool name for importing '%s'",	dst);
 		rc = -1;
 		goto free_layout;
 	}

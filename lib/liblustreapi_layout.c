@@ -49,6 +49,7 @@
 struct llapi_layout {
 	uint32_t	llot_magic;
 	uint64_t	llot_pattern;
+	uint64_t	llot_pattern_flags;
 	uint64_t	llot_stripe_size;
 	uint64_t	llot_stripe_count;
 	uint64_t	llot_stripe_offset;
@@ -163,6 +164,9 @@ llapi_layout_from_lum(const struct lov_user_md *lum, size_t object_count)
 		/* Lustre only supports RAID0 for now. */
 		layout->llot_pattern = lum->lmm_pattern;
 
+	if (lum->lmm_pattern & LOV_PATTERN_F_RELEASED)
+		layout->llot_pattern_flags = LLAPI_LAYOUT_RELEASED;
+
 	if (lum->lmm_stripe_size == 0)
 		layout->llot_stripe_size = LLAPI_LAYOUT_DEFAULT;
 	else
@@ -236,6 +240,9 @@ llapi_layout_to_lum(const struct llapi_layout *layout)
 		lum->lmm_pattern = 1;
 	else
 		lum->lmm_pattern = layout->llot_pattern;
+
+	if (layout->llot_pattern_flags & LLAPI_LAYOUT_RELEASED)
+		lum->lmm_pattern |= LOV_PATTERN_F_RELEASED;
 
 	memset(&lum->lmm_oi, 0, sizeof(lum->lmm_oi));
 
@@ -827,6 +834,35 @@ int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern)
 	}
 
 	layout->llot_pattern = pattern;
+
+	return 0;
+}
+
+/**
+ * Set the extra pattern flag of \a layout.
+ *
+ * \param[in] layout	       layout to set pattern in
+ * \param[in] pattern_flags    flags to set. Only
+ *                             LLAPI_LAYOUT_RELEASED is supported.
+ *
+ * \retval	0 on success
+ * \retval	-1 on error, with errno set.
+ */
+int llapi_layout_pattern_flags_set(struct llapi_layout *layout,
+				   uint64_t pattern_flags)
+{
+	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	/* Reject if an unknown flag is set */
+	if ((pattern_flags & ~(LLAPI_LAYOUT_RELEASED)) != 0) {
+		errno = EOPNOTSUPP;
+		return -1;
+	}
+
+	layout->llot_pattern_flags = pattern_flags;
 
 	return 0;
 }

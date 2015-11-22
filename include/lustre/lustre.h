@@ -90,6 +90,8 @@ struct obd_uuid {
 
 #define LLAPI_LAYOUT_RAID0    0
 
+#define LLAPI_LAYOUT_RELEASED 0x0100
+
 #define LAYOUT_GET_EXPECTED 0x1
 
 /*
@@ -173,6 +175,8 @@ int llapi_layout_stripe_size_set(struct llapi_layout *layout, uint64_t size);
 int llapi_layout_pattern_get(const struct llapi_layout *layout,
 			     uint64_t *pattern);
 int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern);
+int llapi_layout_pattern_flags_set(struct llapi_layout *layout,
+				   uint64_t pattern_flags);
 int llapi_layout_ost_index_get(const struct llapi_layout *layout,
 			       uint64_t stripe_number, uint64_t *index);
 int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,

@@ -126,9 +126,6 @@ TODO
 -   llapi_fid2path and llapi_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
     save a memory copy.
--   llapi_hsm_import is not working. The layout interface doesn't have
-    an equivalent for LOV_PATTERN_F_RELEASED. Lustre HSM test 12a
-    fails.
 -   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
     of the work done by the caller could be done inside, like bound
     checking and. Return the hai or NULL is no more are available in
