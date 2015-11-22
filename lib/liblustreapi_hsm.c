@@ -758,8 +758,8 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
 
 		if (header.kuc_msglen < sizeof(header)) {
 			log_msg(LLAPI_MSG_ERROR, 0,
-				"Invalid data length (%08x < %08x)",
-				header.kuc_msglen < sizeof(header));
+				"Invalid data length (%08x < %08zx)",
+				header.kuc_msglen, sizeof(header));
 			rc = -EPROTO;
 			break;
 		}
