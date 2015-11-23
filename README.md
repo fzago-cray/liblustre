@@ -24,8 +24,7 @@ The directory structure is as follow:
       check.
 
 The new header to include by applications is \<lustre/lustre.h\>. No
-other file need to be included. \<lustre/lustre.h\> will itself include
-\<lustre/lustre\_user.h\>, but that file cannot be included directly.
+other file need to be included.
 
 The library itself includes \<lustre/lustre.h\>, but also "internal.h"
 which contains various definitions that are needed for the library but
@@ -109,6 +108,8 @@ its interaction with Lustre is similar to the copytool.
 TODO
 ----
 
+-   change the name of the prefix. llapi_ will conflict with
+    liblustreapi. What about lus_ ?
 -   All exported API functions should be documented in their sources,
     not in the headers. Format should be the same as lustre (doxygen)
     and conformity enforced during build.
@@ -127,12 +128,13 @@ TODO
     save a memory copy.
 -   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
     of the work done by the caller could be done inside, like bound
-    checking and. Return the hai or NULL is no more are available in
+    checking. Return the hai or NULL if no more hais are available in
     that hal.
 -   inspect strcpy/strncpy/strcat/... and replace with strscpy/strscat
     if possible.
 -   move the copytool to a different repository. It's in this library
     for convenience only.
+-   add llapi_hsm_test.c and llapi_layout_test.c to the tests
 
 Changes from liblustreapi
 -------------------------
@@ -148,7 +150,7 @@ section should help porting.
     with the return code. The former function returned negative errno,
     while the new one returns -1 and sets errno.
 -   llapi\_create\_volatile\_idx is gone, and is replaced with
-    llapi\_create\_volatile\_by\_fid and a layout parameters.
+    llapi\_create\_volatile\_by\_fid and layout parameters.
 -   llapi\_chomp\_string is not exported anymore.
 -   llapi\_stripe\_limit\_check is gone. Use
     llapi\_layout\_stripe\_\*\_is\_valid.
@@ -168,7 +170,8 @@ section should help porting.
 
 ### logging
 
-liblustre doesn't provide an API to log messages. It is the job of the
+liblustre doesn't provide an API to log messages, but will send log
+messages if the application requests it. It is the job of the
 application to emit these logs. By default no logs are evaluated. To
 retrieve the log messages, the application has to set a callback with
 llapi\_msg\_callback\_set() and set a log level with
@@ -186,7 +189,7 @@ On Debian/Ubunto, the following packages are needed to build:
 
 On RHEL/CentOS, the following packages are needed to build:
 
-    check libattr-devel python-docutils
+    check-devel libattr-devel python-docutils
 
 Building liblustre
 ------------------
@@ -210,8 +213,8 @@ This will result in these 4 rpms:
     rpms/RPMS/x86_64/liblustre-devel-0.1.0-g01bb122.x86_64.rpm
     rpms/RPMS/x86_64/liblustre-debuginfo-0.1.0-g01bb122.x86_64.rpm
 
-Only the liblustre rpm is need to run an
-application. liblustre-develcontains the man pages and the headers.
+Only the liblustre rpm is need to run an application. liblustre-devel
+contains the man pages and the headers.
 
 Testing liblustre
 -----------------
@@ -263,4 +266,4 @@ installing the rpms).
 Execute posixct once, so that the lt-posixct binary is created. Then
 run the Lustre test suite like this:
 
-    HSMTOOL=/root/liblustre/tests/.libs/lt-posixct ONLY=12a PDSH=ssh AGTCOUNT=1 agt1_HOST=localhost NAME=local ./sanity-hsm.sh
+    HSMTOOL=/PATH/TO/liblustre/tests/.libs/lt-posixct ONLY=12a PDSH=ssh AGTCOUNT=1 agt1_HOST=localhost NAME=local ./sanity-hsm.sh
