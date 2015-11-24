@@ -134,7 +134,8 @@ TODO
     if possible.
 -   move the copytool to a different repository. It's in this library
     for convenience only.
--   add llapi_layout_test.c to the tests
+-   LOV_MAXPOOLNAME doesn't include the ending NUL. That's a trap for
+    userspace. Should it be 16 instead of 15?
 
 Changes from liblustreapi
 -------------------------
@@ -225,7 +226,7 @@ testsuite to /mnt/lustre.
 
     llmount.sh
     lctl pool_new lustre.mypool
-    lctl pool_add lustre.mypool OST0000
+    lctl pool_add lustre.mypool OST0000 OST0001
     echo enabled > /proc/fs/lustre/mdt/lustre-MDT0000/hsm_control
     echo 1000 > /proc/fs/lustre/mdt/lustre-MDT0000/hsm/max_requests
 
