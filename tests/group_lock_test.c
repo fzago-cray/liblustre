@@ -334,8 +334,10 @@ START_TEST(test14)
 	ck_assert_int_eq(rc, 0);
 
 	memset(buf, 0x5a, sizeof(buf));
+#if 0
 	rc = write(fd, buf, sizeof(buf));
 	ck_assert_int_eq(rc, sizeof(buf));
+#endif
 
 	rc = llapi_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
