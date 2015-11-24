@@ -1,9 +1,9 @@
-check_PROGRAMS=lib_test posixct llapi_fid_test group_lock_test
+check_PROGRAMS=lib_test posixct llapi_fid_test group_lock_test llapi_hsm_test
 
 noinst_PROGRAMS=$(check_PROGRAMS)
 noinst_LTLIBRARIES = liblustre_support.la
 
-TESTS = lib_test llapi_fid_test group_lock_test
+TESTS = lib_test llapi_fid_test group_lock_test llapi_hsm_test
 
 # Support library - Not exported
 liblustre_support_la_SOURCES = support.c support.h
@@ -22,6 +22,11 @@ lib_test_LDADD = \
 
 llapi_fid_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
 llapi_fid_test_LDADD = \
+	${top_builddir}/lib/liblustre.la \
+	liblustre_support.la ${CHECK_LIBS}
+
+llapi_hsm_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+llapi_hsm_test_LDADD = \
 	${top_builddir}/lib/liblustre.la \
 	liblustre_support.la ${CHECK_LIBS}
 

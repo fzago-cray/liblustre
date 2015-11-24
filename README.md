@@ -134,7 +134,7 @@ TODO
     if possible.
 -   move the copytool to a different repository. It's in this library
     for convenience only.
--   add llapi_hsm_test.c and llapi_layout_test.c to the tests
+-   add llapi_layout_test.c to the tests
 
 Changes from liblustreapi
 -------------------------
@@ -226,6 +226,8 @@ testsuite to /mnt/lustre.
     llmount.sh
     lctl pool_new lustre.mypool
     lctl pool_add lustre.mypool OST0000
+    echo enabled > /proc/fs/lustre/mdt/lustre-MDT0000/hsm_control
+    echo 1000 > /proc/fs/lustre/mdt/lustre-MDT0000/hsm/max_requests
 
     make check
 

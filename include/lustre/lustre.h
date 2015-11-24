@@ -278,6 +278,13 @@ struct hsm_current_action {
 	struct hsm_extent	hca_location;
 };
 
+enum hsm_progress_states {
+	HPS_NONE    = 0,
+	HPS_WAITING = 1,
+	HPS_RUNNING = 2,
+	HPS_DONE    = 3,
+};
+
 enum hsm_user_action {
 	HUA_NONE    =  1,
 	HUA_ARCHIVE = 10,
