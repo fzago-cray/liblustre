@@ -207,8 +207,67 @@ START_TEST(test11)
 }
 END_TEST
 
-/* Test writing to a locked file */
+/* Lock / unlock a volatile file, with different creation flags */
 START_TEST(test12)
+{
+	int rc;
+	int fd;
+	int gid;
+	lustre_fid fid;
+
+	rc = mkdir(mainpath, 0600);
+	ck_assert_msg(rc == 0, "mkdir failed for '%s': %s",
+		      mainpath, strerror(errno));
+
+	rc = llapi_path2fid(mainpath, &fid);
+	ck_assert_int_eq(rc, 0);
+
+	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1, O_CREAT | O_WRONLY,
+					  0700, NULL);
+	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+		      mainpath, strerror(-fd));
+
+	gid = 34895;
+	rc = llapi_group_lock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
+
+	rc = llapi_group_unlock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
+
+	close(fd);
+
+	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1,
+					  O_CREAT | O_WRONLY | O_LOV_DELAY_CREATE,
+					  0700, NULL);
+	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+		      mainpath, strerror(-fd));
+
+	gid = 3354895;
+	rc = llapi_group_lock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
+
+	rc = llapi_group_unlock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
+
+	close(fd);
+
+	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1, O_RDONLY, 0700, NULL);
+	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+		      mainpath, strerror(-fd));
+
+	gid = 3489655;
+	rc = llapi_group_lock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
+
+	rc = llapi_group_unlock(fd, gid);
+	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
+
+	close(fd);
+}
+END_TEST
+
+/* Test writing to a locked file */
+START_TEST(test13)
 {
 	int rc;
 	int fd1;
@@ -251,7 +310,7 @@ START_TEST(test12)
 END_TEST
 
 /* Create a volatile file with 2 stripes, lock it and write to it. */
-START_TEST(test13)
+START_TEST(test14)
 {
 	int rc;
 	int fd;
@@ -437,6 +496,7 @@ static Suite *gl_suite(void)
 	tcase_add_test(tc, test11);
 	tcase_add_test(tc, test12);
 	tcase_add_test(tc, test13);
+	tcase_add_test(tc, test14);
 	tcase_add_test(tc, test20);
 	tcase_add_test(tc, test30);
 	suite_add_tcase(s, tc);
