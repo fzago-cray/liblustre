@@ -78,4 +78,5 @@ liblustre_unittest_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/lib/liblustre
 # See m4/ax_valgrind_check.m4 for documentation
 @VALGRIND_CHECK_RULES@
 VALGRIND_SUPPRESSIONS_FILES = valgrind.supp
+VALGRIND_memcheck_FLAGS= --malloc-fill=0x9f --free-fill=0xe2 --track-fds=yes
 EXTRA_DIST = valgrind.supp
