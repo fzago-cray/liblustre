@@ -1,0 +1,24 @@
+Tests for liblustre
+===================
+
+The tests expect that a Lustre filesystem be mounted. By default the
+Lustre filesystem is mounted under '/mnt/lustre'. That setting can be
+changed with -d option in the tests.
+
+The tests are running under the 'check' test framework. See
+http://check.sourceforge.net/ for its documentation.
+
+Some tests may need some arguments.
+
+To run the llapi_hsm_test, HSM must also be enabled on the MDT, and it
+is recommended to set max_requests to a large value:
+
+    lctl set_param mdt.lustre-MDT0000.hsm_control=enabled
+    lctl set_param mdt.lustre-MDT0000.hsm.max_requests=1000
+
+The lib_test and llapi_layout_test expect a Lustre pool named 'mypool'
+to exist, with at least 2 OSTs. The -p option is used to change the
+name.
+
+    lctl pool_new lustre.mypool
+    lctl pool_add lustre.mypool OST0000 OST0001

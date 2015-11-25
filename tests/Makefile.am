@@ -1,11 +1,14 @@
-check_PROGRAMS=lib_test posixct llapi_fid_test group_lock_test llapi_hsm_test \
+check_PROGRAMS=lib_test llapi_fid_test group_lock_test llapi_hsm_test \
 	llapi_layout_test
 
-noinst_PROGRAMS=$(check_PROGRAMS)
+noinst_PROGRAMS=posixct
 noinst_LTLIBRARIES = liblustre_support.la
 
 TESTS = lib_test llapi_fid_test group_lock_test llapi_hsm_test \
 	llapi_layout_test
+
+testsdir=@datarootdir@/@PACKAGE_NAME@/tests
+tests_PROGRAMS=$(check_PROGRAMS)
 
 # Support library - Not exported
 liblustre_support_la_SOURCES = support.c support.h
@@ -61,6 +64,7 @@ liblustre_unittest_la_SOURCES = \
 	test_params.c \
 	test_support.c \
 	check_extra.h \
+	lib_test.h \
 	$(top_srcdir)/lib/liblustre.c \
 	$(top_srcdir)/lib/internal.h \
 	$(top_srcdir)/lib/liblustreapi_hsm.c \

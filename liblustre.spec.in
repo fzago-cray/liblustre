@@ -23,6 +23,14 @@ Requires:	%{name} = %{version}
 %description devel
 Development package for %{name}.
 
+%package tests
+Summary:	Test suite for %{name}
+Group:		Applications/File
+Requires:	%{name} = %{version} check
+
+%description tests
+A test suite for %{name}.
+
 %prep
 %setup -q
 
@@ -45,3 +53,8 @@ make %{?_smp_mflags}
 %{_libdir}/%{name}.la
 %{_mandir}/man3/*
 %{_mandir}/man7/*
+
+%files tests
+%defattr(-,root,root)
+%{_datadir}/%{name}/tests/*
+%{_datadir}/%{name}/README.tests

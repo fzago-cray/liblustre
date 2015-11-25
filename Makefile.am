@@ -1,8 +1,11 @@
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = Changelog liblustre.spec.in liblustre.spec GITHASH
+EXTRA_DIST = Changelog liblustre.spec.in liblustre.spec GITHASH README.tests
 
 SUBDIRS = include lib man tests
+
+readmetestsdir=@datarootdir@/@PACKAGE_NAME@/
+readmetests_DATA=README.tests
 
 # Packaging
 rpm_dir=`pwd`/rpms
@@ -20,4 +23,3 @@ srpm: dist
 	mkdir -p $(rpm_dir)/BUILD $(rpm_dir)/SPECS $(rpm_dir)/SRPMS $(rpm_dir)/RPMS
 	rpmbuild $(rpmbuild_opt) --define="_topdir $(rpm_dir)" \
 		--define="_prefix $(prefix)" -ts $(DIST_ARCHIVES)
-
