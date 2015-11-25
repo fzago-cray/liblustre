@@ -23,21 +23,25 @@ lib_test_LDADD = \
 	liblustre_unittest.la ${CHECK_LIBS}
 
 llapi_fid_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+llapi_fid_test_SOURCE = llapi_fid_test.c check_extra.h
 llapi_fid_test_LDADD = \
 	${top_builddir}/lib/liblustre.la \
 	liblustre_support.la ${CHECK_LIBS}
 
 llapi_hsm_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+llapi_hsm_test_SOURCE = llapi_hsm_test.c check_extra.h
 llapi_hsm_test_LDADD = \
 	${top_builddir}/lib/liblustre.la \
 	liblustre_support.la ${CHECK_LIBS}
 
 llapi_layout_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+llapi_layout_test_SOURCE = llapi_layout_test.c check_extra.h
 llapi_layout_test_LDADD = \
 	${top_builddir}/lib/liblustre.la \
 	liblustre_support.la ${CHECK_LIBS}
 
 group_lock_test_CFLAGS = ${CHECK_CFLAGS} -I${top_srcdir}/include
+group_lock_test_SOURCE = group_lock_test.c check_extra.h
 group_lock_test_LDADD = \
 	${top_builddir}/lib/liblustre.la \
 	liblustre_support.la ${CHECK_LIBS}
@@ -56,6 +60,7 @@ liblustre_unittest_la_SOURCES = \
 	test_osts.c \
 	test_params.c \
 	test_support.c \
+	check_extra.h \
 	$(top_srcdir)/lib/liblustre.c \
 	$(top_srcdir)/lib/internal.h \
 	$(top_srcdir)/lib/liblustreapi_hsm.c \
