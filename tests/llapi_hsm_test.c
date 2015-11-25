@@ -281,10 +281,6 @@ START_TEST(test50)
 	ck_assert_msg(rc == 0, "llapi_hsm_state_get_fd failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == 0, "state=%u", hus.hus_states);
 
-	rc = llapi_hsm_state_get_fd(fd, NULL);
-	ck_assert_msg(rc == -EFAULT, "llapi_hsm_state_get_fd error: %s",
-		strerror(-rc));
-
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "close failed: %s", strerror(errno));
 
@@ -292,10 +288,6 @@ START_TEST(test50)
 	rc = llapi_hsm_state_get(testfile, &hus);
 	ck_assert_msg(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == 0, "state=%u", hus.hus_states);
-
-	rc = llapi_hsm_state_get(testfile, NULL);
-	ck_assert_msg(rc == -EFAULT, "llapi_hsm_state_get error: %s",
-		strerror(-rc));
 
 	memset(&hus, 0xaa, sizeof(hus));
 	rc = llapi_hsm_state_get(testfile, &hus);
@@ -445,10 +437,6 @@ START_TEST(test52)
 	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s", strerror(-rc));
 	ck_assert_msg(hca.hca_state, "hca_state=%u", hca.hca_state);
 	ck_assert_msg(hca.hca_action, "hca_state=%u", hca.hca_action);
-
-	rc = llapi_hsm_current_action(testfile, NULL);
-	ck_assert_msg(rc == -EFAULT, "llapi_hsm_current_action failed: %s",
-		strerror(-rc));
 }
 END_TEST
 
