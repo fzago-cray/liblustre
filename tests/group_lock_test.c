@@ -330,6 +330,7 @@ START_TEST(test14)
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
+	free(layout);
 }
 END_TEST
 
