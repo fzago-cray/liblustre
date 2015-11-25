@@ -22,6 +22,8 @@
 #include "../lib/internal.h"
 #include "support.h"
 
+char *lustre_dir;               /* Lustre mountpoint */
+
 START_TEST(ost1) { unittest_ost1(); } END_TEST
 START_TEST(ost2) { unittest_ost2(); } END_TEST
 START_TEST(fid1) { unittest_fid1(); } END_TEST
@@ -67,11 +69,28 @@ static Suite *ost_suite(void)
 	return s;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	int number_failed;
 	Suite *s = ost_suite();
 	SRunner *sr = srunner_create(s);
+	int opt;
+
+	while ((opt = getopt(argc, argv, "d:")) != -1) {
+		switch (opt) {
+		case 'd':
+			lustre_dir = optarg;
+			break;
+		case '?':
+		default:
+			fprintf(stderr, "Unknown option '%c'\n", optopt);
+			fprintf(stderr, "Usage: %s [-d lustre_dir]\n", argv[0]);
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (lustre_dir == NULL)
+		lustre_dir = "/mnt/lustre";
 
 	srunner_run_all(sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed(sr);

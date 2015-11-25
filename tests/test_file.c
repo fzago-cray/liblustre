@@ -16,7 +16,7 @@
 /*
  * Tests FIDs functions.
  *
- * Assumptions: /mnt/lustre exists.
+ * Assumption: lustre is mounted.
  */
 
 #include <errno.h>
@@ -27,9 +27,7 @@
 #include "check_extra.h"
 
 #include "../lib/file.c"
-
-#define FNAME "/mnt/lustre/unittest_fid"
-#define FNAME_OTHER "/mnt/lustre/unittest_fid_other"
+#include "lib_test.h"
 
 /* Test FID functions. */
 void unittest_fid1(void)
@@ -41,12 +39,16 @@ void unittest_fid1(void)
 	struct stat stbuf;
 	ssize_t sret;
 	char buf[10] = { 0, };
+	char fname[PATH_MAX];
+
+	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/* Create a small file, get its FID, and close it. */
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	fd = open(FNAME, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
+	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	sret = write(fd, buf, sizeof(buf));
@@ -88,11 +90,15 @@ void unittest_fid2(void)
 	lustre_fid parent_fid;
 	int rc;
 	char name[PATH_MAX];
+	char fname[PATH_MAX];
+
+	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/*
 	 * On the mountpoint
 	 */
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &mnt_fid);
@@ -107,7 +113,7 @@ void unittest_fid2(void)
 	 */
 
 	/* On a file */
-	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	rc = llapi_fd2fid(fd, &fid);
@@ -160,19 +166,26 @@ void unittest_fid2(void)
 	ck_assert_str_eq(name, "unittest_fid");
 	ck_assert_int_eq(memcmp(&parent_fid, &mnt_fid, sizeof(lustre_fid)), 0);
 
-	rc = unlink(FNAME);
+	rc = unlink(fname);
 	ck_assert(rc == 0);
 
 	if (0) {
 		/* Try with a symlink */
 		/* TODO? this is not supported. */
-		rc = unlink(FNAME);
+		char fname_other[PATH_MAX];
+
+		rc = snprintf(fname_other, sizeof(fname_other),
+			      "%s/unittest_fid_other", lustre_dir);
+		ck_assert_msg(rc > 0 && rc < sizeof(fname_other),
+			      "snprintf failed: %d", rc);
+
+		rc = unlink(fname);
 		ck_assert(rc == 0 || errno == ENOENT);
 
-		rc = unlink(FNAME_OTHER);
+		rc = unlink(fname_other);
 		ck_assert(rc == 0 || errno == ENOENT);
 
-		rc = symlink(FNAME_OTHER, FNAME);
+		rc = symlink(fname_other, fname);
 		ck_assert_int_eq(rc, 0);
 
 		rc = llapi_fid2parent(lfsh, &fid, 0, &parent_fid, name, sizeof(name));
@@ -190,9 +203,13 @@ void unittest_llapi_fid2path(void)
 	int rc;
 	char path[2*PATH_MAX];
 	int fd;
+	char fname[PATH_MAX];
+
+	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/* On the mountpoint */
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &fid);
@@ -205,7 +222,7 @@ void unittest_llapi_fid2path(void)
 	ck_assert_int_eq(rc, 0);
 
 	/* On a file */
-	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	rc = llapi_fd2fid(fd, &fid);
@@ -213,7 +230,7 @@ void unittest_llapi_fid2path(void)
 
 	close(fd);
 
-	rc = llapi_path2fid(FNAME, &fid);
+	rc = llapi_path2fid(fname, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_fid2path(lfsh, &fid, path, 0, NULL, NULL);
@@ -234,7 +251,7 @@ void unittest_llapi_fid2path(void)
 	rc = llapi_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
-	rc = unlink(FNAME);
+	rc = unlink(fname);
 	ck_assert(rc == 0);
 
 	llapi_close_fs(lfsh);
@@ -247,11 +264,15 @@ void unittest_mdt_index(void)
 	lustre_fid fid;
 	int rc;
 	int fd;
+	char fname[PATH_MAX];
 
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
+
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	rc = llapi_fd2fid(fd, &fid);
@@ -275,13 +296,17 @@ void unittest_llapi_data_version_by_fd(void)
 	char buf[10] = { 0, };
 	uint64_t dv;
 	uint64_t old_dv;
+	char fname[PATH_MAX];
+
+	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/* Create a small file, write several times and check that dv
 	 * differs. */
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	fd = open(FNAME, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
+	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	rc = llapi_data_version_by_fd(fd, 0, &dv);

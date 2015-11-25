@@ -16,8 +16,8 @@
 
 /* Tests OSTs functions.
  *
- * Assumptions: /mnt/lustre exists, pool lustre.mypool exists and is
- * not empty.
+ * Assumptions: lustre is mounted, pool mypool exists and has at least
+ * one OST in it.
  */
 
 #include <limits.h>
@@ -27,6 +27,7 @@
 #include "check_extra.h"
 
 #include "../lib/osts.c"
+#include "lib_test.h"
 
 /* Test find_poolpath */
 void unittest_ost1(void)
@@ -35,7 +36,7 @@ void unittest_ost1(void)
 	char poolpath[PATH_MAX];
 	int rc;
 
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid pool */
@@ -64,7 +65,7 @@ void unittest_ost2(void)
 	int rc;
 	struct lustre_ost_info *info;
 
-	rc = llapi_open_fs("/mnt/lustre", &lfsh);
+	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid, non empty pool */

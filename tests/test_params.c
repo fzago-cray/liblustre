@@ -16,7 +16,7 @@
 /*
  * Tests some misc functions.
  *
- * Assumptions: /mnt/lustre exists.
+ * Assumptions: lustre is mounted.
  */
 
 #include <errno.h>
@@ -27,8 +27,7 @@
 #include "check_extra.h"
 
 #include "../lib/params.c"
-
-#define FNAME "/mnt/lustre/unittest_params"
+#include "lib_test.h"
 
 /* Test read_procfs_value */
 void unittest_read_procfs_value(void)
@@ -54,8 +53,12 @@ void unittest_param_lmv(void)
 	int fd;
 	int rc;
 	char *value;
+	char path[PATH_MAX];
 
-	fd = open(FNAME, O_CREAT | O_TRUNC, S_IRWXU);
+	rc = snprintf(path, sizeof(path), "%s/unittest_params", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(path), "snprintf failed: %d", rc);
+
+	fd = open(path, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
 	/* Read an uuid.
@@ -68,4 +71,5 @@ void unittest_param_lmv(void)
 	free(value);
 
 	close(fd);
+	unlink(path);
 }
