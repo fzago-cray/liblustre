@@ -64,6 +64,7 @@ void unittest_ost2(void)
 	struct lustre_fs_h *lfsh;
 	int rc;
 	struct lustre_ost_info *info;
+	char ostuuid[1000];
 
 	rc = llapi_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
@@ -74,7 +75,9 @@ void unittest_ost2(void)
 	ck_assert_ptr_ne(info, NULL);
 	ck_assert_int_gt(info->count, 0);
 
-	ck_assert_int_eq(strncmp(info->osts[0], "lustre-OST", 10), 0);
+	rc = snprintf(ostuuid, sizeof(ostuuid), "%s-OST", llapi_get_fsname(lfsh));
+	ck_assert_msg(rc > 0 && rc < sizeof(ostuuid), "snprintf failed: %d", rc);
+	ck_assert_int_eq(strncmp(info->osts[0], ostuuid, strlen(ostuuid)), 0);
 
 	free_ost_info(&info);
 	ck_assert_ptr_eq(info, NULL);
