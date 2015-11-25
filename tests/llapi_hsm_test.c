@@ -485,6 +485,7 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 	hur->hur_request.hr_itemcount = 1;
 	hur->hur_request.hr_data_len = 0;
 	hur->hur_user_item[0].hui_extent.length = -1;
+	hur->hur_user_item[0].hui_extent.offset = 0;
 
 	rc = llapi_fd2fid(fd, &hur->hur_user_item[0].hui_fid);
 	ck_assert_msg(rc == 0, "llapi_fd2fid failed: %s", strerror(-rc));
