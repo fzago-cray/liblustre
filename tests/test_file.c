@@ -77,6 +77,8 @@ void unittest_fid1(void)
 	ck_assert_int_eq(fd, -1);
 	ck_assert_int_eq(errno, ENOENT);
 
+	unlink(fname);
+
 	llapi_close_fs(lfsh);
 }
 
@@ -279,6 +281,7 @@ void unittest_mdt_index(void)
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
+	unlink(fname);
 
 	rc = llapi_get_mdt_index_by_fid(lfsh, &fid);
 	ck_assert_int_eq(rc, 0);
@@ -327,6 +330,7 @@ void unittest_llapi_data_version_by_fd(void)
 	ck_assert_int_ne(dv, old_dv);
 
 	close(fd);
+	unlink(fname);
 
 	llapi_close_fs(lfsh);
 
