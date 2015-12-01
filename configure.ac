@@ -53,6 +53,7 @@ fi
 
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
 AX_VALGRIND_CHECK
+AC_CHECK_HEADERS(attr/xattr.h, , AC_MSG_ERROR([libattr-devel / libattr1-dev must be installed]))
 
 # Output files
 AC_CONFIG_FILES([Makefile include/Makefile lib/Makefile lib/liblustre.pc
