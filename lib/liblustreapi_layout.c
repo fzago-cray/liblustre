@@ -378,7 +378,8 @@ struct llapi_layout *llapi_layout_alloc(unsigned int num_stripes)
  * \retval true		the \a lum_size is too small
  * \retval false	the \a lum_size is large enough
  */
-static bool llapi_layout_lum_truncated(struct lov_user_md *lum, size_t lum_size)
+static bool llapi_layout_lum_truncated(const struct lov_user_md *lum,
+				       size_t lum_size)
 {
 	uint32_t magic;
 
@@ -403,7 +404,8 @@ static bool llapi_layout_lum_truncated(struct lov_user_md *lum, size_t lum_size)
  *
  * \retval		number of elements in array lum->lmm_objects
  */
-static int llapi_layout_objects_in_lum(struct lov_user_md *lum, size_t lum_size)
+static int llapi_layout_objects_in_lum(const struct lov_user_md *lum,
+				       size_t lum_size)
 {
 	uint32_t magic;
 	size_t base_size;
@@ -423,6 +425,37 @@ static int llapi_layout_objects_in_lum(struct lov_user_md *lum, size_t lum_size)
 		return 0;
 	else
 		return (lum_size - base_size) / sizeof(lum->lmm_objects[0]);
+}
+
+/**
+ * Return a layout from a given lustre.lov extended attribute.
+ *
+ * \param[in] lum	the extended lustre.lov attribute
+ * \param[in] lum_size	size of the lum
+ * \param[out] layout   returned layout. Set to NULL on error.
+ *
+ * \retval    0 on success, or negative errno on error.
+ */
+int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
+			   struct llapi_layout **layout)
+{
+	int object_count;
+
+	/* Return an error if we got a partial layout. */
+	if (llapi_layout_lum_truncated(lum, lum_len)) {
+		*layout = NULL;
+		return -EINVAL;
+	}
+
+	object_count = llapi_layout_objects_in_lum(lum, lum_len);
+
+	if (lum->lmm_magic == __bswap_32(LOV_MAGIC_V1) ||
+	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
+		llapi_layout_swab_lov_user_md(lum, object_count);
+
+	*layout = llapi_layout_from_lum(lum, object_count);
+
+	return *layout ? 0 : -ENOMEM;
 }
 
 /**

@@ -1209,6 +1209,82 @@ START_TEST(test28)
 }
 END_TEST
 
+/*
+ * Test lus_lovxattr_to_layout.
+ *
+ * The extended attribute in this test has been created with the
+ * following commands:
+ *
+ *   # lctl pool_new lustre.pooltest
+ *   # lctl pool_add lustre.pooltest OST0000 OST0001
+ *   # lfs setstripe /mnt/lustre/testfile.bin --pool=pooltest --stripe-size 128k --stripe-count=2
+ *
+ * The resulting striping info is:
+ *
+ *   # lfs getstripe /mnt/lustre/testfile.bin
+ *   /mnt/lustre/testfile.bin
+ *   lmm_stripe_count:   2
+ *   lmm_stripe_size:    131072
+ *   lmm_pattern:        1
+ *   lmm_layout_gen:     0
+ *   lmm_stripe_offset:  0
+ *   lmm_pool:           pooltest
+ *   	obdidx		 objid		 objid		 group
+ *   	     0	          2567	        0xa07	             0
+ *   	     1	          2502	        0x9c6	             0
+ *
+ * The lustre.lov has been retrieve with:
+ *
+ *   # getfattr -n lustre.lov /mnt/lustre/testfile.bin -e hex
+ */
+START_TEST(test100)
+{
+	unsigned char _lum[] = {
+		0xd0, 0x0b, 0xd3, 0x0b, 0x01, 0x00, 0x00, 0x00,
+		0x32, 0x2b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x04, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00,
+		0x70, 0x6f, 0x6f, 0x6c, 0x74, 0x65, 0x73, 0x74,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x07, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0xc6, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
+	struct lov_user_md *lum = (struct lov_user_md *)_lum;
+	size_t lum_len = sizeof(_lum);
+	int rc;
+	struct llapi_layout *layout;
+	uint64_t count;
+	uint64_t size;
+	char mypool[LOV_MAXPOOLNAME + 1];
+	uint64_t pattern;
+
+	rc = lus_lovxattr_to_layout(lum, lum_len, &layout);
+	ck_assert_msg(rc == 0,
+		      "lus_lovxattr_to_layout failed: %s", strerror(-rc));
+
+	rc = llapi_layout_stripe_count_get(layout, &count);
+	ck_assert_msg(count == 2, "%llu != 2", (unsigned long long)count);
+
+	rc = llapi_layout_stripe_size_get(layout, &size);
+	ck_assert_msg(rc == 0, "llapi_layout_stripe_size_get failed: %s",
+		      strerror(errno));
+	ck_assert_msg(size == 131072, "%llu != 131072", size);
+
+	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "errno = %d", errno);
+	ck_assert_str_eq(mypool, "pooltest");
+
+	/* Pattern 1 is LOV_PATTERN_RAID0, which is LLAPI_LAYOUT_RAID0. */
+	rc = llapi_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "errno = %d", errno);
+	ck_assert_msg(pattern == LLAPI_LAYOUT_RAID0, "pattern = %llx",
+		      (unsigned long long)pattern);
+}
+END_TEST
+
 #define ADD_TEST(name) {			\
 	tc = tcase_create(#name);		\
 	tcase_add_test(tc, name);		\
@@ -1295,6 +1371,7 @@ int main(int argc, char *argv[])
 	ADD_TEST(test27);
 #endif
 	ADD_TEST(test28);
+	ADD_TEST(test100);
 
 	sr = srunner_create(s);
 	srunner_run_all(sr, CK_ENV);

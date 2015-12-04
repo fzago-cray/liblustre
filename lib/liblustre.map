@@ -61,6 +61,7 @@
 		llapi_path2fid;
 		llapi_path2parent;
 		llapi_stat_by_fid;
+		lus_lovxattr_to_layout;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
