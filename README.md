@@ -168,6 +168,11 @@ section should help porting.
     uint64_t instead of an int.
 -   hai_first and hai_next are now functions called llapi_hsm_hai_first
     and llapi_hsm_hai_next
+-   llapi_hsm_import takes its striping information in a layout
+    struture. It now returns a file descriptor which can be used by
+    the caller to set the extended attributes. The fid parameter is no
+    longer needed since it can be retrieved by the caller through the
+    fd.
 
 ### logging
 

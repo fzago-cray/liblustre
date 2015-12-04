@@ -1435,6 +1435,7 @@ static int ct_import_one(const char *src, const char *dst)
 	lustre_fid	fid;
 	struct stat	st;
 	int		rc;
+	int		dst_fd;
 
 	CT_TRACE("importing '%s' from '%s'", dst, src);
 
@@ -1447,13 +1448,18 @@ static int ct_import_one(const char *src, const char *dst)
 	if (opt.o_dry_run)
 		return 0;
 
-	rc = llapi_hsm_import(dst,
-			      opt.o_archive_cnt ? opt.o_archive_id[0] : 0,
-			      &st, LLAPI_LAYOUT_DEFAULT, LLAPI_LAYOUT_DEFAULT,
-			      LLAPI_LAYOUT_DEFAULT, LLAPI_LAYOUT_DEFAULT,
-			      NULL, &fid);
+	rc = llapi_hsm_import(dst, opt.o_archive_cnt ? opt.o_archive_id[0] : 0,
+			      &st, NULL);
 	if (rc < 0) {
 		CT_ERROR(rc, "cannot import '%s' from '%s'", dst, src);
+		return rc;
+	}
+	dst_fd = rc;
+
+	rc = llapi_fd2fid(dst_fd, &fid);
+	close(dst_fd);
+	if (rc != 0) {
+		CT_ERROR(rc, "cannot get fid for imported file '%s'", dst);
 		return rc;
 	}
 

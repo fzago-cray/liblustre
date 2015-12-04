@@ -382,9 +382,7 @@ int llapi_hsm_action_get_dfid(const struct hsm_copyaction_private *hcp,
 			      lustre_fid *fid);
 int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp);
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
-		     uint64_t stripe_size, uint64_t stripe_offset,
-		     uint64_t stripe_count, uint64_t stripe_pattern,
-		     const char *pool_name, lustre_fid *newfid);
+		     struct llapi_layout *layout);
 const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *hal);
 const struct hsm_action_item *llapi_hsm_hai_next(const struct hsm_action_item *hai);
 

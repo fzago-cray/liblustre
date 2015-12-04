@@ -792,72 +792,49 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
 /**
  * Import an existing hsm-archived file into Lustre.
  *
- * Caller must access file by (returned) newfid value from now on.
- *
  * \param dst      path to Lustre destination (e.g. /mnt/lustre/my/file).
  * \param archive  archive number.
  * \param st       struct stat buffer containing file ownership, perm, etc.
- * \param stripe_* Striping options.  Currently ignored, since the restore
- *                 operation will set the striping.  In V2, this striping might
- *                 be used.
- * \param newfid[out] Filled with new Lustre fid.
+ * \param layout   file layout. Can be NULL to select a default one.
+ *
+ * \retval    open fd of the newly imported file on success
+ * \retval    a negative errno
  */
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
-		     uint64_t stripe_size, uint64_t stripe_offset,
-		     uint64_t stripe_count, uint64_t stripe_pattern,
-		     const char *pool_name, lustre_fid *newfid)
+		     struct llapi_layout *layout)
 {
 	struct hsm_user_import	 hui;
-	int			 fd;
+	int			 fd = -1;
 	int			 rc = 0;
-	struct llapi_layout *layout;
+	struct llapi_layout	*def_layout = NULL;
 
-        if (stripe_pattern == LLAPI_LAYOUT_DEFAULT)
-                stripe_pattern = LLAPI_LAYOUT_RAID0;
-
-	/* Create a non-striped file */
-	layout = llapi_layout_alloc(0);
+	/* We need a layout. */
 	if (layout == NULL) {
-		log_msg(LLAPI_MSG_ERROR, ENOMEM,
-			"cannot allocate a new layout for import");
-		return -1;
+		def_layout = llapi_layout_alloc(0);
+
+		if (def_layout == NULL) {
+			log_msg(LLAPI_MSG_ERROR, ENOMEM,
+				"cannot allocate a new layout for import");
+			return -EINVAL;
+		}
+		layout = def_layout;
 	}
 
-	if (llapi_layout_stripe_size_set(layout, stripe_size) != 0 ||
-	    llapi_layout_stripe_count_set(layout, stripe_count) != 0 ||
-	    llapi_layout_pattern_set(layout, stripe_pattern) != 0 ||
-	    llapi_layout_pattern_flags_set(layout, LLAPI_LAYOUT_RELEASED) != 0 ||
-	    llapi_layout_ost_index_set(layout, 0, stripe_offset) != 0) {
+	if (llapi_layout_pattern_flags_set(layout, LLAPI_LAYOUT_RELEASED) != 0) {
 		log_msg(LLAPI_MSG_ERROR, EINVAL,
 			"invalid striping information for importing '%s'",
 			dst);
-		rc = -1;
-		goto free_layout;
+		rc = -EINVAL;
+		goto out;
 	}
 
-	if (pool_name != NULL &&
-	    llapi_layout_pool_name_set(layout, pool_name) != 0) {
-		log_msg(LLAPI_MSG_ERROR, EINVAL,
-			"invalid pool name for importing '%s'",	dst);
-		rc = -1;
-		goto free_layout;
-	}
-
-	fd = llapi_layout_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, layout);
+	fd = llapi_layout_file_open(dst, O_CREAT | O_WRONLY,
+				    st->st_mode, layout);
 	if (fd < 0) {
 		log_msg(LLAPI_MSG_ERROR, fd,
 			    "cannot create '%s' for import", dst);
 		rc = fd;
-		goto free_layout;
-	}
-
-	/* Get the new fid in Lustre. Caller needs to use this fid
-	   from now on. */
-	rc = llapi_fd2fid(fd, newfid);
-	if (rc != 0) {
-		log_msg(LLAPI_MSG_ERROR, rc,
-			    "cannot get fid of '%s' for import", dst);
-		goto out_unlink;
+		goto out;
 	}
 
 	hui.hui_uid = st->st_uid;
@@ -873,17 +850,20 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	if (rc != 0) {
 		rc = -errno;
 		log_msg(LLAPI_MSG_ERROR, rc, "cannot import '%s'", dst);
-		goto out_unlink;
+		unlink(dst);
+		goto out;
 	}
 
-out_unlink:
-	if (fd >= 0)
-		close(fd);
-	if (rc)
-		unlink(dst);
-free_layout:
-	llapi_layout_free(layout);
-	return rc;
+out:
+	llapi_layout_free(def_layout);
+
+	if (rc) {
+		if (fd >= 0)
+			close(fd);
+		return rc;
+	} else {
+		return fd;
+	}
 }
 
 /**
