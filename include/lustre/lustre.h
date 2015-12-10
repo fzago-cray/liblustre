@@ -339,8 +339,6 @@ struct hsm_action_item {
 	char       hai_data[0];
 } __attribute__((packed));
 
-struct hsm_user_request *llapi_hsm_user_request_alloc(int itemcount,
-						      int data_len);
 int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 		      const struct hsm_user_request *request);
 int llapi_hsm_current_action(const char *path,
@@ -351,6 +349,22 @@ int llapi_hsm_state_set_fd(int fd, __u64 setmask, __u64 clearmask,
 			   __u32 archive_id);
 int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
 			__u32 archive_id);
+
+/**
+ * Helper to return the length needed for an HSM user request.
+ *
+ * \param itemcount    number of items in the request
+ * \param data_len     length of extra data
+ *
+ * \return the length of memory to allocate
+ */
+static inline size_t llapi_hsm_user_request_len(unsigned int itemcount,
+						unsigned int data_len)
+{
+	return sizeof(struct hsm_user_request) +
+		sizeof(struct hsm_user_item) * itemcount +
+		data_len;
+}
 
 /*
  * HSM copytool interface.

@@ -464,16 +464,13 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 		      strerror(-rc));
 
 	/* Create and send the archive request. */
-	hur = llapi_hsm_user_request_alloc(1, 0);
-	ck_assert_msg(hur != NULL, "llapi_hsm_user_request_alloc returned NULL");
+	hur = calloc(1, llapi_hsm_user_request_len(1, 0));
+	ck_assert_msg(hur != NULL, "calloc returned NULL");
 
 	hur->hur_request.hr_action = HUA_ARCHIVE;
 	hur->hur_request.hr_archive_id = 1;
-	hur->hur_request.hr_flags = 0;
 	hur->hur_request.hr_itemcount = 1;
-	hur->hur_request.hr_data_len = 0;
 	hur->hur_user_item[0].hui_extent.length = -1;
-	hur->hur_user_item[0].hui_extent.offset = 0;
 
 	rc = llapi_fd2fid(fd, &hur->hur_user_item[0].hui_fid);
 	ck_assert_msg(rc == 0, "llapi_fd2fid failed: %s", strerror(-rc));

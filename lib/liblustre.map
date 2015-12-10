@@ -32,7 +32,6 @@
 		llapi_hsm_state_get_fd;
 		llapi_hsm_state_set;
 		llapi_hsm_state_set_fd;
-		llapi_hsm_user_request_alloc;
 		llapi_init;
 		llapi_initialized;
 		llapi_layout_alloc;

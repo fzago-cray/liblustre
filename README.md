@@ -163,7 +163,7 @@ section should help porting.
     can return -EWOULDBLOCK so the caller should handle that
     condition.
 -   llapi_get_data_version is now called llapi_data_version_by_fd and
-    the last two parmeters are swapped, to put the result last.
+    the last two parameters are swapped, to put the result last.
 -   the gid given to llapi_group_lock / llapi_group_unlock is now an
     uint64_t instead of an int.
 -   hai_first and hai_next are now functions called llapi_hsm_hai_first
@@ -173,6 +173,12 @@ section should help porting.
     the caller to set the extended attributes. The fid parameter is no
     longer needed since it can be retrieved by the caller through the
     fd.
+-   llapi_hsm_user_request_alloc is gone. The caller can replace
+      hur = llapi_hsm_user_request_alloc(x, y)
+    with
+      hur = malloc(llapi_hsm_user_request_len(x, y))
+    This is more flexible as the caller can reuse the hur, resetting
+    it between calls to llapi_hsm_request.
 
 ### logging
 

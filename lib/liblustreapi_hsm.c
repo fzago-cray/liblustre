@@ -992,30 +992,13 @@ int llapi_hsm_current_action(const char *path, struct hsm_current_action *hca)
 }
 
 /**
- * Allocate a hsm_user_request with the specified carateristics.
- * This structure should be freed with free().
- *
- * \return an allocated structure on success, NULL otherwise.
- */
-struct hsm_user_request *llapi_hsm_user_request_alloc(int itemcount,
-						      int data_len)
-{
-	int len = 0;
-
-	len += sizeof(struct hsm_user_request);
-	len += sizeof(struct hsm_user_item) * itemcount;
-	len += data_len;
-
-	return (struct hsm_user_request *)malloc(len);
-}
-
-/**
  * Send a HSM request to Lustre, described in \param request.
  *
- * \param path	  Fullpath to the file to operate on.
- * \param request The request, allocated with llapi_hsm_user_request_alloc().
+ * \param path	     Fullpath to the file to operate on.
+ * \param request    The request, of at least llapi_hsm_user_request_len
+ *                   bytes long.
  *
- * \return 0 on success, an error code otherwise.
+ * \return 0 on success, or a negative errno on error.
  */
 int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 		      const struct hsm_user_request *request)
@@ -1023,10 +1006,8 @@ int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 	int rc;
 
 	rc = ioctl(lfsh->mount_fd, LL_IOC_HSM_REQUEST, request);
-	/* If error, save errno value */
-	rc = rc ? -errno : 0;
 
-	return rc;
+	return rc ? -errno : 0;
 }
 
 /**
