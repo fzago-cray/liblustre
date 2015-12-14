@@ -26,6 +26,11 @@
  * Author: Ned Bass <bass6@llnl.gov>
  */
 
+/**
+ * @file
+ * @brief Interactions with the layout of Lustre files
+ */
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>

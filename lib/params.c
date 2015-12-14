@@ -13,7 +13,10 @@
  * Lesser General Public License for more details.
  */
 
-/* Read values from procfs. */
+/**
+ * @file
+ * @brief Read values from procfs.
+ */
 
 #include <errno.h>
 #include <fcntl.h>
@@ -99,5 +102,3 @@ int get_param_lmv(int fd, const char *param, char **value)
 
 	return read_procfs_value("lmv", uuid.uuid, param, value);
 }
-
-

@@ -1,5 +1,10 @@
 /* Public API for liblustre. */
 
+/**
+ * @file
+ * @brief Lustre public header
+ */
+
 #ifndef _LUSTRE_H_
 #define _LUSTRE_H_
 
@@ -319,16 +324,18 @@ struct hsm_user_request {
 	struct hsm_user_item	hur_user_item[0];
 } __attribute__((packed));
 
-/* Header for HSM action items. A series of action item follow the
- * header, and each is 8 bytes aligned. */
+/**
+ * Header for HSM action items. A series of action item follow the
+ * header, and each is 8 bytes aligned.
+ */
 struct hsm_action_list {
-	__u32 hal_version;
-	__u32 hal_count;
+	__u32 hal_version;	/*!< Version */
+	__u32 hal_count;	/*!< Number of action items */
 	__u64 hal_compound_id;
 	__u64 hal_flags;
-	__u32 hal_archive_id;
+	__u32 hal_archive_id;	/*!< Archive id */
 	__u32 padding1;
-	char  hal_fsname[0];
+	char  hal_fsname[0];	/*!< Lustre file system name */
 } __attribute__((packed));
 
 struct hsm_action_item {

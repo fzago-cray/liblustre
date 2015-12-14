@@ -13,6 +13,11 @@
  * Lesser General Public License for more details.
  */
 
+/**
+ * @file
+ * @brief Logging interface for liblustre error messages
+ */
+
 #include <errno.h>
 #include <stdlib.h>
 

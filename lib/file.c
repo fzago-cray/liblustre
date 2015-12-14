@@ -13,6 +13,11 @@
  * Lesser General Public License for more details.
  */
 
+/**
+ * @file
+ * @brief File related functions
+ */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

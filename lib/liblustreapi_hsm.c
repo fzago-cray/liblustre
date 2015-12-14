@@ -32,6 +32,11 @@
  * Author: Henri Doreau <henri.doreau@cea.fr>
  */
 
+/**
+ * @file
+ * @brief Interfaces to HSM functions
+ */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif

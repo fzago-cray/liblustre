@@ -13,6 +13,11 @@
  * Lesser General Public License for more details.
  */
 
+/**
+ * @file
+ * @brief OSTs related interfaces
+ */
+
 #include <errno.h>
 #include <glob.h>
 #include <limits.h>

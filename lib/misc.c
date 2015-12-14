@@ -13,7 +13,10 @@
  * Lesser General Public License for more details.
  */
 
-/* Miscellaneous functions. */
+/**
+ * @file
+ * @brief Miscellaneous functions.
+ */
 
 #include <errno.h>
 #include <limits.h>
@@ -59,7 +62,8 @@ bool lus_initialized;
  * loaded with dlopen(), so the init function has to be called
  * manually in that case.
  */
-__attribute__ ((constructor)) void lus_init(void)
+void llapi_init(void)  __attribute__ ((constructor));
+void llapi_init(void)
 {
 	unsigned int	seed;
 	struct timeval	tv;

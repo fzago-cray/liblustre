@@ -13,6 +13,11 @@
  * Lesser General Public License for more details.
  */
 
+/**
+ * @file
+ * @brief Interfaces to manage a Lustre filesystem
+ */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

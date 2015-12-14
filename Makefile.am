@@ -23,3 +23,6 @@ srpm: dist
 	mkdir -p $(rpm_dir)/BUILD $(rpm_dir)/SPECS $(rpm_dir)/SRPMS $(rpm_dir)/RPMS
 	rpmbuild $(rpmbuild_opt) --define="_topdir $(rpm_dir)" \
 		--define="_prefix $(prefix)" -ts $(DIST_ARCHIVES)
+
+docs:
+	doxygen
