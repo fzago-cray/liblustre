@@ -51,9 +51,10 @@ void llapi_close_fs(struct lustre_fs_h *lfsh)
 /**
  * Register a new Lustre filesystem
  *
- * \param path   Lustre filesystem mountpoint
+ * \param[in]  mount_path   Lustre filesystem mountpoint
+ * \param[out] lfsh	    An opaque handle
  *
- * \retval       An opaque handle, or NULL if an error occurred.
+ * \retval     An opaque handle, or NULL if an error occurred.
  */
 int llapi_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
 {
@@ -161,7 +162,14 @@ fail:
 	return rc;
 }
 
-/* Accessor to return the Lustre filesystem name of an opened Lustre handle. */
+/**
+ * Accessor to return the Lustre filesystem name of an opened Lustre
+ * handle.
+ *
+ * \param lfsh	An opaque handle returned by llapi_open_fs()
+ *
+ * \retval      The Lustre filesystem name. Cannot be NULL.
+ */
 const char *llapi_get_fsname(const struct lustre_fs_h *lfsh)
 {
 	return lfsh->fs_name;

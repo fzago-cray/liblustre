@@ -140,6 +140,7 @@ static struct llapi_layout *__llapi_layout_alloc(unsigned int num_stripes)
  * The caller is responsible for freeing the returned pointer.
  *
  * \param[in] lum	LOV user metadata structure to copy data from
+ * \param[in] object_count  number of objects in the layout
  *
  * \retval		valid llapi_layout pointer on success
  * \retval		NULL if memory allocation fails
@@ -430,9 +431,9 @@ static int llapi_layout_objects_in_lum(const struct lov_user_md *lum,
 /**
  * Return a layout from a given lustre.lov extended attribute.
  *
- * \param[in] lum	the extended lustre.lov attribute
- * \param[in] lum_size	size of the lum
- * \param[out] layout   returned layout. Set to NULL on error.
+ * \param[in]  lum	 the extended lustre.lov attribute
+ * \param[in]  lum_len	 size of the lum
+ * \param[out] layout    returned layout. Set to NULL on error.
  *
  * \retval    0 on success, or negative errno on error.
  */
@@ -662,8 +663,8 @@ struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
 /**
  * Get the layout for the file with FID \a fidstr in filesystem \a lustre_dir.
  *
- * \param[in] lustre_dir	path within Lustre filesystem containing \a fid
- * \param[in] fid		Lustre identifier of file to get layout for
+ * \param[in] lfsh	  An opaque handle returned by llapi_open_fs()
+ * \param[in] fid	  Lustre identifier of file to get layout for
  *
  * \retval	valid llapi_layout pointer on success
  * \retval	NULL if an error occurs
@@ -937,12 +938,12 @@ int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
  *
  * Stripes are indexed starting from zero.
  *
- * \param[in] layout		layout to get index from
- * \param[in] stripe_number	stripe number to get index for
- * \param[out] index		integer to store index in
+ * \param[in]   layout	       Layout to get index from
+ * \param[in]   stripe_number  Stripe number to get index for
+ * \param[out]  idx	       Integer to store index in
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	-1 or error, with errno set
  */
 int llapi_layout_ost_index_get(const struct llapi_layout *layout,
 			       uint64_t stripe_number, uint64_t *idx)

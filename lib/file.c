@@ -27,9 +27,9 @@
 /**
  * Open a file given its FID.
  *
- * \param[in]  lfsh   an opened Lustre fs opaque handle
- * \param[in]  fid    the request fid, contained in the above Lustre fs
- * \param[in]  flags  the open flags. See open(2)
+ * \param[in]  lfsh        an opened Lustre fs opaque handle
+ * \param[in]  fid         the request fid, contained in the above Lustre fs
+ * \param[in]  open_flags  the open flags. See open(2)
  *
  * \retval   a 0 or positive file descriptor on success
  * \retval   a negative errno on error
@@ -270,8 +270,8 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
  * \param[in]   fid            the FID of the file / directory
  * \param[out]  path           the requested path
  * \param[in]   path_len       the length of path
- * \param[in][out]   recno     may be NULL
- * \param[in][out]   linkno    which name to return; may be NULL
+ * \param[in,out]   recno     may be NULL
+ * \param[in,out]   linkno    which name to return; may be NULL
  *
  * \retval    0 on success
  * \retval    a negative errno on error.
@@ -320,14 +320,14 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
  * Open an anonymous file. That file will be destroyed by Lustre when
  * the last reference to it is closed.
  *
- * \param  lfsh[in]          an opaque handle returned by llapi_open_fs()
- * \param  parent_fid[in]    the FID of a directory into which the file must be
+ * \param[in]  lfsh          an opaque handle returned by llapi_open_fs()
+ * \param[in]  parent_fid    the FID of a directory into which the file must be
  *                           created.
- * \param  mdt_idx[in]       the MDT index onto which create the file. To use a
+ * \param[in]  mdt_idx       the MDT index onto which create the file. To use a
  *                           default MDT, set it to -1.
- * \param  open_flags[in]    open flags, see open(2)
- * \param  mode[in]          open mode, see open(2)
- * \param  layout[in]        striping information. If it is NULL, then
+ * \param[in]  open_flags    open flags, see open(2)
+ * \param[in]  mode          open mode, see open(2)
+ * \param[in]  layout        striping information. If it is NULL, then
  *                           the default for the directory is used.
  *
  * \retval   0 on success

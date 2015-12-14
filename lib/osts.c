@@ -23,15 +23,17 @@
 
 #include "internal.h"
 
-/**
+/*
  * Returns the path to the pools for a filesystem.
  * eg: /proc/fs/lustre/lov/lustre-MDT0000-mdtlov/pools/
  *
- * \param path[out]    the path to the pool
- * \param pathlen[in]  length of path
+ * \param[in]   lfsh	 An opaque handle returned by llapi_open_fs()
+ * \param[in]   poolname  Name of the pool
+ * \param[out]  path     The path to the pool
+ * \param[in]   pathlen  Length of path
  *
- * \retval 0           on success
- * \retval -EINVAL     if the path doesn't exist
+ * \retval 0 on success
+ * \retval -EINVAL if the path doesn't exist
  */
 static int find_poolpath(const struct lustre_fs_h *lfsh, const char *poolname,
 			 char *path, size_t pathlen)

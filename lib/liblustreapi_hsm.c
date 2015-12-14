@@ -295,12 +295,14 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
 }
 
 
-/** Register a copytool
- * \param[out] priv		Opaque private control structure
- * \param mnt			Lustre filesystem mount point
- * \param archive_count		Number of valid archive IDs in \a archives
- * \param archives		Which archive numbers this copytool is
- *				responsible for
+/**
+ * Register a copytool
+ *
+ * \param[in]   lfsh      An opened Lustre fs opaque handle
+ * \param[out]  priv	  Opaque private control structure
+ * \param[in]   archive_count  Number of valid archive IDs in \a archives
+ * \param[in]   archives  Which archive numbers this copytool is
+ *			  responsible for
  *
  * \retval 0 on success.
  * \retval -errno on error.
@@ -505,11 +507,13 @@ out:
 	return rc;
 }
 
-/** Create the destination volatile file for a restore operation.
+/**
+ * Create the destination volatile file for a restore operation.
  *
- * \param hcp        Private copyaction handle.
- * \param mdt_index  MDT index where to create the volatile file.
- * \param flags      Volatile file creation flags.
+ * \param hcp         Private copyaction handle.
+ * \param mdt_index   MDT index where to create the volatile file.
+ * \param open_flags  Volatile file creation flags.
+ *
  * \return 0 on success.
  */
 static int create_restore_volatile(struct hsm_copyaction_private *hcp,
@@ -558,21 +562,22 @@ err_cleanup:
 	return rc;
 }
 
-/** Start processing an HSM action.
+/**
+ * Start processing an HSM action.
  * Should be called by copytools just before starting handling a request.
  * It could be skipped if copytool only want to directly report an error,
  * \see llapi_hsm_action_end().
  *
- * \param hcp                Opaque action handle to be passed to
- *                           llapi_hsm_action_progress and llapi_hsm_action_end.
- * \param ct                 Copytool handle acquired at registration.
- * \param hai                The hsm_action_item describing the request.
- * \param restore_mdt_index  On restore: MDT index where to create the volatile
- *                           file. Use -1 for default.
- * \param restore_open_flags On restore: volatile file creation mode. Use
- *                           O_LOV_DELAY_CREATE to manually set the LOVEA
- *                           afterwards.
- * \param is_error           Whether this call is just to report an error.
+ * \param[out] phcp     Opaque action handle to be passed to
+ *                      llapi_hsm_action_progress and llapi_hsm_action_end.
+ * \param[in] ct        Copytool handle acquired at registration.
+ * \param[in] hai       The hsm_action_item describing the request.
+ * \param[in] restore_mdt_index   On restore: MDT index where to create
+ *                      the volatile file. Use -1 for default.
+ * \param[in] restore_open_flags  On restore: volatile file creation mode. Use
+ *                      O_LOV_DELAY_CREATE to manually set the LOVEA
+ *                      afterwards.
+ * \param[in] is_error  Whether this call is just to report an error.
  *
  * \return 0 on success.
  */
@@ -628,14 +633,15 @@ err_out:
 	return rc;
 }
 
-/** Terminate an HSM action processing.
+/**
+ * Terminate an HSM action processing.
  * Should be called by copytools just having finished handling the request.
- * \param hdl[in,out]  Handle returned by llapi_hsm_action_start.
- * \param he[in]       The final range of copied data (for copy actions).
- * \param errval[in]   The status code of the operation.
- * \param flags[in]    The flags about the termination status (HP_FLAG_RETRY if
- *                     the error is retryable).
  *
+ * \param[in,out]  phcp    Handle returned by llapi_hsm_action_start.
+ * \param[in]      he      The final range of copied data (for copy actions).
+ * \param[in]      errval  The status code of the operation.
+ * \param[in]      hp_flags   The flags about the termination status
+ *                         (HP_FLAG_RETRY if the error is retryable).
  * \return 0 on success.
  */
 int llapi_hsm_action_end(struct hsm_copyaction_private **phcp,
@@ -704,11 +710,15 @@ err_cleanup:
 	return rc;
 }
 
-/** Notify a progress in processing an HSM action.
- * \param hdl[in,out]   handle returned by llapi_hsm_action_start.
- * \param he[in]        the range of copied data (for copy actions).
- * \param total[in]     the expected total of copied data (for copy actions).
- * \param hp_flags[in]  HSM progress flags.
+/**
+ * Notify a progress in processing an HSM action.
+ *
+ * \param[in,out]  hcp       handle returned by llapi_hsm_action_start.
+ * \param[in]      he        the range of copied data (for copy actions).
+ * \param[in]      total     the expected total of copied data
+ *                           (for copy actions).
+ * \param[in]      hp_flags  HSM progress flags.
+ *
  * \return 0 on success.
  */
 int llapi_hsm_action_progress(struct hsm_copyaction_private *hcp,
@@ -867,11 +877,11 @@ out:
 }
 
 /**
- * Return the current HSM states and HSM requests related to file pointed by \a
- * path.
+ * Return the current HSM states and HSM requests related to a file.
  *
- * \param hus  Should be allocated by caller. Will be filled with current file
- *             states.
+ * \param fd   Opened file descriptor of a Lustre file
+ * \param hus  Should be allocated by caller. Will be filled with
+ *             current file states.
  *
  * \retval 0 on success.
  * \retval -errno on error.
@@ -909,15 +919,16 @@ int llapi_hsm_state_get(const char *path, struct hsm_user_state *hus)
 }
 
 /**
- * Set HSM states of file pointed by \a fd
+ * Set HSM states of file.
  *
  * Using the provided bitmasks, the current HSM states for this file will be
  * changed. \a archive_id could be used to change the archive number also. Set
  * it to 0 if you do not want to change it.
  *
+ * \param fd           Opened file descriptor of a Lustre file
  * \param setmask      Bitmask for flag to be set.
  * \param clearmask    Bitmask for flag to be cleared.
- * \param archive_id  Archive number identifier to use. 0 means no change.
+ * \param archive_id   Archive number identifier to use. 0 means no change.
  *
  * \retval 0 on success.
  * \retval -errno on error.
@@ -968,8 +979,9 @@ int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
 /**
  * Return the current HSM request related to file pointed by \a path.
  *
- * \param hca  Should be allocated by caller. Will be filled with current file
- *             actions.
+ * \param[in] path     Fullpath to the file to operate on.
+ * \param[in,out] hca  Should be allocated by caller. Will be filled
+ *		       with current file actions.
  *
  * \retval 0 on success.
  * \retval -errno on error.
@@ -992,11 +1004,11 @@ int llapi_hsm_current_action(const char *path, struct hsm_current_action *hca)
 }
 
 /**
- * Send a HSM request to Lustre, described in \param request.
+ * Send a HSM request to Lustre.
  *
- * \param path	     Fullpath to the file to operate on.
- * \param request    The request, of at least llapi_hsm_user_request_len
- *                   bytes long.
+ * \param[in]  lfsh     An opened Lustre fs opaque handle
+ * \param[in]  request  The request, of at least llapi_hsm_user_request_len
+ *                      bytes long.
  *
  * \return 0 on success, or a negative errno on error.
  */

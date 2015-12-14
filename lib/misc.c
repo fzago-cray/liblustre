@@ -45,7 +45,7 @@ void chomp_string(char *buf)
 		*p = '\0';
 }
 
-/*
+/**
  * Indicate whether the liblustreapi_init() constructor below has run or not.
  *
  * This can be used by external programs to ensure if the initialization
@@ -53,11 +53,11 @@ void chomp_string(char *buf)
  */
 bool llapi_initialized;
 
-/*
+/**
  * Initializes the library. This function is automatically called on
  * application startup. However it is not called is the library is
  * loaded with dlopen(), so the init function has to be called
- * manually.
+ * manually in that case.
  */
 __attribute__ ((constructor)) void llapi_init(void)
 {
