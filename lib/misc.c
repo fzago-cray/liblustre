@@ -48,7 +48,7 @@ void chomp_string(char *buf)
 /**
  * Indicate whether the liblustreapi_init() constructor below has run or not.
  *
- * This can be used by external programs to ensure if the initialization
+ * This can be used by external programs to ensure the initialization
  * mechanism has actually worked.
  */
 bool llapi_initialized;
