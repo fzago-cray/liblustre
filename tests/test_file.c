@@ -102,7 +102,7 @@ void unittest_fid2(void)
 	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_path2fid(lus_get_mountpoint(lfsh), &mnt_fid);
+	rc = lus_path2fid(lus_get_mountpoint(lfsh), &mnt_fid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Doesn't work on mountpoint. */
@@ -214,7 +214,7 @@ void unittest_llapi_fid2path(void)
 	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_path2fid(lus_get_mountpoint(lfsh), &fid);
+	rc = lus_path2fid(lus_get_mountpoint(lfsh), &fid);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_fid2path(lfsh, &fid, path, 0, NULL, NULL);
@@ -232,7 +232,7 @@ void unittest_llapi_fid2path(void)
 
 	close(fd);
 
-	rc = llapi_path2fid(fname, &fid);
+	rc = lus_path2fid(fname, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_fid2path(lfsh, &fid, path, 0, NULL, NULL);

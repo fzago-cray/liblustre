@@ -57,7 +57,7 @@
 		llapi_msg_set_level;
 		lus_open_by_fid;
 		lus_open_fs;
-		llapi_path2fid;
+		lus_path2fid;
 		lus_path2parent;
 		lus_stat_by_fid;
 		lus_lovxattr_to_layout;

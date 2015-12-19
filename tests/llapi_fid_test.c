@@ -78,7 +78,7 @@ static void helper_fid2path(const char *filename, int fd)
 	unsigned int linkno;
 	int rc;
 
-	rc = llapi_path2fid(filename, &fid);
+	rc = lus_path2fid(filename, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	recno = -1;
@@ -99,7 +99,7 @@ static void helper_fid2path(const char *filename, int fd)
 	rc = snprintf(path3, sizeof(path3), "%s/%s",
 		      lus_get_mountpoint(lfsh), path);
 	ck_assert(rc > 0 && rc < sizeof(path3));
-	rc = llapi_path2fid(path3, &fid2);
+	rc = lus_path2fid(path3, &fid2);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(memcmp(&fid, &fid2, sizeof(fid)), 0);
 }
@@ -215,7 +215,7 @@ START_TEST(test11)
 	ck_assert_int_ge(fd, 0);
 	close(fd);
 
-	rc = llapi_path2fid(mainpath, &fid);
+	rc = lus_path2fid(mainpath, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	rc = unlink(mainpath);
@@ -243,7 +243,7 @@ START_TEST(test12)
 	ck_assert_int_eq(rc, 0);
 
 	/* Get the fid of maindir, to create the volatile. */
-	rc = llapi_path2fid(mainpath, &maindir_fid);
+	rc = lus_path2fid(mainpath, &maindir_fid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Against a volatile file */
@@ -358,7 +358,7 @@ START_TEST(test30)
 	ck_assert_int_ge(fd, 0);
 	close(fd);
 
-	rc = llapi_path2fid(links[0].filename, &fid);
+	rc = lus_path2fid(links[0].filename, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Create the links */
@@ -429,7 +429,7 @@ static void help_test40(void)
 	lustre_fid maindir_fid;
 
 	/* Get the fid of maindir, to get the parent. */
-	rc = llapi_path2fid(mainpath, &maindir_fid);
+	rc = lus_path2fid(mainpath, &maindir_fid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Successful call */
@@ -441,7 +441,7 @@ static void help_test40(void)
 	/* By construction, mainpath is just under lustre_dir, so we
 	 * can check that the parent fid of mainpath is indeed the one
 	 * of lustre_dir. */
-	rc = llapi_path2fid(lustre_dir, &fid2);
+	rc = lus_path2fid(lustre_dir, &fid2);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(memcmp(&parent_fid, &fid2, sizeof(fid2)), 0);
 
@@ -552,7 +552,7 @@ START_TEST(test42)
 		rc = mkdir(links[i].subdir, S_IRWXU);
 		ck_assert_int_eq(rc, 0);
 
-		rc = llapi_path2fid(links[i].subdir, &links[i].subdir_fid);
+		rc = lus_path2fid(links[i].subdir, &links[i].subdir_fid);
 		ck_assert_int_eq(rc, 0);
 	}
 

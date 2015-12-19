@@ -247,7 +247,7 @@ int lus_fd2fid(int fd, lustre_fid *fid)
  * \retval    0 on success
  * \retval    a negative errno on error
  */
-int llapi_path2fid(const char *path, lustre_fid *fid)
+int lus_path2fid(const char *path, lustre_fid *fid)
 {
 	int fd;
 	int rc;

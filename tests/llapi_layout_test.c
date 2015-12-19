@@ -182,8 +182,8 @@ START_TEST(test3)
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
 
-	rc = llapi_path2fid(path, &fid);
-	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
+	rc = lus_path2fid(path, &fid);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	snprintf(fidstr, sizeof(fidstr), "0x%"PRIx64":0x%x:0x%x",
 		 (uint64_t)fid.f_seq, fid.f_oid, fid.f_ver);
 	errno = 0;

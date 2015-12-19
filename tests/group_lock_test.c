@@ -206,7 +206,7 @@ START_TEST(test12)
 	ck_assert_msg(rc == 0, "mkdir failed for '%s': %s",
 		      mainpath, strerror(errno));
 
-	rc = llapi_path2fid(mainpath, &fid);
+	rc = lus_path2fid(mainpath, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1, O_CREAT | O_WRONLY,
