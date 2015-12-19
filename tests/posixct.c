@@ -1456,7 +1456,7 @@ static int ct_import_one(const char *src, const char *dst)
 	}
 	dst_fd = rc;
 
-	rc = llapi_fd2fid(dst_fd, &fid);
+	rc = lus_fd2fid(dst_fd, &fid);
 	close(dst_fd);
 	if (rc != 0) {
 		CT_ERROR(rc, "cannot get fid for imported file '%s'", dst);

@@ -88,7 +88,7 @@ static void helper_fid2path(const char *filename, int fd)
 
 	/* Try fd2fid and check that the result is still the same. */
 	if (fd != -1) {
-		rc = llapi_fd2fid(fd, &fid3);
+		rc = lus_fd2fid(fd, &fid3);
 		ck_assert_int_eq(rc, 0);
 
 		ck_assert_int_eq(memcmp(&fid, &fid3, sizeof(fid)), 0);
@@ -250,7 +250,7 @@ START_TEST(test12)
 	fd = llapi_create_volatile_by_fid(lfsh, &maindir_fid, -1, 0, 0600, NULL);
 	ck_assert_int_ge(fd, 0);
 
-	rc = llapi_fd2fid(fd, &fid);
+	rc = lus_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Not many ways to test, except to open by fid. */

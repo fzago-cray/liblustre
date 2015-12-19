@@ -215,8 +215,11 @@ static int get_fid_from_xattr(const char *path, int fd, lustre_fid *fid)
  * \param[in]   fd     an opened file descriptor for a file in the above
  *                     Lustre filesystem
  * \param[out]  fid    the requested parent fid
+ *
+ * \retval   0 on success
+ * \retval   a negative errno on error
  */
-int llapi_fd2fid(int fd, lustre_fid *fid)
+int lus_fd2fid(int fd, lustre_fid *fid)
 {
 	int rc;
 
@@ -259,7 +262,7 @@ int llapi_path2fid(const char *path, lustre_fid *fid)
 		else
 			rc = -errno;
 	} else {
-		rc = llapi_fd2fid(fd, fid);
+		rc = lus_fd2fid(fd, fid);
 		close(fd);
 	}
 

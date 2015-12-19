@@ -548,7 +548,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 	if (rc < 0)
 		goto err_cleanup;
 
-	rc = llapi_fd2fid(fd, &hai->hai_dfid);
+	rc = lus_fd2fid(fd, &hai->hai_dfid);
 	if (rc < 0)
 		goto err_cleanup;
 

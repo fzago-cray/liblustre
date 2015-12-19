@@ -54,7 +54,7 @@ void unittest_fid1(void)
 	sret = write(fd, buf, sizeof(buf));
 	ck_assert_int_eq(sret, sizeof(buf));
 
-	rc = llapi_fd2fid(fd, &fid);
+	rc = lus_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
@@ -117,7 +117,7 @@ void unittest_fid2(void)
 	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
-	rc = llapi_fd2fid(fd, &fid);
+	rc = lus_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
@@ -226,7 +226,7 @@ void unittest_llapi_fid2path(void)
 	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
-	rc = llapi_fd2fid(fd, &fid);
+	rc = lus_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
@@ -276,7 +276,7 @@ void unittest_mdt_index(void)
 	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
-	rc = llapi_fd2fid(fd, &fid);
+	rc = lus_fd2fid(fd, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);

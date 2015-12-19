@@ -204,7 +204,7 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
 int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		   char *path, size_t path_len, long long *recno,
 		   unsigned int *linkno);
-int llapi_fd2fid(int fd, lustre_fid *fid);
+int lus_fd2fid(int fd, lustre_fid *fid);
 int llapi_path2fid(const char *path, lustre_fid *fid);
 int lus_open_by_fid(const struct lustre_fs_h *lfsh,
 		    const lustre_fid *fid, int open_flags);
