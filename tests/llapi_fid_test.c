@@ -96,7 +96,8 @@ static void helper_fid2path(const char *filename, int fd)
 
 	/* Pass the result back to fid2path and ensure the fid stays
 	 * the same. */
-	rc = snprintf(path3, sizeof(path3), "%s/%s", llapi_get_mountpoint(lfsh), path);
+	rc = snprintf(path3, sizeof(path3), "%s/%s",
+		      lus_get_mountpoint(lfsh), path);
 	ck_assert(rc > 0 && rc < sizeof(path3));
 	rc = llapi_path2fid(path3, &fid2);
 	ck_assert_int_eq(rc, 0);
@@ -378,7 +379,8 @@ START_TEST(test30)
 				    sizeof(buf), &recno, &linkno);
 		ck_assert_int_eq(rc, 0);
 
-		snprintf(buf2, sizeof(buf2), "%s/%s", llapi_get_mountpoint(lfsh), buf);
+		snprintf(buf2, sizeof(buf2),
+			 "%s/%s", lus_get_mountpoint(lfsh), buf);
 
 		if (past_link_limit == false) {
 			/* Find the name in the links that were created */

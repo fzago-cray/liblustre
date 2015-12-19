@@ -11,7 +11,7 @@
 		llapi_fswap_layouts;
 		lus_get_fsname;
 		llapi_get_mdt_index_by_fid;
-		llapi_get_mountpoint;
+		lus_get_mountpoint;
 		llapi_group_lock;
 		llapi_group_unlock;
 		llapi_hsm_action_begin;

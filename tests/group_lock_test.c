@@ -366,16 +366,17 @@ START_TEST(test20)
 	cleanup();
 
 	/* Try the mountpoint. Should fail. */
-	fd = open(llapi_get_mountpoint(lfsh), O_RDONLY | O_DIRECTORY);
+	fd = open(lus_get_mountpoint(lfsh), O_RDONLY | O_DIRECTORY);
 	ck_assert_int_ge(fd, 0);
 	helper_test20(fd);
 	close(fd);
 
 	/* Try .lustre/ . Should fail. */
-	rc = snprintf(dname, sizeof(dname), "%s/.lustre", llapi_get_mountpoint(lfsh));
+	rc = snprintf(dname, sizeof(dname),
+		      "%s/.lustre", lus_get_mountpoint(lfsh));
 	ck_assert_int_lt(rc, sizeof(dname));
 
-	fd = open(llapi_get_mountpoint(lfsh), O_RDONLY | O_DIRECTORY);
+	fd = open(lus_get_mountpoint(lfsh), O_RDONLY | O_DIRECTORY);
 	ck_assert_int_ge(fd, 0);
 	helper_test20(fd);
 	close(fd);

@@ -124,7 +124,7 @@ struct lustre_fs_h;
 void lus_close_fs(struct lustre_fs_h *lfsh);
 int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
 const char *lus_get_fsname(const struct lustre_fs_h *lfsh);
-const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh);
+const char *lus_get_mountpoint(const struct lustre_fs_h *lfsh);
 
 /*
  * LOV
