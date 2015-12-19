@@ -34,8 +34,8 @@
  * \retval   a 0 or positive file descriptor on success
  * \retval   a negative errno on error
  */
-int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
-		      const lustre_fid *fid, int open_flags)
+int lus_open_by_fid(const struct lustre_fs_h *lfsh,
+		    const lustre_fid *fid, int open_flags)
 {
 	char fidstr[FID_NOBRACE_LEN + 1];
 
@@ -134,7 +134,7 @@ int llapi_fid2parent(const struct lustre_fs_h *lfsh,
 	int fd;
 	int rc;
 
-	fd = llapi_open_by_fid(lfsh, fid, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
+	fd = lus_open_by_fid(lfsh, fid, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
 	if (fd == -1)
 		return -errno;
 

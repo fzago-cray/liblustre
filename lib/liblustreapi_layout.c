@@ -680,7 +680,7 @@ struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 	 * while executing this function, then restore previous message
 	 * level. */
 	llapi_msg_set_level(LLAPI_MSG_OFF);
-	fd = llapi_open_by_fid(lfsh, fid, O_RDONLY);
+	fd = lus_open_by_fid(lfsh, fid, O_RDONLY);
 	llapi_msg_set_level(saved_msg_level);
 
 	if (fd < 0)

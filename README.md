@@ -61,7 +61,7 @@ lfsh is an opaque handle that can then be passed to various functions:
     lu_fid *fid, char *path, int path_len, long long *recno, int
     *linkno)
 
-    int llapi_open_by_fid(const struct lustre_fs_h *lfsh, const
+    int lus_open_by_fid(const struct lustre_fs_h *lfsh, const
     lustre_fid *fid, int open_flags)
 
     int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,

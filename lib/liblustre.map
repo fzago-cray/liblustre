@@ -55,7 +55,7 @@
 		llapi_layout_stripe_size_set;
 		llapi_msg_callback_set;
 		llapi_msg_set_level;
-		llapi_open_by_fid;
+		lus_open_by_fid;
 		lus_open_fs;
 		llapi_path2fid;
 		llapi_path2parent;

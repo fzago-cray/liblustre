@@ -206,8 +206,8 @@ int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 		   unsigned int *linkno);
 int llapi_fd2fid(int fd, lustre_fid *fid);
 int llapi_path2fid(const char *path, lustre_fid *fid);
-int llapi_open_by_fid(const struct lustre_fs_h *lfsh,
-		      const lustre_fid *fid, int open_flags);
+int lus_open_by_fid(const struct lustre_fs_h *lfsh,
+		    const lustre_fid *fid, int open_flags);
 int llapi_stat_by_fid(const struct lustre_fs_h *lfsh,
 		      const lustre_fid *fid, struct stat *stbuf);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,

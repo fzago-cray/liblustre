@@ -72,7 +72,7 @@ created. **llapi_hsm_action_get_fd**\ () will return a file descriptor
 to it. It is the responsibility of the copytool to close the returned
 file descriptor when the data transfer is
 done. **llapi_hsm_action_get_dfid**\ () will return the FID of the volatile
-file, which can then be used with **llapi_open_by_fid**\ () to open
+file, which can then be used with **lus_open_by_fid**\ () to open
 the file in a different process, or on a different node.
 
 **llapi_hsm_action_get_fd**\ () and **llapi_hsm_action_get_dfid**\ ()

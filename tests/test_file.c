@@ -67,13 +67,13 @@ void unittest_fid1(void)
 	ck_assert_int_eq(stbuf.st_size, sizeof(buf));
 
 	/* Open it agin by FID. */
-	fd = llapi_open_by_fid(lfsh, &fid, O_RDONLY);
+	fd = lus_open_by_fid(lfsh, &fid, O_RDONLY);
 	ck_assert_int_gt(fd, 0);
 	close(fd);
 
 	/* Fake file */
 	fid.f_seq += 100;
-	fd = llapi_open_by_fid(lfsh, &fid, O_RDONLY);
+	fd = lus_open_by_fid(lfsh, &fid, O_RDONLY);
 	ck_assert_int_eq(fd, -1);
 	ck_assert_int_eq(errno, ENOENT);
 

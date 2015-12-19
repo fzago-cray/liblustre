@@ -790,7 +790,7 @@ int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
 		return -EINVAL;
 
 	if (hai->hai_action == HSMA_ARCHIVE) {
-		fd = llapi_open_by_fid(hcp->ct_priv->lfsh, &hai->hai_dfid,
+		fd = lus_open_by_fid(hcp->ct_priv->lfsh, &hai->hai_dfid,
 				O_RDONLY | O_NOATIME | O_NOFOLLOW | O_NONBLOCK);
 		return fd < 0 ? -errno : fd;
 	} else if (hai->hai_action == HSMA_RESTORE) {

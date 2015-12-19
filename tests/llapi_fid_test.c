@@ -254,21 +254,21 @@ START_TEST(test12)
 	ck_assert_int_eq(rc, 0);
 
 	/* Not many ways to test, except to open by fid. */
-	fd2 = llapi_open_by_fid(lfsh, &fid, 0600);
+	fd2 = lus_open_by_fid(lfsh, &fid, 0600);
 	ck_assert_int_ge(fd2, 0);
 
 	close(fd);
 
 	/* Check the file can still be opened, since fd2 is not
 	 * closed. */
-	fd3 = llapi_open_by_fid(lfsh, &fid, 0600);
+	fd3 = lus_open_by_fid(lfsh, &fid, 0600);
 	ck_assert_int_ge(fd3, 0);
 
 	close(fd2);
 	close(fd3);
 
 	/* The volatile file is gone now. */
-	fd = llapi_open_by_fid(lfsh, &fid, 0600);
+	fd = lus_open_by_fid(lfsh, &fid, 0600);
 	ck_assert_int_eq(fd, -1);
 }
 END_TEST
