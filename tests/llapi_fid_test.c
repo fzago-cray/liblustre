@@ -418,7 +418,7 @@ START_TEST(test30)
 }
 END_TEST
 
-/* Test lus_fd2parent/llapi_path2parent on mainpath (whatever its
+/* Test lus_fd2parent/lus_path2parent on mainpath (whatever its
  * type). mainpath must exist. */
 static void help_test40(void)
 {
@@ -434,7 +434,7 @@ static void help_test40(void)
 
 	/* Successful call */
 	memset(buf, 0x55, sizeof(buf));
-	rc = llapi_fid2parent(lfsh, &maindir_fid, 0, &parent_fid, buf, PATH_MAX);
+	rc = lus_fid2parent(lfsh, &maindir_fid, 0, &parent_fid, buf, PATH_MAX);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_str_eq(buf, maindir);
 
@@ -446,16 +446,16 @@ static void help_test40(void)
 	ck_assert_int_eq(memcmp(&parent_fid, &fid2, sizeof(fid2)), 0);
 
 	/* Name too short */
-	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 0);
+	rc = lus_path2parent(mainpath, 0, &parent_fid, buf, 0);
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 5);
+	rc = lus_path2parent(mainpath, 0, &parent_fid, buf, 5);
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, strlen(maindir));
+	rc = lus_path2parent(mainpath, 0, &parent_fid, buf, strlen(maindir));
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf,
+	rc = lus_path2parent(mainpath, 0, &parent_fid, buf,
 			       strlen(maindir)+1);
 	ck_assert_int_eq(rc, 0);
 }
@@ -580,7 +580,7 @@ START_TEST(test42)
 	for (linkno = num_links-1; linkno >= 0; linkno--) {
 		bool found;
 
-		rc = llapi_path2parent(link0, linkno, &parent_fid, buf,
+		rc = lus_path2parent(link0, linkno, &parent_fid, buf,
 				       sizeof(buf));
 		ck_assert_int_eq(rc, 0);
 
@@ -602,7 +602,7 @@ START_TEST(test42)
 	}
 
 	/* check non existent n+1 link */
-	rc = llapi_path2parent(link0, num_links, &parent_fid, buf, sizeof(buf));
+	rc = lus_path2parent(link0, num_links, &parent_fid, buf, sizeof(buf));
 	ck_assert_int_eq(rc, -ENODATA);
 }
 END_TEST

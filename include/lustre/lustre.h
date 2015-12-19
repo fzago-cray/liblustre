@@ -218,12 +218,12 @@ int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 				 const struct llapi_layout *layout);
 int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		  char *parent_name, size_t parent_name_len);
-int llapi_fid2parent(const struct lustre_fs_h *lfsh,
-		     const lustre_fid *fid,
-		     unsigned int linkno,
-		     lustre_fid *parent_fid,
-		     char *parent_name, size_t parent_name_len);
-int llapi_path2parent(const char *path, unsigned int linkno,
+int lus_fid2parent(const struct lustre_fs_h *lfsh,
+		   const lustre_fid *fid,
+		   unsigned int linkno,
+		   lustre_fid *parent_fid,
+		   char *parent_name, size_t parent_name_len);
+int lus_path2parent(const char *path, unsigned int linkno,
 		      lustre_fid *parent_fid,
 		      char *parent_name, size_t parent_name_len);
 int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);

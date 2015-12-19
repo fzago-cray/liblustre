@@ -130,7 +130,7 @@ int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int llapi_fid2parent(const struct lustre_fs_h *lfsh,
+int lus_fid2parent(const struct lustre_fs_h *lfsh,
 		     const lustre_fid *fid,
 		     unsigned int linkno,
 		     lustre_fid *parent_fid,
@@ -165,7 +165,7 @@ int llapi_fid2parent(const struct lustre_fs_h *lfsh,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int llapi_path2parent(const char *path, unsigned int linkno,
+int lus_path2parent(const char *path, unsigned int linkno,
 		      lustre_fid *parent_fid,
 		      char *parent_name, size_t parent_name_len)
 {

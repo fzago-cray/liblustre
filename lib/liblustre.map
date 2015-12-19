@@ -6,7 +6,7 @@
 		llapi_data_version_by_fd;
 		lus_fd2fid;
 		lus_fd2parent;
-		llapi_fid2parent;
+		lus_fid2parent;
 		llapi_fid2path;
 		llapi_fswap_layouts;
 		lus_get_fsname;
@@ -58,7 +58,7 @@
 		lus_open_by_fid;
 		lus_open_fs;
 		llapi_path2fid;
-		llapi_path2parent;
+		lus_path2parent;
 		lus_stat_by_fid;
 		lus_lovxattr_to_layout;
 

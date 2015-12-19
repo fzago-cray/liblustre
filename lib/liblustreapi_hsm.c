@@ -530,7 +530,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 	/* TODO: original version would create volatile in root fs if
 	 * that failed. Is it correct? We should fail because that is
 	 * not correct. */
-	rc = llapi_fid2parent(hcp->ct_priv->lfsh, &hai->hai_fid, 0,
+	rc = lus_fid2parent(hcp->ct_priv->lfsh, &hai->hai_fid, 0,
 			      &parent_fid, NULL, 0);
 	if (rc < 0) {
 		log_msg(LLAPI_MSG_ERROR, rc,
