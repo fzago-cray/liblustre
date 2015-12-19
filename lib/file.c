@@ -38,9 +38,12 @@ int lus_open_by_fid(const struct lustre_fs_h *lfsh,
 		    const lustre_fid *fid, int open_flags)
 {
 	char fidstr[FID_NOBRACE_LEN + 1];
+	int rc;
 
 	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(fid));
-	return openat(lfsh->fid_fd, fidstr, open_flags);
+
+	rc = openat(lfsh->fid_fd, fidstr, open_flags);
+	return rc == -1 ? -errno : rc;
 }
 
 /**
@@ -135,8 +138,8 @@ int llapi_fid2parent(const struct lustre_fs_h *lfsh,
 	int rc;
 
 	fd = lus_open_by_fid(lfsh, fid, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
-	if (fd == -1)
-		return -errno;
+	if (fd < 0)
+		return fd;
 
 	rc = llapi_fd2parent(fd, linkno,
 			     parent_fid, parent_name, parent_name_len);

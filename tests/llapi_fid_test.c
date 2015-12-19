@@ -269,7 +269,7 @@ START_TEST(test12)
 
 	/* The volatile file is gone now. */
 	fd = lus_open_by_fid(lfsh, &fid, 0600);
-	ck_assert_int_eq(fd, -1);
+	ck_assert_int_eq(fd, -ENOENT);
 }
 END_TEST
 

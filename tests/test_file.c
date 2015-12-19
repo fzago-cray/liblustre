@@ -74,8 +74,7 @@ void unittest_fid1(void)
 	/* Fake file */
 	fid.f_seq += 100;
 	fd = lus_open_by_fid(lfsh, &fid, O_RDONLY);
-	ck_assert_int_eq(fd, -1);
-	ck_assert_int_eq(errno, ENOENT);
+	ck_assert_int_eq(fd, -ENOENT);
 
 	unlink(fname);
 
