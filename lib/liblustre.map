@@ -7,7 +7,7 @@
 		lus_fd2fid;
 		lus_fd2parent;
 		lus_fid2parent;
-		llapi_fid2path;
+		lus_fid2path;
 		llapi_fswap_layouts;
 		lus_get_fsname;
 		llapi_get_mdt_index_by_fid;

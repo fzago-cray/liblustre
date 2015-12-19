@@ -312,7 +312,7 @@ void unittest_param_lmv(void);
 void unittest_read_procfs_value(void);
 void unittest_strscpy(void);
 void unittest_strscat(void);
-void unittest_llapi_fid2path(void);
+void unittest_lus_fid2path(void);
 void unittest_llapi_data_version_by_fd(void);
 
 #endif /* _LIBLUSTRE_INTERNAL_H_ */

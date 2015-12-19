@@ -1060,8 +1060,8 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 		while (*ptr)
 			(*ptr++ == '/') ? depth-- : 0;
 
-		rc = llapi_fid2path(lfsh, &hai->hai_fid, src + strlen(src),
-				    sizeof(src) - strlen(src), NULL, NULL);
+		rc = lus_fid2path(lfsh, &hai->hai_fid, src + strlen(src),
+				  sizeof(src) - strlen(src), NULL, NULL);
 		if (rc < 0) {
 			CT_ERROR(rc, "cannot get FID of '%s'", buf);
 			rcf = rcf ? rcf : rc;
@@ -1330,8 +1330,8 @@ static int ct_process_item(struct hsm_action_item *hai, const long hal_flags)
 			 PFID(&hai->hai_fid),
 			 hsm_copytool_action2name(hai->hai_action),
 			 hai->hai_len, hai->hai_cookie);
-		rc = llapi_fid2path(lfsh, &hai->hai_fid, path,
-				    sizeof(path), NULL, NULL);
+		rc = lus_fid2path(lfsh, &hai->hai_fid, path,
+				  sizeof(path), NULL, NULL);
 		if (rc < 0)
 			CT_ERROR(rc, "cannot get path of FID "DFID,
 				 PFID(&hai->hai_fid));

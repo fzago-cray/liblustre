@@ -57,7 +57,7 @@ retrieved more than once. Thus we open and close a filesystem with:
 
 lfsh is an opaque handle that can then be passed to various functions:
 
-    int llapi_fid2path(const struct lustre_fs_h *lfsh, const struct
+    int lus_fid2path(const struct lustre_fs_h *lfsh, const struct
     lu_fid *fid, char *path, int path_len, long long *recno, int
     *linkno)
 
@@ -122,8 +122,8 @@ TODO
     relative path is passed. Same with path2fid.
 -   llapi\_open\_by\_fid and some layout function should return -errno
     on error, not -1 with errno set.
--   remove recno from llapi\_fid2path since it's unused
--   llapi_fid2path and lus_fd2parent should use a newer ioctl that
+-   remove recno from lus\_fid2path since it's unused
+-   lus_fid2path and lus_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
     save a memory copy.
 -   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
@@ -157,7 +157,7 @@ section should help porting.
     llapi\_layout\_stripe\_\*\_is\_valid.
 -   llapi\_get\_mdt\_index\_by\_fid directly returns the MDT index.
 -   dot\_lustre\_name is gone.
--   llapi\_fid2path will return an empty string instead of / if the
+-   lus\_fid2path will return an empty string instead of / if the
     mountpoint is given. recno and linkno can now be NULL.
 -   reading an HSM event is non blocking. llapi_hsm_copytool_register()
     can return -EWOULDBLOCK so the caller should handle that

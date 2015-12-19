@@ -271,22 +271,22 @@ int lus_path2fid(const char *path, lustre_fid *fid)
 
 /**
  * Return a path given a FID. The path is relative to the filesystem
- * mountpoint. If the FID is of the mountpoint, the return path will
+ * mountpoint. If the FID is of the mountpoint, the returned path will
  * be empty.
  *
- * \param[in]   lfsh           an opened Lustre fs opaque handle
- * \param[in]   fid            the FID of the file / directory
- * \param[out]  path           the requested path
- * \param[in]   path_len       the length of path
+ * \param[in]   lfsh          an opened Lustre fs opaque handle
+ * \param[in]   fid           the FID of the file / directory
+ * \param[out]  path          the requested path
+ * \param[in]   path_len      the length of path
  * \param[in,out]   recno     may be NULL
  * \param[in,out]   linkno    which name to return; may be NULL
  *
  * \retval    0 on success
  * \retval    a negative errno on error.
  */
-int llapi_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
-		   char *path, size_t path_len,
-		   long long *recno, unsigned int *linkno)
+int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+		 char *path, size_t path_len,
+		 long long *recno, unsigned int *linkno)
 {
 	/* Avoid allocating gf by adding MAX_PATH after it. */
 	struct {

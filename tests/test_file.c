@@ -197,8 +197,8 @@ void unittest_fid2(void)
 	lus_close_fs(lfsh);
 }
 
-/* Test llapi_fid2path. */
-void unittest_llapi_fid2path(void)
+/* Test lus_fid2path. */
+void unittest_lus_fid2path(void)
 {
 	struct lustre_fs_h *lfsh;
 	lustre_fid fid;
@@ -217,10 +217,10 @@ void unittest_llapi_fid2path(void)
 	rc = lus_path2fid(lus_get_mountpoint(lfsh), &fid);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2path(lfsh, &fid, path, 0, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, 0, NULL, NULL);
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
 	/* On a file */
@@ -235,22 +235,22 @@ void unittest_llapi_fid2path(void)
 	rc = lus_path2fid(fname, &fid);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2path(lfsh, &fid, path, 0, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, 0, NULL, NULL);
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_fid2path(lfsh, &fid, path, 5, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, 5, NULL, NULL);
 	ck_assert_int_eq(rc, -ENOSPC);
 
-	rc = llapi_fid2path(lfsh, &fid, path, 50, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, 50, NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2path(lfsh, &fid, path, PATH_MAX, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, PATH_MAX, NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2path(lfsh, &fid, path, PATH_MAX + 1, NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, PATH_MAX + 1, NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
+	rc = lus_fid2path(lfsh, &fid, path, sizeof(path), NULL, NULL);
 	ck_assert_int_eq(rc, 0);
 
 	rc = unlink(fname);

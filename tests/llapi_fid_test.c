@@ -83,7 +83,7 @@ static void helper_fid2path(const char *filename, int fd)
 
 	recno = -1;
 	linkno = 0;
-	rc = llapi_fid2path(lfsh, &fid, path, sizeof(path), &recno, &linkno);
+	rc = lus_fid2path(lfsh, &fid, path, sizeof(path), &recno, &linkno);
 	ck_assert_int_eq(rc, 0);
 
 	/* Try fd2fid and check that the result is still the same. */
@@ -223,8 +223,7 @@ START_TEST(test11)
 
 	recno = -1;
 	linkno = 0;
-	rc = llapi_fid2path(lfsh, &fid, path,
-			    sizeof(path), &recno, &linkno);
+	rc = lus_fid2path(lfsh, &fid, path, sizeof(path), &recno, &linkno);
 	ck_assert_int_eq(rc, -ENOENT);
 }
 END_TEST
@@ -375,8 +374,8 @@ START_TEST(test30)
 		/* Without braces */
 		recno = -1;
 		linkno = i;
-		rc = llapi_fid2path(lfsh, &fid, buf,
-				    sizeof(buf), &recno, &linkno);
+		rc = lus_fid2path(lfsh, &fid, buf,
+				  sizeof(buf), &recno, &linkno);
 		ck_assert_int_eq(rc, 0);
 
 		snprintf(buf2, sizeof(buf2),
