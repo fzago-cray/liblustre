@@ -61,7 +61,7 @@ void unittest_fid1(void)
 
 	/* Stat the file by FID and ensure it worked. */
 	memset(&stbuf, 0x55, sizeof(stbuf));
-	rc = llapi_stat_by_fid(lfsh, &fid, &stbuf);
+	rc = lus_stat_by_fid(lfsh, &fid, &stbuf);
 	ck_assert_int_eq(rc, 0);
 	ck_assert(S_ISREG(stbuf.st_mode));
 	ck_assert_int_eq(stbuf.st_size, sizeof(buf));

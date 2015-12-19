@@ -56,13 +56,15 @@ int lus_open_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   a 0 or positive file descriptor on success
  * \retval   a negative errno on error
  */
-int llapi_stat_by_fid(const struct lustre_fs_h *lfsh,
-		      const lustre_fid *fid, struct stat *stbuf)
+int lus_stat_by_fid(const struct lustre_fs_h *lfsh,
+		    const lustre_fid *fid, struct stat *stbuf)
 {
 	char fidstr[FID_NOBRACE_LEN + 1];
+	int rc;
 
 	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(fid));
-	return fstatat(lfsh->fid_fd, fidstr, stbuf, AT_SYMLINK_NOFOLLOW);
+	rc = fstatat(lfsh->fid_fd, fidstr, stbuf, AT_SYMLINK_NOFOLLOW);
+	return rc == -1 ? -errno : rc;
 }
 
 /**

@@ -14,7 +14,7 @@ nodist_man_MANS = \
 	llapi_create_volatile_by_fid.3 \
 	llapi_hsm_action_begin.3 \
 	llapi_hsm_copytool_register.3 \
-	llapi_stat_by_fid.3
+	lus_stat_by_fid.3
 
 # Generated man pages
 
@@ -31,6 +31,6 @@ EXTRA_DIST = \
 	llapi_create_volatile_by_fid.rst \
 	llapi_hsm_action_begin.rst \
 	llapi_hsm_copytool_register.rst \
-	llapi_stat_by_fid.rst
+	lus_stat_by_fid.rst
 
 CLEANFILES = $(nodist_man_MANS)

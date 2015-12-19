@@ -1,6 +1,6 @@
-=================
-llapi_stat_by_fid
-=================
+===============
+lus_stat_by_fid
+===============
 
 -------------------------
 liblustre file management
@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int llapi_stat_by_fid(const struct lustre_fs_h \***\ lfsh\ **,
+**int lus_stat_by_fid(const struct lustre_fs_h \***\ lfsh\ **,
 const lustre_fid \***\ fid\ **, struct stat \***\ stbuf\ **)**
 
 
@@ -37,8 +37,7 @@ FID.
 RETURN VALUE
 ============
 
-Since **llapi_stat_by_fid** is a passthrough for fstatat(2), it
-returns 0 on success, or -1 with errno set.
+**lus_stat_by_fid** returns 0 on success, or a negative errno on error.
 
 
 ERRORS
