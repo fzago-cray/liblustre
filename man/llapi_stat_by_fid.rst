@@ -27,7 +27,7 @@ DESCRIPTION
 This function calls fstatat(2) on a file residing on Lustre, given its
 FID.
 
-*lfsh* is an opaque Lustre fs handle returned by **llapi_open_fs(3)**.
+*lfsh* is an opaque Lustre fs handle returned by **lus_open_fs(3)**.
 
 *fid* is the FID of the file to be stat'ed.
 

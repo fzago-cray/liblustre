@@ -27,7 +27,7 @@
  * Returns the path to the pools for a filesystem.
  * eg: /proc/fs/lustre/lov/lustre-MDT0000-mdtlov/pools/
  *
- * \param[in]   lfsh	 An opaque handle returned by llapi_open_fs()
+ * \param[in]   lfsh	 An opaque handle returned by lus_open_fs()
  * \param[in]   poolname  Name of the pool
  * \param[out]  path     The path to the pool
  * \param[in]   pathlen  Length of path

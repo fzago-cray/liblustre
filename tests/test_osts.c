@@ -36,7 +36,7 @@ void unittest_ost1(void)
 	char poolpath[PATH_MAX];
 	int rc;
 
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid pool */
@@ -55,7 +55,7 @@ void unittest_ost1(void)
 	rc = find_poolpath(lfsh, "somepool", poolpath, sizeof(poolpath));
 	ck_assert_int_eq(rc, -EINVAL);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }
 
 /* Test for open_pool_info */
@@ -66,7 +66,7 @@ void unittest_ost2(void)
 	struct lustre_ost_info *info;
 	char ostuuid[1000];
 
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	/* valid, non empty pool */
@@ -85,5 +85,5 @@ void unittest_ost2(void)
 	/* Ensure this doesn't crash */
 	free_ost_info(&info);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }

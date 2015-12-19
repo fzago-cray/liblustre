@@ -1,7 +1,7 @@
 {
 	# Symbols that the library exports.
     global:
-		llapi_close_fs;
+		lus_close_fs;
 		llapi_create_volatile_by_fid;
 		llapi_data_version_by_fd;
 		llapi_fd2fid;
@@ -56,7 +56,7 @@
 		llapi_msg_callback_set;
 		llapi_msg_set_level;
 		llapi_open_by_fid;
-		llapi_open_fs;
+		lus_open_fs;
 		llapi_path2fid;
 		llapi_path2parent;
 		llapi_stat_by_fid;

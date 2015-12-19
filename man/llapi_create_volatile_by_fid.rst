@@ -31,7 +31,7 @@ Lustre filesystem. The created file is not visible with
 **ls(1)**. Once the file is closed, or the owning process dies, the
 file is permanently removed from the filesystem.
 
-*lfsh* is an opaque Lustre fs handle returned by **llapi_open_fs(3)**.
+*lfsh* is an opaque Lustre fs handle returned by **lus_open_fs(3)**.
 
 *parent_fid* is the FID of a directory into which the file must be
 created.

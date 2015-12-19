@@ -45,7 +45,7 @@ void unittest_fid1(void)
 	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/* Create a small file, get its FID, and close it. */
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
@@ -79,7 +79,7 @@ void unittest_fid1(void)
 
 	unlink(fname);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }
 
 /* Test llapi_fid2parent */
@@ -100,7 +100,7 @@ void unittest_fid2(void)
 	/*
 	 * On the mountpoint
 	 */
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &mnt_fid);
@@ -194,7 +194,7 @@ void unittest_fid2(void)
 		ck_assert_int_eq(rc, 0);
 	}
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }
 
 /* Test llapi_fid2path. */
@@ -211,7 +211,7 @@ void unittest_llapi_fid2path(void)
 	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
 	/* On the mountpoint */
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	rc = llapi_path2fid(llapi_get_mountpoint(lfsh), &fid);
@@ -256,7 +256,7 @@ void unittest_llapi_fid2path(void)
 	rc = unlink(fname);
 	ck_assert(rc == 0);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }
 
 /* Test llapi_get_mdt_index_by_fid */
@@ -271,7 +271,7 @@ void unittest_mdt_index(void)
 	rc = snprintf(fname, sizeof(fname), "%s/unittest_fid", lustre_dir);
 	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
 
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(fname, O_CREAT | O_TRUNC, S_IRWXU);
@@ -286,7 +286,7 @@ void unittest_mdt_index(void)
 	rc = llapi_get_mdt_index_by_fid(lfsh, &fid);
 	ck_assert_int_eq(rc, 0);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 }
 
 /* Test llapi_data_version_by_fd */
@@ -306,7 +306,7 @@ void unittest_llapi_data_version_by_fd(void)
 
 	/* Create a small file, write several times and check that dv
 	 * differs. */
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	ck_assert_int_eq(rc, 0);
 
 	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
@@ -332,7 +332,7 @@ void unittest_llapi_data_version_by_fd(void)
 	close(fd);
 	unlink(fname);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 
 	/* Bad fd */
 	rc = llapi_data_version_by_fd(876, 0, &dv);

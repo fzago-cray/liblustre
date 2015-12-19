@@ -663,7 +663,7 @@ struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
 /**
  * Get the layout for the file with FID \a fidstr in filesystem \a lustre_dir.
  *
- * \param[in] lfsh	  An opaque handle returned by llapi_open_fs()
+ * \param[in] lfsh	  An opaque handle returned by lus_open_fs()
  * \param[in] fid	  Lustre identifier of file to get layout for
  *
  * \retval	valid llapi_layout pointer on success

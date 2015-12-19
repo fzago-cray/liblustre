@@ -121,8 +121,8 @@ void llapi_msg_callback_set(llapi_log_callback_t cb);
  * Open / close a filesystem
  */
 struct lustre_fs_h;
-void llapi_close_fs(struct lustre_fs_h *lfsh);
-int llapi_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
+void lus_close_fs(struct lustre_fs_h *lfsh);
+int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
 const char *llapi_get_fsname(const struct lustre_fs_h *lfsh);
 const char *llapi_get_mountpoint(const struct lustre_fs_h *lfsh);
 

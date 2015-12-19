@@ -52,8 +52,8 @@ This is a new structure meant to keep the information of an existing
 filesystem (mountpoint, name, ...) so the information doesn't have to be
 retrieved more than once. Thus we open and close a filesystem with:
 
-    void llapi_close_fs(struct lustre_fs_h *lfsh)
-    int llapi_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
+    int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
+    void lus_close_fs(struct lustre_fs_h *lfsh)
 
 lfsh is an opaque handle that can then be passed to various functions:
 

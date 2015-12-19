@@ -662,7 +662,7 @@ int main(int argc, char *argv[])
 	if (lustre_dir == NULL)
 		lustre_dir = "/mnt/lustre";
 
-	rc = llapi_open_fs(lustre_dir, &lfsh);
+	rc = lus_open_fs(lustre_dir, &lfsh);
 	if (rc != 0) {
 		fprintf(stderr, "Error: '%s' is not a Lustre filesystem\n",
 			lustre_dir);
@@ -682,7 +682,7 @@ int main(int argc, char *argv[])
 	number_failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
 
-	llapi_close_fs(lfsh);
+	lus_close_fs(lfsh);
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

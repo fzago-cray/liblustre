@@ -119,7 +119,7 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
 struct lustre_fs_h {
-	/* Lustre mountpoint, as given to llapi_open_fs. */
+	/* Lustre mountpoint, as given to lus_open_fs. */
 	char *mount_path;
 	char fs_name[8 + 1];	/* filesystem name */
 	int mount_fd;
