@@ -170,7 +170,7 @@ fail:
  *
  * \retval      The Lustre filesystem name. Cannot be NULL.
  */
-const char *llapi_get_fsname(const struct lustre_fs_h *lfsh)
+const char *lus_get_fsname(const struct lustre_fs_h *lfsh)
 {
 	return lfsh->fs_name;
 }

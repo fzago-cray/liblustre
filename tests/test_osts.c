@@ -75,7 +75,7 @@ void unittest_ost2(void)
 	ck_assert_ptr_ne(info, NULL);
 	ck_assert_int_gt(info->count, 0);
 
-	rc = snprintf(ostuuid, sizeof(ostuuid), "%s-OST", llapi_get_fsname(lfsh));
+	rc = snprintf(ostuuid, sizeof(ostuuid), "%s-OST", lus_get_fsname(lfsh));
 	ck_assert_msg(rc > 0 && rc < sizeof(ostuuid), "snprintf failed: %d", rc);
 	ck_assert_int_eq(strncmp(info->osts[0], ostuuid, strlen(ostuuid)), 0);
 

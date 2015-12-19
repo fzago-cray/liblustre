@@ -9,7 +9,7 @@
 		llapi_fid2parent;
 		llapi_fid2path;
 		llapi_fswap_layouts;
-		llapi_get_fsname;
+		lus_get_fsname;
 		llapi_get_mdt_index_by_fid;
 		llapi_get_mountpoint;
 		llapi_group_lock;

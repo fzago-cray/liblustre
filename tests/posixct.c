@@ -823,7 +823,7 @@ static int ct_copy_xattr(const char *src, const char *dst, int src_fd,
 
 static void ct_path_lustre(char *buf, int sz, const lustre_fid *fid)
 {
-	snprintf(buf, sz, "%s:"DFID_NOBRACE, llapi_get_fsname(lfsh), PFID(fid));
+	snprintf(buf, sz, "%s:"DFID_NOBRACE, lus_get_fsname(lfsh), PFID(fid));
 	buf[sz-1] = 0;
 }
 
@@ -1902,10 +1902,10 @@ static int ct_run(void)
 		CT_TRACE("copytool fs=%s archive#=%d item_count=%d",
 			 hal->hal_fsname, hal->hal_archive_id, hal->hal_count);
 
-		if (strcmp(hal->hal_fsname, llapi_get_fsname(lfsh)) != 0) {
+		if (strcmp(hal->hal_fsname, lus_get_fsname(lfsh)) != 0) {
 			rc = -EINVAL;
 			CT_ERROR(rc, "'%s' invalid fs name, expecting: %s",
-				 hal->hal_fsname, llapi_get_fsname(lfsh));
+				 hal->hal_fsname, lus_get_fsname(lfsh));
 			err_major++;
 			if (opt.o_abort_on_error)
 				break;
