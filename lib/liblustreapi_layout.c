@@ -83,13 +83,9 @@ static bool llapi_stripe_index_is_valid(int64_t idx)
 
 /**
  * Byte-swap the fields of struct lov_user_md.
- *
- * XXX Rather than duplicating swabbing code here, we should eventually
- * refactor the needed functions in lustre/ptlrpc/pack_generic.c
- * into a library that can be shared between kernel and user code.
  */
-#define __swab16s(x) do { *(x) = __bswap_16(*(x)); } while (0)
-#define __swab32s(x) do { *(x) = __bswap_32(*(x)); } while (0)
+static void __swab16s(uint16_t *x) { *x = __bswap_16(*x); }
+static void __swab32s(uint32_t *x) { *x = __bswap_32(*x); }
 static void
 llapi_layout_swab_lov_user_md(struct lov_user_md *lum, int object_count)
 {
@@ -185,12 +181,14 @@ llapi_layout_from_lum(const struct lov_user_md *lum, size_t object_count)
 
 	if (lum->lmm_magic != LOV_USER_MAGIC_V1) {
 		const struct lov_user_md_v3 *lumv3;
+
 		lumv3 = (struct lov_user_md_v3 *)lum;
 		snprintf(layout->llot_pool_name, sizeof(layout->llot_pool_name),
 			 "%s", lumv3->lmm_pool_name);
 		memcpy(layout->llot_objects, lumv3->lmm_objects, objects_sz);
 	} else {
 		const struct lov_user_md_v1 *lumv1;
+
 		lumv1 = (struct lov_user_md_v1 *)lum;
 		memcpy(layout->llot_objects, lumv1->lmm_objects, objects_sz);
 	}

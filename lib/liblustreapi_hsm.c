@@ -82,7 +82,7 @@ struct hsm_copyaction_private {
 	__s32					 data_fd;
 	const struct hsm_copytool_private	*ct_priv;
 	struct hsm_copy				 copy;
-	struct stat 				 stat;
+	struct stat				 stat;
 };
 
 enum ct_progress_type {
@@ -277,7 +277,7 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
 		if (header.kuc_transport == KUC_TRANSPORT_HSM ||
 		    header.kuc_transport == KUC_TRANSPORT_GENERIC) {
 
-			switch(header.kuc_msgtype) {
+			switch (header.kuc_msgtype) {
 			case KUC_MSG_SHUTDOWN:
 				rc = -ESHUTDOWN;
 				break;
@@ -321,9 +321,9 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	}
 
 	if (archive_count > LL_HSM_MAX_ARCHIVE) {
-		log_msg(LLAPI_MSG_ERROR, 0, "%d requested when maximum "
-				  "of %zu archives supported", archive_count,
-				  LL_HSM_MAX_ARCHIVE);
+		log_msg(LLAPI_MSG_ERROR, 0,
+			"%d requested when maximum of %zu archives supported",
+			archive_count, LL_HSM_MAX_ARCHIVE);
 		return -EINVAL;
 	}
 
@@ -339,9 +339,9 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	ct->archives = 0;
 	for (rc = 0; rc < archive_count; rc++) {
 		if ((archives[rc] > LL_HSM_MAX_ARCHIVE) || (archives[rc] < 0)) {
-			log_msg(LLAPI_MSG_ERROR, 0, "%d requested when "
-					  "archive id [0 - %zu] is supported",
-					  archives[rc], LL_HSM_MAX_ARCHIVE);
+			log_msg(LLAPI_MSG_ERROR, 0,
+				"%d requested when archive id [0 - %zu] is supported",
+				archives[rc], LL_HSM_MAX_ARCHIVE);
 			rc = -EINVAL;
 			goto out_err;
 		}
@@ -422,7 +422,8 @@ int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct)
  * cleared the data in ct->kuch from the previous call.
  */
 int llapi_hsm_copytool_recv(struct hsm_copytool_private *ct,
-			    const struct hsm_action_list **halh, size_t *msgsize)
+			    const struct hsm_action_list **halh,
+			    size_t *msgsize)
 {
 	int rc;
 
@@ -694,7 +695,8 @@ end:
 
 	hcp->copy.hc_hai.hai_extent = *he;
 
-	rc = ioctl(hcp->ct_priv->lfsh->mount_fd, LL_IOC_HSM_COPY_END, &hcp->copy);
+	rc = ioctl(hcp->ct_priv->lfsh->mount_fd, LL_IOC_HSM_COPY_END,
+		   &hcp->copy);
 	if (rc) {
 		rc = -errno;
 		goto err_cleanup;
@@ -830,7 +832,8 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		layout = def_layout;
 	}
 
-	if (llapi_layout_pattern_flags_set(layout, LLAPI_LAYOUT_RELEASED) != 0) {
+	if (llapi_layout_pattern_flags_set(layout,
+					   LLAPI_LAYOUT_RELEASED) != 0) {
 		log_msg(LLAPI_MSG_ERROR, EINVAL,
 			"invalid striping information for importing '%s'",
 			dst);
@@ -1029,7 +1032,8 @@ int llapi_hsm_request(const struct lustre_fs_h *lfsh,
  *
  * \retval  a pointer to the first action item in the list
  */
-const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *hal)
+const struct hsm_action_item *
+llapi_hsm_hai_first(const struct hsm_action_list *hal)
 {
 	const char *p;
 
@@ -1052,7 +1056,8 @@ const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *
  *
  * \retval  a pointer to the next action item in the list
  */
-const struct hsm_action_item *llapi_hsm_hai_next(const struct hsm_action_item *hai)
+const struct hsm_action_item *
+llapi_hsm_hai_next(const struct hsm_action_item *hai)
 {
 	return (struct hsm_action_item *)
 		(((uintptr_t)hai + hai->hai_len + 7) & ~7);
