@@ -341,10 +341,10 @@ int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
-				 const lustre_fid *parent_fid,
-				 int mdt_idx, int open_flags, mode_t mode,
-				 const struct llapi_layout *layout)
+int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+			       const lustre_fid *parent_fid,
+			       int mdt_idx, int open_flags, mode_t mode,
+			       const struct llapi_layout *layout)
 {
 	char path[PATH_MAX];
 	int fd;

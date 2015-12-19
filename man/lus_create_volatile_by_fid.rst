@@ -1,6 +1,6 @@
-============================
-llapi_create_volatile_by_fid
-============================
+==========================
+lus_create_volatile_by_fid
+==========================
 
 -------------------------
 liblustre file management
@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int llapi_create_volatile_by_fid(const struct lustre_fs_h \***\
+**int lus_create_volatile_by_fid(const struct lustre_fs_h \***\
 lfsh\ **, const lustre_fid \***\ parent_fid\ **, int** mdt_idx\ **,
 int** open_flags\ **, mode_t** mode\ **, const struct llapi_layout
 \***\ layout\ **)**
@@ -48,7 +48,7 @@ the default for the directory is used.
 RETURN VALUE
 ============
 
-**llapi_create_volatile_by_fid** returns a file descriptor on success,
+**lus_create_volatile_by_fid** returns a file descriptor on success,
 or a negative errno on failure.
 
 

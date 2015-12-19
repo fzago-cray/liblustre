@@ -212,10 +212,10 @@ int lus_stat_by_fid(const struct lustre_fs_h *lfsh,
 		    const lustre_fid *fid, struct stat *stbuf);
 int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 			       const struct lu_fid *fid);
-int llapi_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
-				 const lustre_fid *parent_fid,
-				 int mdt_idx, int open_flags, mode_t mode,
-				 const struct llapi_layout *layout);
+int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+			       const lustre_fid *parent_fid,
+			       int mdt_idx, int open_flags, mode_t mode,
+			       const struct llapi_layout *layout);
 int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		  char *parent_name, size_t parent_name_len);
 int lus_fid2parent(const struct lustre_fs_h *lfsh,

@@ -246,7 +246,7 @@ START_TEST(test12)
 	ck_assert_int_eq(rc, 0);
 
 	/* Against a volatile file */
-	fd = llapi_create_volatile_by_fid(lfsh, &maindir_fid, -1, 0, 0600, NULL);
+	fd = lus_create_volatile_by_fid(lfsh, &maindir_fid, -1, 0, 0600, NULL);
 	ck_assert_int_ge(fd, 0);
 
 	rc = lus_fd2fid(fd, &fid);

@@ -209,9 +209,9 @@ START_TEST(test12)
 	rc = lus_path2fid(mainpath, &fid);
 	ck_assert_int_eq(rc, 0);
 
-	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1, O_CREAT | O_WRONLY,
-					  0700, NULL);
-	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+	fd = lus_create_volatile_by_fid(lfsh, &fid, -1, O_CREAT | O_WRONLY,
+					0700, NULL);
+	ck_assert_msg(fd >= 0, "lus_create_volatile_by_fid failed on '%s': %s",
 		      mainpath, strerror(-fd));
 
 	gid = 34895;
@@ -223,10 +223,10 @@ START_TEST(test12)
 
 	close(fd);
 
-	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1,
-					  O_CREAT | O_WRONLY | O_LOV_DELAY_CREATE,
+	fd = lus_create_volatile_by_fid(lfsh, &fid, -1,
+					O_CREAT | O_WRONLY | O_LOV_DELAY_CREATE,
 					  0700, NULL);
-	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+	ck_assert_msg(fd >= 0, "lus_create_volatile_by_fid failed on '%s': %s",
 		      mainpath, strerror(-fd));
 
 	gid = 3354895;
@@ -238,8 +238,8 @@ START_TEST(test12)
 
 	close(fd);
 
-	fd = llapi_create_volatile_by_fid(lfsh, &fid, -1, O_RDONLY, 0700, NULL);
-	ck_assert_msg(fd >= 0, "llapi_create_volatile_idx failed on '%s': %s",
+	fd = lus_create_volatile_by_fid(lfsh, &fid, -1, O_RDONLY, 0700, NULL);
+	ck_assert_msg(fd >= 0, "lus_create_volatile_by_fid failed on '%s': %s",
 		      mainpath, strerror(-fd));
 
 	gid = 3489655;
@@ -312,9 +312,9 @@ START_TEST(test14)
 	rc = llapi_layout_stripe_count_set(layout, 2);
 	ck_assert_int_eq(rc, 0);
 
-	fd = llapi_create_volatile_by_fid(lfsh, NULL, -1,
-					  0, S_IRUSR | S_IWUSR,
-					  layout);
+	fd = lus_create_volatile_by_fid(lfsh, NULL, -1,
+					0, S_IRUSR | S_IWUSR,
+					layout);
 	ck_assert_int_ge(fd, 0);
 
 	rc = llapi_group_lock(fd, gid);
