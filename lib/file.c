@@ -82,8 +82,8 @@ int lus_stat_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int llapi_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
-		    char *parent_name, size_t parent_name_len)
+int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
+		  char *parent_name, size_t parent_name_len)
 {
 	/* Avoid allocating gp by adding PATH_MAX after it. */
 	struct {
@@ -143,8 +143,8 @@ int llapi_fid2parent(const struct lustre_fs_h *lfsh,
 	if (fd < 0)
 		return fd;
 
-	rc = llapi_fd2parent(fd, linkno,
-			     parent_fid, parent_name, parent_name_len);
+	rc = lus_fd2parent(fd, linkno,
+			   parent_fid, parent_name, parent_name_len);
 
 	close(fd);
 
@@ -176,8 +176,8 @@ int llapi_path2parent(const char *path, unsigned int linkno,
 	if (fd == -1)
 		return -errno;
 
-	rc = llapi_fd2parent(fd, linkno,
-			     parent_fid, parent_name, parent_name_len);
+	rc = lus_fd2parent(fd, linkno,
+			   parent_fid, parent_name, parent_name_len);
 	close(fd);
 
 	return rc;

@@ -418,7 +418,7 @@ START_TEST(test30)
 }
 END_TEST
 
-/* Test llapi_fd2parent/llapi_path2parent on mainpath (whatever its
+/* Test lus_fd2parent/llapi_path2parent on mainpath (whatever its
  * type). mainpath must exist. */
 static void help_test40(void)
 {
@@ -484,7 +484,7 @@ START_TEST(test40b)
 }
 END_TEST
 
-/* Test llapi_fd2parent */
+/* Test lus_fd2parent */
 START_TEST(test41)
 {
         int rc;
@@ -501,7 +501,7 @@ START_TEST(test41)
         for (i = 0; i < 256; i++) {
                 memset(name, i, sizeof(name)); /* poison */
 
-		rc = llapi_fd2parent(fd, 0, &parent_fid, name, sizeof(name));
+		rc = lus_fd2parent(fd, 0, &parent_fid, name, sizeof(name));
                 ck_assert_int_eq(rc, 0);
                 ck_assert_str_eq(name, maindir);
         }

@@ -5,7 +5,7 @@
 		llapi_create_volatile_by_fid;
 		llapi_data_version_by_fd;
 		llapi_fd2fid;
-		llapi_fd2parent;
+		lus_fd2parent;
 		llapi_fid2parent;
 		llapi_fid2path;
 		llapi_fswap_layouts;

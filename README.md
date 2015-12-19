@@ -123,7 +123,7 @@ TODO
 -   llapi\_open\_by\_fid and some layout function should return -errno
     on error, not -1 with errno set.
 -   remove recno from llapi\_fid2path since it's unused
--   llapi_fid2path and llapi_fd2parent should use a newer ioctl that
+-   llapi_fid2path and lus_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
     save a memory copy.
 -   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
