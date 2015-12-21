@@ -51,7 +51,7 @@ void chomp_string(char *buf)
  * This can be used by external programs to ensure the initialization
  * mechanism has actually worked.
  */
-bool llapi_initialized;
+bool lus_initialized;
 
 /**
  * Initializes the library. This function is automatically called on
@@ -59,7 +59,7 @@ bool llapi_initialized;
  * loaded with dlopen(), so the init function has to be called
  * manually in that case.
  */
-__attribute__ ((constructor)) void llapi_init(void)
+__attribute__ ((constructor)) void lus_init(void)
 {
 	unsigned int	seed;
 	struct timeval	tv;
@@ -87,5 +87,5 @@ __attribute__ ((constructor)) void llapi_init(void)
 	}
 
 	srandom(seed);
-	llapi_initialized = true;
+	lus_initialized = true;
 }

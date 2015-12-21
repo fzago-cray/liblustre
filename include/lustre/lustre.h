@@ -231,8 +231,8 @@ int lus_group_lock(int fd, uint64_t gid);
 int lus_group_unlock(int fd, uint64_t gid);
 
 /* Library initialization */
-bool llapi_initialized;
-void llapi_init(void);
+bool lus_initialized;
+void lus_init(void);
 
 /*
  * HSM
