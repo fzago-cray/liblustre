@@ -185,9 +185,9 @@ section should help porting.
 liblustre doesn't provide an API to log messages, but will send log
 messages if the application requests it. It is the job of the
 application to emit these logs. By default no logs are evaluated. To
-retrieve the log messages, the application has to set a callback with
-llapi\_msg\_callback\_set() and set a log level with
-llapi\_msg\_set\_level(). When the callback is called, the application
+retrieve the log messages, the application has to register a callback
+with lus\_log\_set\_callback() and set a log level with
+lus\_log\_set\_level(). When the callback is called, the application
 can then emit the messages if it wishes. The posix copytool, renamed
 posixct.c, has been modified to use that interface and will output all
 its messages on stdout.

@@ -1300,7 +1300,7 @@ int main(int argc, char *argv[])
 	TCase *tc;
 	SRunner *sr;
 
-	llapi_msg_set_level(LLAPI_MSG_OFF);
+	lus_log_set_level(LUS_LOG_OFF);
 
 	while ((opt = getopt(argc, argv, "d:o:p:")) != -1) {
 		switch (opt) {

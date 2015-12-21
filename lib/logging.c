@@ -20,8 +20,8 @@
 
 #include "internal.h"
 
-unsigned int log_level = LLAPI_MSG_OFF;
-llapi_log_callback_t log_msg_callback = NULL;
+unsigned int log_level = LUS_LOG_OFF;
+lus_log_callback_t log_msg_callback;
 
 /**
  * Set the log level.
@@ -29,12 +29,12 @@ llapi_log_callback_t log_msg_callback = NULL;
  *
  * \param[in]  level    new logging level
  */
-void llapi_msg_set_level(enum llapi_message_level level)
+void lus_log_set_level(enum lus_log_level level)
 {
-	if (level < LLAPI_MSG_OFF)
-		log_level = LLAPI_MSG_OFF;
-	else if (level >= LLAPI_MSG_DEBUG)
-		log_level = LLAPI_MSG_DEBUG;
+	if (level < LUS_LOG_OFF)
+		log_level = LUS_LOG_OFF;
+	else if (level >= LUS_LOG_DEBUG)
+		log_level = LUS_LOG_DEBUG;
 	else
 		log_level = level;
 }
@@ -44,7 +44,7 @@ void llapi_msg_set_level(enum llapi_message_level level)
  *
  * \retval      the current log level
  */
-enum llapi_message_level llapi_msg_get_level(void)
+enum lus_log_level lus_log_get_level(void)
 {
 	return log_level;
 }
@@ -52,8 +52,7 @@ enum llapi_message_level llapi_msg_get_level(void)
 /* Send log messages to the callback. This function should only be
  * called through log_msg() as it validates the callback.
  * Preserve errno. */
-void
-log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...)
+void log_msg_internal(enum lus_log_level level, int err, const char *fmt, ...)
 {
 	va_list args;
 	int errno_org = errno;
@@ -71,7 +70,7 @@ log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...)
  *
  * \param[in]  cb    new logging callback
  */
-void llapi_msg_callback_set(llapi_log_callback_t cb)
+void lus_log_set_callback(lus_log_callback_t cb)
 {
 	log_msg_callback = cb;
 }

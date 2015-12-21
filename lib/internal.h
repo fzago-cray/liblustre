@@ -13,10 +13,10 @@
  * Logging
  */
 unsigned int log_level;
-llapi_log_callback_t log_msg_callback;
+lus_log_callback_t log_msg_callback;
 
 void
-log_msg_internal(enum llapi_message_level level, int err, const char *fmt, ...)
+log_msg_internal(enum lus_log_level level, int err, const char *fmt, ...)
 	__attribute__((format(__printf__, 3, 4)));
 
 /* We don't want to evaluate arguments if the output is not used */

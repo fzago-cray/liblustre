@@ -140,7 +140,7 @@ struct lustre_fs_h *lfsh;
 struct options opt = {
 	.o_copy_attrs = 1,
 	.o_shadow_tree = 1,
-	.o_verbose = LLAPI_MSG_INFO,
+	.o_verbose = LUS_LOG_INFO,
 	.o_copy_xattrs = 1,
 	.o_report_int = REPORT_INTERVAL_DEFAULT,
 	.o_chunk_size = ONE_MB,
@@ -170,7 +170,7 @@ static inline double ct_now(void)
 }
 
 /* Call back for liblustre. Also use to log the copytool's messages. */
-static void log_fn_cb(enum llapi_message_level level, int err,
+static void log_fn_cb(enum lus_log_level level, int err,
 		      const char *fmt, va_list args)
 {
 	fprintf(stdout, "%f %s[%ld]: ", ct_now(), cmd_name, syscall(SYS_gettid));
@@ -182,7 +182,7 @@ static void log_fn_cb(enum llapi_message_level level, int err,
 }
 
 /* Reformat the copytool's messages to use log_fn_cb. */
-static void log_fn(enum llapi_message_level level, int err,
+static void log_fn(enum lus_log_level level, int err,
 		   const char *fmt, ...)
 {
 	va_list args;
@@ -193,16 +193,16 @@ static void log_fn(enum llapi_message_level level, int err,
 }
 
 #define CT_ERROR(_rc, _format, ...)				\
-	log_fn(LLAPI_MSG_ERROR, _rc, _format, ## __VA_ARGS__)
+	log_fn(LUS_LOG_ERROR, _rc, _format, ## __VA_ARGS__)
 
 #define CT_DEBUG(_format, ...)					\
-	log_fn(LLAPI_MSG_DEBUG, 0, _format, ## __VA_ARGS__)
+	log_fn(LUS_LOG_DEBUG, 0, _format, ## __VA_ARGS__)
 
 #define CT_WARN(_format, ...)					\
-	log_fn(LLAPI_MSG_WARN, 0, _format, ## __VA_ARGS__)
+	log_fn(LUS_LOG_WARN, 0, _format, ## __VA_ARGS__)
 
 #define CT_TRACE(_format, ...)					\
-	log_fn(LLAPI_MSG_INFO, 0, _format, ## __VA_ARGS__)
+	log_fn(LUS_LOG_INFO, 0, _format, ## __VA_ARGS__)
 
 static void usage(const char *name, int rc)
 {
@@ -1322,7 +1322,7 @@ static int ct_process_item(struct hsm_action_item *hai, const long hal_flags)
 {
 	int	rc = 0;
 
-	if (opt.o_verbose >= LLAPI_MSG_INFO || opt.o_dry_run) {
+	if (opt.o_verbose >= LUS_LOG_INFO || opt.o_dry_run) {
 		/* Print the original path */
 		char		path[PATH_MAX];
 
@@ -1946,8 +1946,8 @@ static int ct_setup(void)
 	int	rc;
 
 	/* set llapi message level */
-	llapi_msg_callback_set(log_fn_cb);
-	llapi_msg_set_level(opt.o_verbose);
+	lus_log_set_callback(log_fn_cb);
+	lus_log_set_level(opt.o_verbose);
 
 	arc_fd = open(opt.o_hsm_root, O_RDONLY);
 	if (arc_fd < 0) {

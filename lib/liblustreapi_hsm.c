@@ -152,7 +152,7 @@ static inline const char *llapi_hsm_ct_ev2str(int type)
 	case CT_REMOVE_ERROR:
 		return "REMOVE_ERROR";
 	default:
-		log_msg(LLAPI_MSG_ERROR, 0,
+		log_msg(LUS_LOG_ERROR, 0,
 			"Unknown event type: %d", type);
 		return NULL;
 	}
@@ -249,7 +249,7 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
 		}
 
 		if (header.kuc_magic != KUC_MAGIC) {
-			log_msg(LLAPI_MSG_ERROR, 0,
+			log_msg(LUS_LOG_ERROR, 0,
 				"Bad magic received from kernel (%08x instead of %08x)",
 				header.kuc_magic, KUC_MAGIC);
 			rc = -EPROTO;
@@ -257,7 +257,7 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
 		}
 
 		if (header.kuc_msglen < sizeof(header)) {
-			log_msg(LLAPI_MSG_ERROR, 0,
+			log_msg(LUS_LOG_ERROR, 0,
 				"Invalid data length (%08x < %08zx)",
 				header.kuc_msglen, sizeof(header));
 			rc = -EPROTO;
@@ -315,13 +315,13 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	int				 rc;
 
 	if (archive_count > 0 && archives == NULL) {
-		log_msg(LLAPI_MSG_ERROR, 0,
+		log_msg(LUS_LOG_ERROR, 0,
 				  "NULL archive numbers");
 		return -EINVAL;
 	}
 
 	if (archive_count > LL_HSM_MAX_ARCHIVE) {
-		log_msg(LLAPI_MSG_ERROR, 0,
+		log_msg(LUS_LOG_ERROR, 0,
 			"%d requested when maximum of %zu archives supported",
 			archive_count, LL_HSM_MAX_ARCHIVE);
 		return -EINVAL;
@@ -339,7 +339,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	ct->archives = 0;
 	for (rc = 0; rc < archive_count; rc++) {
 		if ((archives[rc] > LL_HSM_MAX_ARCHIVE) || (archives[rc] < 0)) {
-			log_msg(LLAPI_MSG_ERROR, 0,
+			log_msg(LUS_LOG_ERROR, 0,
 				"%d requested when archive id [0 - %zu] is supported",
 				archives[rc], LL_HSM_MAX_ARCHIVE);
 			rc = -EINVAL;
@@ -358,7 +358,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 
 	rc = open_hsm_comm(ct);
 	if (rc < 0) {
-		log_msg(LLAPI_MSG_ERROR, rc,
+		log_msg(LUS_LOG_ERROR, rc,
 			"cannot start copytool on '%s'", lfsh->mount_path);
 		goto out_err;
 	}
@@ -442,7 +442,7 @@ repeat:
 	 * If 0 registered, we serve any archive. */
 	if (ct->archives &&
 	    ((1 << ((*halh)->hal_archive_id - 1)) & ct->archives) == 0) {
-		log_msg(LLAPI_MSG_INFO, 0,
+		log_msg(LUS_LOG_INFO, 0,
 			"This copytool does not service archive #%d,"
 			" ignoring this request."
 			" Mask of served archive is 0x%.8X",
@@ -495,7 +495,7 @@ static int ct_md_getattr(const struct lustre_fs_h *lfsh,
 	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, lmd);
 	if (rc != 0) {
 		rc = -errno;
-		log_msg(LLAPI_MSG_ERROR, rc,
+		log_msg(LUS_LOG_ERROR, rc,
 			    "cannot get metadata attributes of "DFID" in '%s'",
 			    PFID(fid), lfsh->mount_path);
 		goto out;
@@ -533,7 +533,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 	rc = lus_fid2parent(hcp->ct_priv->lfsh, &hai->hai_fid, 0,
 			      &parent_fid, NULL, 0);
 	if (rc < 0) {
-		log_msg(LLAPI_MSG_ERROR, rc,
+		log_msg(LUS_LOG_ERROR, rc,
 			"cannot get parent fid to restore "DFID" using '%s'",
 			PFID(&hai->hai_fid), mnt);
 		return rc;
@@ -825,7 +825,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		def_layout = llapi_layout_alloc(0);
 
 		if (def_layout == NULL) {
-			log_msg(LLAPI_MSG_ERROR, ENOMEM,
+			log_msg(LUS_LOG_ERROR, ENOMEM,
 				"cannot allocate a new layout for import");
 			return -EINVAL;
 		}
@@ -834,7 +834,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 
 	if (llapi_layout_pattern_flags_set(layout,
 					   LLAPI_LAYOUT_RELEASED) != 0) {
-		log_msg(LLAPI_MSG_ERROR, EINVAL,
+		log_msg(LUS_LOG_ERROR, EINVAL,
 			"invalid striping information for importing '%s'",
 			dst);
 		rc = -EINVAL;
@@ -844,7 +844,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	fd = llapi_layout_file_open(dst, O_CREAT | O_WRONLY,
 				    st->st_mode, layout);
 	if (fd < 0) {
-		log_msg(LLAPI_MSG_ERROR, fd,
+		log_msg(LUS_LOG_ERROR, fd,
 			    "cannot create '%s' for import", dst);
 		rc = fd;
 		goto out;
@@ -862,7 +862,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	rc = ioctl(fd, LL_IOC_HSM_IMPORT, &hui);
 	if (rc != 0) {
 		rc = -errno;
-		log_msg(LLAPI_MSG_ERROR, rc, "cannot import '%s'", dst);
+		log_msg(LUS_LOG_ERROR, rc, "cannot import '%s'", dst);
 		unlink(dst);
 		goto out;
 	}

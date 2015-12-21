@@ -100,22 +100,22 @@ struct obd_uuid {
  * Logging
  */
 
-/* Logging levels. The default is LLAPI_MSG_OFF. */
-enum llapi_message_level {
-	LLAPI_MSG_OFF    = 0,
-	LLAPI_MSG_FATAL,
-	LLAPI_MSG_ERROR,
-	LLAPI_MSG_WARN,
-	LLAPI_MSG_NORMAL,
-	LLAPI_MSG_INFO,
-	LLAPI_MSG_DEBUG
+/* Logging levels. The default is LUS_LOG_OFF. */
+enum lus_log_level {
+	LUS_LOG_OFF = 0,
+	LUS_LOG_FATAL,
+	LUS_LOG_ERROR,
+	LUS_LOG_WARN,
+	LUS_LOG_NORMAL,
+	LUS_LOG_INFO,
+	LUS_LOG_DEBUG
 };
 
-void llapi_msg_set_level(enum llapi_message_level level);
-enum llapi_message_level llapi_msg_get_level(void);
-typedef void (*llapi_log_callback_t)(enum llapi_message_level level, int err,
-				     const char *fmt, va_list args);
-void llapi_msg_callback_set(llapi_log_callback_t cb);
+void lus_log_set_level(enum lus_log_level level);
+enum lus_log_level lus_log_get_level(void);
+typedef void (*lus_log_callback_t)(enum lus_log_level level, int err,
+				   const char *fmt, va_list args);
+void lus_log_set_callback(lus_log_callback_t cb);
 
 /*
  * Open / close a filesystem
