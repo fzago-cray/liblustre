@@ -400,8 +400,8 @@ int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   0 or a positive MDT index
  * \retval   a negative errno on error
  */
-int llapi_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
-			       const struct lu_fid *fid)
+int lus_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
+			     const struct lu_fid *fid)
 {
 	int rc;
 

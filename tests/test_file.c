@@ -259,7 +259,7 @@ void unittest_lus_fid2path(void)
 	lus_close_fs(lfsh);
 }
 
-/* Test llapi_get_mdt_index_by_fid */
+/* Test lus_get_mdt_index_by_fid */
 void unittest_mdt_index(void)
 {
 	struct lustre_fs_h *lfsh;
@@ -283,7 +283,7 @@ void unittest_mdt_index(void)
 	close(fd);
 	unlink(fname);
 
-	rc = llapi_get_mdt_index_by_fid(lfsh, &fid);
+	rc = lus_get_mdt_index_by_fid(lfsh, &fid);
 	ck_assert_int_eq(rc, 0);
 
 	lus_close_fs(lfsh);
