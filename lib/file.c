@@ -422,7 +422,7 @@ int lus_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   0 on success, with dv set
  * \retval   a negative errno on error
  */
-int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
+int lus_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
 {
 	struct ioc_data_version idv = { .idv_flags = flags };
 	int rc;

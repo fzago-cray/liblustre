@@ -226,7 +226,7 @@ int lus_fid2parent(const struct lustre_fs_h *lfsh,
 int lus_path2parent(const char *path, unsigned int linkno,
 		      lustre_fid *parent_fid,
 		      char *parent_name, size_t parent_name_len);
-int llapi_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
+int lus_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
 int llapi_group_lock(int fd, uint64_t gid);
 int llapi_group_unlock(int fd, uint64_t gid);
 

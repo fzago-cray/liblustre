@@ -3,7 +3,7 @@
     global:
 		lus_close_fs;
 		lus_create_volatile_by_fid;
-		llapi_data_version_by_fd;
+		lus_data_version_by_fd;
 		lus_fd2fid;
 		lus_fd2parent;
 		lus_fid2parent;

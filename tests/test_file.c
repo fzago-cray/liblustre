@@ -289,8 +289,8 @@ void unittest_mdt_index(void)
 	lus_close_fs(lfsh);
 }
 
-/* Test llapi_data_version_by_fd */
-void unittest_llapi_data_version_by_fd(void)
+/* Test lus_data_version_by_fd */
+void unittest_lus_data_version_by_fd(void)
 {
 	struct lustre_fs_h *lfsh;
 	int fd;
@@ -312,11 +312,11 @@ void unittest_llapi_data_version_by_fd(void)
 	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
 	ck_assert_int_gt(fd, 0);
 
-	rc = llapi_data_version_by_fd(fd, 0, &dv);
+	rc = lus_data_version_by_fd(fd, 0, &dv);
 	ck_assert_int_eq(rc, 0);
 
 	old_dv = dv;
-	rc = llapi_data_version_by_fd(fd, 0, &dv);
+	rc = lus_data_version_by_fd(fd, 0, &dv);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(dv, old_dv);
 
@@ -325,7 +325,7 @@ void unittest_llapi_data_version_by_fd(void)
 	sync();
 
 	old_dv = dv;
-	rc = llapi_data_version_by_fd(fd, 0, &dv);
+	rc = lus_data_version_by_fd(fd, 0, &dv);
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_ne(dv, old_dv);
 
@@ -335,12 +335,12 @@ void unittest_llapi_data_version_by_fd(void)
 	lus_close_fs(lfsh);
 
 	/* Bad fd */
-	rc = llapi_data_version_by_fd(876, 0, &dv);
+	rc = lus_data_version_by_fd(876, 0, &dv);
 	ck_assert_int_eq(rc, -EBADF);
 
 	/* Non Lustre file. */
 	fd = open("/dev/zero", O_RDONLY);
-	rc = llapi_data_version_by_fd(fd, 0, &dv);
+	rc = lus_data_version_by_fd(fd, 0, &dv);
 	ck_assert_int_eq(rc, -ENOTTY);
 	close(fd);
 }
