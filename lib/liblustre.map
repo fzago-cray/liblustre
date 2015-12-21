@@ -13,7 +13,7 @@
 		lus_get_mdt_index_by_fid;
 		lus_get_mountpoint;
 		lus_group_lock;
-		llapi_group_unlock;
+		lus_group_unlock;
 		llapi_hsm_action_begin;
 		llapi_hsm_action_end;
 		llapi_hsm_action_get_dfid;

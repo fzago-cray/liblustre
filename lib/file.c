@@ -506,7 +506,7 @@ int lus_group_lock(int fd, uint64_t gid)
  * \retval  0 on success
  * \retval  a negative errno on error
  */
-int llapi_group_unlock(int fd, uint64_t gid)
+int lus_group_unlock(int fd, uint64_t gid)
 {
 	int rc;
 

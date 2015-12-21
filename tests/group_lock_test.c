@@ -81,7 +81,7 @@ START_TEST(test10)
 	gid = 1234;
 	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Again */
@@ -89,7 +89,7 @@ START_TEST(test10)
 	for (i = 0; i < 1000; i++) {
 		rc = lus_group_lock(fd, gid);
 		ck_assert_int_eq(rc, 0);
-		rc = llapi_group_unlock(fd, gid);
+		rc = lus_group_unlock(fd, gid);
 		ck_assert_int_eq(rc, 0);
 	}
 
@@ -99,9 +99,9 @@ START_TEST(test10)
 	ck_assert_int_eq(rc, 0);
 	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -EINVAL);
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, -EINVAL);
 
 	/* 0 is an invalid gid */
@@ -114,11 +114,11 @@ START_TEST(test10)
 	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 	for (gid = -10; gid < 10; gid++) {
-		rc = llapi_group_unlock(fd, gid);
+		rc = lus_group_unlock(fd, gid);
 		ck_assert_int_eq(rc, -EINVAL);
 	}
 	gid = 3543;
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
@@ -218,7 +218,7 @@ START_TEST(test12)
 	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
 
 	close(fd);
@@ -233,7 +233,7 @@ START_TEST(test12)
 	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
 
 	close(fd);
@@ -246,7 +246,7 @@ START_TEST(test12)
 	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(-rc));
 
 	close(fd);
@@ -285,10 +285,10 @@ START_TEST(test13)
 	ck_assert_int_eq(rc, sizeof(buf));
 
 	/* Finish */
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
-	rc = llapi_group_unlock(fd2, gid);
+	rc = lus_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd1);
@@ -326,7 +326,7 @@ START_TEST(test14)
 	ck_assert_int_eq(rc, sizeof(buf));
 #endif
 
-	rc = llapi_group_unlock(fd, gid);
+	rc = lus_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd);
@@ -415,16 +415,16 @@ START_TEST(test30)
 	gid = 1234;
 	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Lock on one fd, unlock on the other */
 	gid = 6947556;
 	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd2, gid);
+	rc = lus_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, -EINVAL);
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Lock from both */
@@ -433,9 +433,9 @@ START_TEST(test30)
 	ck_assert_int_eq(rc, 0);
 	rc = lus_group_lock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd2, gid);
+	rc = lus_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Lock from both. Unlock in reverse order. */
@@ -444,9 +444,9 @@ START_TEST(test30)
 	ck_assert_int_eq(rc, 0);
 	rc = lus_group_lock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_unlock(fd2, gid);
+	rc = lus_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Try to lock with different gids */
@@ -466,7 +466,7 @@ START_TEST(test30)
 		else
 			ck_assert_int_eq(rc, -EAGAIN);
 	}
-	rc = llapi_group_unlock(fd1, gid);
+	rc = lus_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	close(fd1);

@@ -164,7 +164,7 @@ section should help porting.
     condition.
 -   llapi_get_data_version is now called lus_data_version_by_fd and
     the last two parameters are swapped, to put the result last.
--   the gid given to lus_group_lock / llapi_group_unlock is now an
+-   the gid given to lus_group_lock / lus_group_unlock is now an
     uint64_t instead of an int.
 -   hai_first and hai_next are now functions called llapi_hsm_hai_first
     and llapi_hsm_hai_next
