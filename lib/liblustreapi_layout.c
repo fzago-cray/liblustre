@@ -673,16 +673,9 @@ struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 {
 	int fd;
 	int tmp;
-	int saved_msg_level = lus_log_get_level();
 	struct llapi_layout *layout = NULL;
 
-	/* Prevent llapi internal routines from writing to console
-	 * while executing this function, then restore previous message
-	 * level. */
-	lus_log_set_level(LUS_LOG_OFF);
 	fd = lus_open_by_fid(lfsh, fid, O_RDONLY);
-	lus_log_set_level(saved_msg_level);
-
 	if (fd < 0)
 		return NULL;
 
