@@ -451,9 +451,9 @@ int lus_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv)
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int llapi_fswap_layouts(int fd1, int fd2,
-			uint64_t dv1, uint64_t dv2,
-			uint64_t flags)
+int lus_fswap_layouts(int fd1, int fd2,
+		      uint64_t dv1, uint64_t dv2,
+		      uint64_t flags)
 {
 	struct lustre_swap_layouts lsl = {
 		.sl_flags = flags,

@@ -8,7 +8,7 @@
 		lus_fd2parent;
 		lus_fid2parent;
 		lus_fid2path;
-		llapi_fswap_layouts;
+		lus_fswap_layouts;
 		lus_get_fsname;
 		lus_get_mdt_index_by_fid;
 		lus_get_mountpoint;
