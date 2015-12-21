@@ -64,9 +64,8 @@ lfsh is an opaque handle that can then be passed to various functions:
     int lus_open_by_fid(const struct lustre_fs_h *lfsh, const
     lustre_fid *fid, int open_flags)
 
-    int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
-    struct hsm_copytool_private **priv, int archive_count, int
-    *archives)
+    int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh, int
+    archive_count, int *archives, struct hsm_copytool_private **priv)
 
 ### posix copytool
 
@@ -159,7 +158,7 @@ section should help porting.
 -   dot\_lustre\_name is gone.
 -   lus\_fid2path will return an empty string instead of / if the
     mountpoint is given. recno and linkno can now be NULL.
--   reading an HSM event is non blocking. llapi_hsm_copytool_register()
+-   reading an HSM event is non blocking. lus_hsm_copytool_register()
     can return -EWOULDBLOCK so the caller should handle that
     condition.
 -   llapi_get_data_version is now called lus_data_version_by_fd and

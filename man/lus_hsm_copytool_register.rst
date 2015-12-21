@@ -1,6 +1,6 @@
-===========================
-llapi_hsm_copytool_register
-===========================
+=========================
+lus_hsm_copytool_register
+=========================
 
 ------------------------------
 Lustre API copytool management
@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int llapi_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
+**int lus_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
 struct hsm_copytool_private \*\***\ priv\ **, int** archive_count\ **,
 int \***\ archives\ **)**
 
@@ -38,7 +38,7 @@ DESCRIPTION
 
 To receive HSM requests from a Lustre filesystem, a copytool
 application must open a communication channel with Lustre by calling
-**llapi_hsm_copytool_register**\ (). The Lustre filesystem to monitor
+**lus_hsm_copytool_register**\ (). The Lustre filesystem to monitor
 has already been opened with **lus_open_fs**\ (). *archives* is an
 array with up to 32 elements indicating which archive IDs to register
 for. Each element is a number from 1 to 32. *archive_count* is the
@@ -46,11 +46,11 @@ number of valid elements in the *archive* array. If an element in
 *archives* is 0, or if *archive_count* is 0, then all archives will be
 monitored.
 
-**llapi_hsm_copytool_register** returns *priv*, an opaque
+**lus_hsm_copytool_register** returns *priv*, an opaque
 pointer that must be used with the other functions.
 
 **llapi_hsm_copytool_unregister** unregisters a copytool. *priv* is
-the opaque handle returned by **llapi_hsm_copytool_register**.
+the opaque handle returned by **lus_hsm_copytool_register**.
 
 **llapi_hsm_copytool_get_fd** returns the file descriptor used by the
 Library to communicate with the kernel. This descriptor is only
@@ -95,7 +95,7 @@ request, then **hai_next**.
 RETURN VALUE
 ============
 
-**llapi_hsm_copytool_register** and **llapi_hsm_copytool_unregister**
+**lus_hsm_copytool_register** and **llapi_hsm_copytool_unregister**
 return 0 on success. On error, a negative errno is returned.
 
 **llapi_hsm_copytool_get_fd** returns the file descriptor associated

@@ -57,9 +57,9 @@ START_TEST(test1)
 	struct hsm_copytool_private *ctdata;
 
 	for (i = 0; i < 2000; i++) {
-		rc = llapi_hsm_copytool_register(lfsh, &ctdata, 0, NULL);
+		rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
 		ck_assert_msg(rc == 0,
-			"llapi_hsm_copytool_register failed: %s, loop=%d",
+			"lus_hsm_copytool_register failed: %s, loop=%d",
 			strerror(-rc), i);
 
 		rc = llapi_hsm_copytool_unregister(&ctdata);
@@ -77,12 +77,12 @@ START_TEST(test2)
 	struct hsm_copytool_private *ctdata1;
 	struct hsm_copytool_private *ctdata2;
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata1, 0, NULL);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_register failed: %s",
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata1);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata2, 0, NULL);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_register failed: %s",
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata2);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
 	rc = llapi_hsm_copytool_unregister(&ctdata2);
@@ -95,36 +95,36 @@ START_TEST(test2)
 }
 END_TEST
 
-/* Bad parameters to llapi_hsm_copytool_register(). */
+/* Bad parameters to lus_hsm_copytool_register(). */
 START_TEST(test3)
 {
 	int rc;
 	struct hsm_copytool_private *ctdata;
 	int archives[33];
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 1, NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
+	rc = lus_hsm_copytool_register(lfsh, 1, NULL, &ctdata);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_register error: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 33, NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
+	rc = lus_hsm_copytool_register(lfsh, 33, NULL, &ctdata);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_register error: %s",
 		strerror(-rc));
 
 	memset(archives, 1, sizeof(archives));
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 34, archives);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
+	rc = lus_hsm_copytool_register(lfsh, 34, archives, &ctdata);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_register error: %s",
 		strerror(-rc));
 
 #if 0
 	/* BUG? Should that fail or not? */
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, -1, NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
+	rc = lus_hsm_copytool_register(lfsh, -1, NULL, &ctdata);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_register error: %s",
 		strerror(-rc));
 #endif
 
 	memset(archives, -1, sizeof(archives));
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 1, archives);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
+	rc = lus_hsm_copytool_register(lfsh, 1, archives, &ctdata);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_register error: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -149,7 +149,7 @@ START_TEST(test5)
 	const struct hsm_action_list *hal;
 	size_t msgsize;
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 0, NULL);
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
 	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 
@@ -174,8 +174,8 @@ START_TEST(test6)
 	int rc;
 	size_t msgsize;
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 0, NULL);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
 	rc = llapi_hsm_copytool_recv(NULL, &hal, &msgsize);
@@ -210,8 +210,8 @@ START_TEST(test7)
 	int fd;
 	struct pollfd fds[1];
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 0, NULL);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_register failed: %s",
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
 	fd = llapi_hsm_copytool_get_fd(ctdata);
@@ -459,8 +459,8 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 
 	fd = create_testfile(length);
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata, 0, NULL);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_register failed: %s",
+	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		      strerror(-rc));
 
 	/* Create and send the archive request. */

@@ -21,7 +21,7 @@
 		llapi_hsm_action_progress;
 		llapi_hsm_copytool_get_fd;
 		llapi_hsm_copytool_recv;
-		llapi_hsm_copytool_register;
+		lus_hsm_copytool_register;
 		llapi_hsm_copytool_unregister;
 		llapi_hsm_current_action;
 		llapi_hsm_hai_first;

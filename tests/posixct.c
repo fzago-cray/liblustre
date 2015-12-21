@@ -1859,9 +1859,10 @@ static int ct_run(void)
 
 	setbuf(stdout, NULL);
 
-	rc = llapi_hsm_copytool_register(lfsh, &ctdata,
-					 opt.o_archive_cnt,
-					 opt.o_archive_id);
+	rc = lus_hsm_copytool_register(lfsh,
+				       opt.o_archive_cnt,
+				       opt.o_archive_id,
+				       &ctdata);
 	if (rc < 0) {
 		CT_ERROR(rc, "cannot start copytool interface");
 		return rc;

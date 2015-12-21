@@ -255,26 +255,25 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
  * Register a copytool
  *
  * \param[in]   lfsh      An opened Lustre fs opaque handle
- * \param[out]  priv	  Opaque private control structure
  * \param[in]   archive_count  Number of valid archive IDs in \a archives
  * \param[in]   archives  Which archive numbers this copytool is
  *			  responsible for
+ * \param[out]  priv	  Opaque private control structure
  *
  * \retval 0 on success.
- * \retval -errno on error.
+ * \retval negative errno on error, with priv set to NULL.
  */
-int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
-				struct hsm_copytool_private **priv,
-				int archive_count, int *archives)
+int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
+			      unsigned int archive_count, int *archives,
+			      struct hsm_copytool_private **priv)
 {
-	struct hsm_copytool_private	*ct;
-	int				 rc;
+	struct hsm_copytool_private *ct;
+	int rc;
 
-	if (archive_count > 0 && archives == NULL) {
-		log_msg(LUS_LOG_ERROR, 0,
-				  "NULL archive numbers");
+	*priv = NULL;
+
+	if (archive_count > 0 && archives == NULL)
 		return -EINVAL;
-	}
 
 	if (archive_count > LL_HSM_MAX_ARCHIVE) {
 		log_msg(LUS_LOG_ERROR, 0,
@@ -301,7 +300,7 @@ int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 			rc = -EINVAL;
 			goto out_err;
 		}
-		/* in the list we have a all archive wildcard
+		/* in the list we have an all archive wildcard
 		 * so move to all archives mode
 		 */
 		if (archives[rc] == 0) {

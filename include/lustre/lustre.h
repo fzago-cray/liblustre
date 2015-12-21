@@ -373,9 +373,9 @@ static inline size_t llapi_hsm_user_request_len(unsigned int itemcount,
 struct hsm_copytool_private;
 struct hsm_copyaction_private;
 
-int llapi_hsm_copytool_register(const struct lustre_fs_h *lfsh,
-				struct hsm_copytool_private **priv,
-				int archive_count, int *archives);
+int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
+			      unsigned int archive_count, int *archives,
+			      struct hsm_copytool_private **priv);
 int llapi_hsm_copytool_unregister(struct hsm_copytool_private **priv);
 int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct);
 int llapi_hsm_copytool_recv(struct hsm_copytool_private *priv,

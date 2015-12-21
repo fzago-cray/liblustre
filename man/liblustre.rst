@@ -24,6 +24,6 @@ The Lustre library provides an interface with a Lustre filesystem.
 SEE ALSO
 ========
 
-The HSM API is documented in **llapi_hsm_copytool_register**\ (3) and
+The HSM API is documented in **lus_hsm_copytool_register**\ (3) and
 **llapi_hsm_action_begin**\ (3).
 

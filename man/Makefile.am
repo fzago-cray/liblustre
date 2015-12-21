@@ -13,7 +13,7 @@ nodist_man_MANS = \
 	liblustre.7 \
 	lus_create_volatile_by_fid.3 \
 	llapi_hsm_action_begin.3 \
-	llapi_hsm_copytool_register.3 \
+	lus_hsm_copytool_register.3 \
 	lus_stat_by_fid.3
 
 # Generated man pages
@@ -30,7 +30,7 @@ EXTRA_DIST = \
 	liblustre.rst \
 	lus_create_volatile_by_fid.rst \
 	llapi_hsm_action_begin.rst \
-	llapi_hsm_copytool_register.rst \
+	lus_hsm_copytool_register.rst \
 	lus_stat_by_fid.rst
 
 CLEANFILES = $(nodist_man_MANS)
