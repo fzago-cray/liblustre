@@ -79,7 +79,7 @@ START_TEST(test10)
 
 	/* Valid command first. */
 	gid = 1234;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
@@ -87,7 +87,7 @@ START_TEST(test10)
 	/* Again */
 	gid = 768;
 	for (i = 0; i < 1000; i++) {
-		rc = llapi_group_lock(fd, gid);
+		rc = lus_group_lock(fd, gid);
 		ck_assert_int_eq(rc, 0);
 		rc = llapi_group_unlock(fd, gid);
 		ck_assert_int_eq(rc, 0);
@@ -95,9 +95,9 @@ START_TEST(test10)
 
 	/* Lock twice. */
 	gid = 97486;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -EINVAL);
 	rc = llapi_group_unlock(fd, gid);
 	ck_assert_int_eq(rc, 0);
@@ -106,12 +106,12 @@ START_TEST(test10)
 
 	/* 0 is an invalid gid */
 	gid = 0;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -EINVAL);
 
 	/* Lock/unlock with a different gid */
 	gid = 3543;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 	for (gid = -10; gid < 10; gid++) {
 		rc = llapi_group_unlock(fd, gid);
@@ -184,7 +184,7 @@ START_TEST(test11)
 		fd = open(mainpath, oflags);
 		ck_assert_int_ge(fd, 0);
 
-		rc = llapi_group_lock(fd, gid);
+		rc = lus_group_lock(fd, gid);
 		ck_assert_int_eq(rc, 0);
 
 		close(fd);
@@ -215,7 +215,7 @@ START_TEST(test12)
 		      mainpath, strerror(-fd));
 
 	gid = 34895;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
 	rc = llapi_group_unlock(fd, gid);
@@ -230,7 +230,7 @@ START_TEST(test12)
 		      mainpath, strerror(-fd));
 
 	gid = 3354895;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
 	rc = llapi_group_unlock(fd, gid);
@@ -243,7 +243,7 @@ START_TEST(test12)
 		      mainpath, strerror(-fd));
 
 	gid = 3489655;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_msg(rc == 0, "cannot lock '%s': %s", mainpath, strerror(-rc));
 
 	rc = llapi_group_unlock(fd, gid);
@@ -268,7 +268,7 @@ START_TEST(test13)
 	fd1 = creat(mainpath, 0);
 	ck_assert_int_ge(fd1, 0);
 
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	memset(buf, 0x5a, sizeof(buf));
@@ -277,7 +277,7 @@ START_TEST(test13)
 
 	/* Open a second fd to that file, lock it too and write. */
 	fd2 = open(mainpath, O_WRONLY);
-	rc = llapi_group_lock(fd2, gid);
+	rc = lus_group_lock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
 
 	memset(buf, 0xa5, sizeof(buf));
@@ -317,7 +317,7 @@ START_TEST(test14)
 					layout);
 	ck_assert_int_ge(fd, 0);
 
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, 0);
 
 	memset(buf, 0x5a, sizeof(buf));
@@ -340,19 +340,19 @@ static void helper_test20(int fd)
 	int rc;
 
 	gid = 1234;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -ENOTTY);
 
 	gid = 0;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -ENOTTY);
 
 	gid = 1;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -ENOTTY);
 
 	gid = -1;
-	rc = llapi_group_lock(fd, gid);
+	rc = lus_group_lock(fd, gid);
 	ck_assert_int_eq(rc, -ENOTTY);
 }
 
@@ -413,14 +413,14 @@ START_TEST(test30)
 
 	/* Valid command first. */
 	gid = 1234;
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	/* Lock on one fd, unlock on the other */
 	gid = 6947556;
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, -EINVAL);
@@ -429,9 +429,9 @@ START_TEST(test30)
 
 	/* Lock from both */
 	gid = 89489665;
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_lock(fd2, gid);
+	rc = lus_group_lock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_group_unlock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
@@ -440,9 +440,9 @@ START_TEST(test30)
 
 	/* Lock from both. Unlock in reverse order. */
 	gid = 89489665;
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
-	rc = llapi_group_lock(fd2, gid);
+	rc = lus_group_lock(fd2, gid);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_group_unlock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
@@ -451,7 +451,7 @@ START_TEST(test30)
 
 	/* Try to lock with different gids */
 	gid = 89489665;
-	rc = llapi_group_lock(fd1, gid);
+	rc = lus_group_lock(fd1, gid);
 	ck_assert_int_eq(rc, 0);
 
 	for (gid2 = -50; gid2 < 50; gid2++) {
@@ -460,7 +460,7 @@ START_TEST(test30)
 		if (gid2 == -1)
 			continue;
 
-		rc = llapi_group_lock(fd2, gid2);
+		rc = lus_group_lock(fd2, gid2);
 		if (gid2 == 0)
 			ck_assert_int_eq(rc, -EINVAL);
 		else

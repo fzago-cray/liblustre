@@ -12,7 +12,7 @@
 		lus_get_fsname;
 		lus_get_mdt_index_by_fid;
 		lus_get_mountpoint;
-		llapi_group_lock;
+		lus_group_lock;
 		llapi_group_unlock;
 		llapi_hsm_action_begin;
 		llapi_hsm_action_end;

@@ -485,7 +485,7 @@ int lus_fswap_layouts(int fd1, int fd2,
  * \retval  0 on success
  * \retval  a negative errno on error
  */
-int llapi_group_lock(int fd, uint64_t gid)
+int lus_group_lock(int fd, uint64_t gid)
 {
 	int rc;
 
@@ -498,7 +498,7 @@ int llapi_group_lock(int fd, uint64_t gid)
 
 /**
  * Release a lock on a file, previously acquired with
- * llapi_group_lock. The gid must match.
+ * lus_group_lock. The gid must match.
  *
  * \param[in]  fd     an opened file descriptor for a file on Lustre
  * \param[in]  gid    a non-zero random number to identify the lock
