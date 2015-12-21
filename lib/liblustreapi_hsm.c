@@ -330,12 +330,19 @@ out_err:
 	return rc;
 }
 
-/** Deregister a copytool
- * Note: under Linux, until llapi_hsm_copytool_unregister is called
+/**
+ * Deregister a copytool
+ *
+ * \param[out]  priv	  Opaque private control structure
+ *
+ * \retval 0 on success.
+ * \retval negative errno on error, with priv set to NULL.
+ *
+ * Note: under Linux, until lus_hsm_copytool_unregister is called
  * (or the program is killed), the libcfs module will be referenced
  * and unremovable, even after Lustre services stop.
  */
-int llapi_hsm_copytool_unregister(struct hsm_copytool_private **priv)
+int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv)
 {
 	struct hsm_copytool_private *ct;
 

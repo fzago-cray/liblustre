@@ -62,9 +62,9 @@ START_TEST(test1)
 			"lus_hsm_copytool_register failed: %s, loop=%d",
 			strerror(-rc), i);
 
-		rc = llapi_hsm_copytool_unregister(&ctdata);
+		rc = lus_hsm_copytool_unregister(&ctdata);
 		ck_assert_msg(rc == 0,
-			"llapi_hsm_copytool_unregister failed: %s, loop=%d",
+			"lus_hsm_copytool_unregister failed: %s, loop=%d",
 			strerror(-rc), i);
 	}
 }
@@ -85,12 +85,12 @@ START_TEST(test2)
 	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_copytool_unregister(&ctdata2);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata2);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_copytool_unregister(&ctdata1);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata1);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -129,13 +129,13 @@ START_TEST(test3)
 }
 END_TEST
 
-/* Bad parameters to llapi_hsm_copytool_unregister(). */
+/* Bad parameters to lus_hsm_copytool_unregister(). */
 START_TEST(test4)
 {
 	int rc;
 
-	rc = llapi_hsm_copytool_unregister(NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_unregister error: %s",
+	rc = lus_hsm_copytool_unregister(NULL);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_unregister error: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -150,7 +150,7 @@ START_TEST(test5)
 	size_t msgsize;
 
 	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 
 	/* Hopefully there is nothing lingering */
@@ -160,8 +160,8 @@ START_TEST(test5)
 			strerror(-rc));
 	}
 
-	rc = llapi_hsm_copytool_unregister(&ctdata);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -194,8 +194,8 @@ START_TEST(test6)
 	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_recv error: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_copytool_unregister(&ctdata);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -233,8 +233,8 @@ START_TEST(test7)
 	ck_assert_msg(rc == 0, "poll failed: %d, %s",
 		rc, strerror(errno)); /* no event */
 
-	rc = llapi_hsm_copytool_unregister(&ctdata);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 }
 END_TEST
@@ -522,8 +522,8 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 	ck_assert_msg(hcp == NULL, "hcp is NULL");
 
 	/* Close HSM client */
-	rc = llapi_hsm_copytool_unregister(&ctdata);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
+	rc = lus_hsm_copytool_unregister(&ctdata);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
 		      strerror(-rc));
 
 	/* Final check */

@@ -1838,7 +1838,7 @@ static void handler(int signal)
 	 * and doesn't remove us from mtab (EINPROGRESS). The lustre client
 	 * does successfully unmount and the mount is actually gone, but the
 	 * mtab entry remains. So this just makes mtab happier. */
-	llapi_hsm_copytool_unregister(&ctdata);
+	lus_hsm_copytool_unregister(&ctdata);
 
 	_exit(1);
 }
@@ -1937,7 +1937,7 @@ static int ct_run(void)
 			break;
 	}
 
-	llapi_hsm_copytool_unregister(&ctdata);
+	lus_hsm_copytool_unregister(&ctdata);
 
 	return rc;
 }

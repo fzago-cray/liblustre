@@ -18,10 +18,10 @@ SYNOPSIS
 **#include <lustre/lustre.h>**
 
 **int lus_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
-struct hsm_copytool_private \*\***\ priv\ **, int** archive_count\ **,
-int \***\ archives\ **)**
+unsigned int** archive_count\ **,
+int \***\ archives\ **struct hsm_copytool_private \*\***\ priv\ **)**
 
-**int llapi_hsm_copytool_unregister(struct hsm_copytool_private \*\***\ priv**)**
+**int lus_hsm_copytool_unregister(struct hsm_copytool_private \*\***\ priv**)**
 
 **int llapi_hsm_copytool_get_fd(struct hsm_copytool_private \***\ ct\ **)**
 
@@ -49,7 +49,7 @@ monitored.
 **lus_hsm_copytool_register** returns *priv*, an opaque
 pointer that must be used with the other functions.
 
-**llapi_hsm_copytool_unregister** unregisters a copytool. *priv* is
+**lus_hsm_copytool_unregister** unregisters a copytool. *priv* is
 the opaque handle returned by **lus_hsm_copytool_register**.
 
 **llapi_hsm_copytool_get_fd** returns the file descriptor used by the
@@ -95,7 +95,7 @@ request, then **hai_next**.
 RETURN VALUE
 ============
 
-**lus_hsm_copytool_register** and **llapi_hsm_copytool_unregister**
+**lus_hsm_copytool_register** and **lus_hsm_copytool_unregister**
 return 0 on success. On error, a negative errno is returned.
 
 **llapi_hsm_copytool_get_fd** returns the file descriptor associated
