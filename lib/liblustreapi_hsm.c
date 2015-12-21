@@ -114,50 +114,6 @@ enum ct_event {
 	CT_EVENT_MAX
 };
 
-static inline const char *llapi_hsm_ct_ev2str(int type)
-{
-	switch (type) {
-	case CT_REGISTER:
-		return "REGISTER";
-	case CT_UNREGISTER:
-		return "UNREGISTER";
-	case CT_ARCHIVE_START:
-		return "ARCHIVE_START";
-	case CT_ARCHIVE_RUNNING:
-		return "ARCHIVE_RUNNING";
-	case CT_ARCHIVE_FINISH:
-		return "ARCHIVE_FINISH";
-	case CT_ARCHIVE_CANCEL:
-		return "ARCHIVE_CANCEL";
-	case CT_ARCHIVE_ERROR:
-		return "ARCHIVE_ERROR";
-	case CT_RESTORE_START:
-		return "RESTORE_START";
-	case CT_RESTORE_RUNNING:
-		return "RESTORE_RUNNING";
-	case CT_RESTORE_FINISH:
-		return "RESTORE_FINISH";
-	case CT_RESTORE_CANCEL:
-		return "RESTORE_CANCEL";
-	case CT_RESTORE_ERROR:
-		return "RESTORE_ERROR";
-	case CT_REMOVE_START:
-		return "REMOVE_START";
-	case CT_REMOVE_RUNNING:
-		return "REMOVE_RUNNING";
-	case CT_REMOVE_FINISH:
-		return "REMOVE_FINISH";
-	case CT_REMOVE_CANCEL:
-		return "REMOVE_CANCEL";
-	case CT_REMOVE_ERROR:
-		return "REMOVE_ERROR";
-	default:
-		log_msg(LUS_LOG_ERROR, 0,
-			"Unknown event type: %d", type);
-		return NULL;
-	}
-}
-
 /* Open a communication channel with the kernel to retrieve HSM
  * events. Return 0 on success, or -1 on error. */
 static int open_hsm_comm(struct hsm_copytool_private *ct)
