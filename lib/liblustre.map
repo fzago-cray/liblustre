@@ -24,8 +24,8 @@
 		lus_hsm_copytool_register;
 		lus_hsm_copytool_unregister;
 		llapi_hsm_current_action;
-		llapi_hsm_hai_first;
-		llapi_hsm_hai_next;
+		lus_hsm_hai_first;
+		lus_hsm_hai_next;
 		llapi_hsm_import;
 		llapi_hsm_request;
 		llapi_hsm_state_get;

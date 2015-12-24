@@ -28,9 +28,9 @@ int \***\ archives\ **struct hsm_copytool_private \*\***\ priv\ **)**
 **int lus_hsm_copytool_recv(struct hsm_copytool_private \***\ priv\ **,
 **struct hsm_action_list \*\***\ hal\ **, int \***\ msgsize\ **)**
 
-**struct hsm_action_item \*hai_first(struct hsm_action_list \***\ hal\ **)**
+**struct hsm_action_item \*lus_hsm_hai_first(struct hsm_action_list \***\ hal\ **)**
 
-**struct hsm_action_item \*hai_next(struct hsm_action_item \***\ hai\ **)**
+**struct hsm_action_item \*lus_hsm_hai_next(struct hsm_action_item \***\ hai\ **)**
 
 
 DESCRIPTION
@@ -88,8 +88,8 @@ hsm_action_item*::
         char       hai_data[0]; /* variable length */
     };
 
-To iterate through the requests, use **hai_first** to get the first
-request, then **hai_next**.
+To iterate through the requests, use **lus_hsm_hai_first** to get
+the first request, then **lus_hsm_hai_next**.
 
 
 RETURN VALUE

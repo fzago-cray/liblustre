@@ -996,7 +996,7 @@ int llapi_hsm_request(const struct lustre_fs_h *lfsh,
  * \retval  a pointer to the first action item in the list
  */
 const struct hsm_action_item *
-llapi_hsm_hai_first(const struct hsm_action_list *hal)
+lus_hsm_hai_first(const struct hsm_action_list *hal)
 {
 	const char *p;
 
@@ -1020,7 +1020,7 @@ llapi_hsm_hai_first(const struct hsm_action_list *hal)
  * \retval  a pointer to the next action item in the list
  */
 const struct hsm_action_item *
-llapi_hsm_hai_next(const struct hsm_action_item *hai)
+lus_hsm_hai_next(const struct hsm_action_item *hai)
 {
 	return (struct hsm_action_item *)
 		(((uintptr_t)hai + hai->hai_len + 7) & ~7);

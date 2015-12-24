@@ -470,8 +470,8 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 		      strerror(-rc));
 	ck_assert_msg(hal->hal_count == 1, "hal_count=%d", hal->hal_count);
 
-	hai = llapi_hsm_hai_first(hal);
-	ck_assert_msg(hai != NULL, "hai_first returned NULL");
+	hai = lus_hsm_hai_first(hal);
+	ck_assert_msg(hai != NULL, "lus_hsm_hai_first returned NULL");
 	ck_assert_msg(hai->hai_action == HSMA_ARCHIVE,
 		      "hai_action=%d", hai->hai_action);
 

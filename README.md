@@ -125,7 +125,7 @@ TODO
 -   lus_fid2path and lus_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
     save a memory copy.
--   rework llapi_hsm_hai_first and llapi_hsm_hai_next to be nicer. Some
+-   rework lus_hsm_hai_first and lus_hsm_hai_next to be nicer. Some
     of the work done by the caller could be done inside, like bound
     checking. Return the hai or NULL if no more hais are available in
     that hal.
@@ -165,8 +165,8 @@ section should help porting.
     the last two parameters are swapped, to put the result last.
 -   the gid given to lus_group_lock / lus_group_unlock is now an
     uint64_t instead of an int.
--   hai_first and hai_next are now functions called llapi_hsm_hai_first
-    and llapi_hsm_hai_next
+-   hai_first and hai_next are now functions called lus_hsm_hai_first
+    and lus_hsm_hai_next
 -   llapi_hsm_import takes its striping information in a layout
     struture. It now returns a file descriptor which can be used by
     the caller to set the extended attributes. The fid parameter is no

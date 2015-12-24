@@ -397,7 +397,9 @@ int llapi_hsm_action_get_dfid(const struct hsm_copyaction_private *hcp,
 int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp);
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     struct llapi_layout *layout);
-const struct hsm_action_item *llapi_hsm_hai_first(const struct hsm_action_list *hal);
-const struct hsm_action_item *llapi_hsm_hai_next(const struct hsm_action_item *hai);
+const struct hsm_action_item *
+lus_hsm_hai_first(const struct hsm_action_list *hal);
+const struct hsm_action_item *
+lus_hsm_hai_next(const struct hsm_action_item *hai);
 
 #endif
