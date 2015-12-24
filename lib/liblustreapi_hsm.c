@@ -361,16 +361,16 @@ int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv)
 	return 0;
 }
 
-/** Returns a file descriptor to poll/select on.
- * \param ct Opaque private control structure
- * \retval -EINVAL on error
- * \retval the file descriptor for reading HSM events from the kernel
+/**
+ * Returns a file descriptor to poll/select on.
+ *
+ * \param   ct    Opaque private control structure
+ *
+ * \retval  -EINVAL on error
+ * \retval  the file descriptor for reading HSM events from the kernel
  */
-int llapi_hsm_copytool_get_fd(struct hsm_copytool_private *ct)
+int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct)
 {
-	if (ct == NULL || ct->magic != CT_PRIV_MAGIC)
-		return -EINVAL;
-
 	return ct->channel_rfd;
 }
 

@@ -23,7 +23,7 @@ int \***\ archives\ **struct hsm_copytool_private \*\***\ priv\ **)**
 
 **int lus_hsm_copytool_unregister(struct hsm_copytool_private \*\***\ priv**)**
 
-**int llapi_hsm_copytool_get_fd(struct hsm_copytool_private \***\ ct\ **)**
+**int lus_hsm_copytool_get_fd(const struct hsm_copytool_private \***\ ct\ **)**
 
 **int llapi_hsm_copytool_recv(struct hsm_copytool_private \***\ priv\ **,
 **struct hsm_action_list \*\***\ hal\ **, int \***\ msgsize\ **)**
@@ -52,7 +52,7 @@ pointer that must be used with the other functions.
 **lus_hsm_copytool_unregister** unregisters a copytool. *priv* is
 the opaque handle returned by **lus_hsm_copytool_register**.
 
-**llapi_hsm_copytool_get_fd** returns the file descriptor used by the
+**lus_hsm_copytool_get_fd** returns the file descriptor used by the
 Library to communicate with the kernel. This descriptor is only
 intended to be used with **select(2)** or **poll(2)**.
 
@@ -98,7 +98,7 @@ RETURN VALUE
 **lus_hsm_copytool_register** and **lus_hsm_copytool_unregister**
 return 0 on success. On error, a negative errno is returned.
 
-**llapi_hsm_copytool_get_fd** returns the file descriptor associated
+**lus_hsm_copytool_get_fd** returns the file descriptor associated
  with the register copytool. On error, a negative errno is returned.
 
 **llapi_hsm_copytool_recv** returns 0 when a message is available. If
@@ -125,7 +125,7 @@ SEE ALSO
 
 **llapi_hsm_action_begin**\ (3), **llapi_hsm_action_end**\ (3),
 **llapi_hsm_action_progress**\ (3), **llapi_hsm_action_get_dfid**\ (3),
-**llapi_hsm_action_get_fd**\ (3), **lustre**\ (7)
+**lus_hsm_action_get_fd**\ (3), **lustre**\ (7)
 
 See *lhsmtool_posix.c* in the Lustre sources for a use case of this
 API.

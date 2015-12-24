@@ -214,8 +214,8 @@ START_TEST(test7)
 	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
-	fd = llapi_hsm_copytool_get_fd(ctdata);
-	ck_assert_msg(fd >= 0, "llapi_hsm_copytool_get_fd failed: %s",
+	fd = lus_hsm_copytool_get_fd(ctdata);
+	ck_assert_msg(fd >= 0, "lus_hsm_copytool_get_fd failed: %s",
 		strerror(-rc));
 
 	/* Ensure it's read-only */
@@ -486,9 +486,9 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 	{
 		struct pollfd fds[1];
 
-		fds[0].fd = llapi_hsm_copytool_get_fd(ctdata);
+		fds[0].fd = lus_hsm_copytool_get_fd(ctdata);
 		ck_assert_msg(fds[0].fd >= 0,
-			      "llapi_hsm_copytool_get_fd failed: %s",
+			      "lus_hsm_copytool_get_fd failed: %s",
 			      strerror(-rc));
 		fds[0].events = POLLIN;
 

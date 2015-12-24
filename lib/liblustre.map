@@ -19,7 +19,7 @@
 		llapi_hsm_action_get_dfid;
 		llapi_hsm_action_get_fd;
 		llapi_hsm_action_progress;
-		llapi_hsm_copytool_get_fd;
+		lus_hsm_copytool_get_fd;
 		llapi_hsm_copytool_recv;
 		lus_hsm_copytool_register;
 		lus_hsm_copytool_unregister;
