@@ -410,7 +410,7 @@ END_TEST
 /* Helper to simulate archiving a file. No actual data movement
  * happens. */
 static void
-helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
+helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 				  size_t length),
 		 const size_t length)
 {
@@ -421,7 +421,7 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 	const struct hsm_action_list	*hal;
 	const struct hsm_action_item	*hai;
 	size_t msgsize;
-	struct hsm_copyaction_private *hcp;
+	struct lus_hsm_action_handle *hcp;
 	struct hsm_user_state hus;
 
 	fd = create_testfile(length);
@@ -511,7 +511,7 @@ START_TEST(test100)
 END_TEST
 
 /* Archive, with a report every byte. */
-static void test101_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test101_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int i;
 	int rc;
@@ -547,7 +547,7 @@ START_TEST(test101)
 END_TEST
 
 /* Archive, with a report every byte, backwards. */
-static void test102_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test102_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int i;
 	int rc;
@@ -583,7 +583,7 @@ START_TEST(test102)
 END_TEST
 
 /* Archive, with a single report. */
-static void test103_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test103_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -615,7 +615,7 @@ START_TEST(test103)
 END_TEST
 
 /* Archive, with 2 reports. */
-static void test104_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test104_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -653,7 +653,7 @@ START_TEST(test104)
 END_TEST
 
 /* Archive, with 1 bogus report. */
-static void test105_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test105_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -688,7 +688,7 @@ START_TEST(test105)
 END_TEST
 
 /* Archive, with 1 empty report. */
-static void test106_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test106_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -720,7 +720,7 @@ START_TEST(test106)
 END_TEST
 
 /* Archive, with 1 bogus report. */
-static void test107_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test107_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -752,7 +752,7 @@ START_TEST(test107)
 END_TEST
 
 /* Archive, with same report, many times. */
-static void test108_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test108_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -787,7 +787,7 @@ START_TEST(test108)
 END_TEST
 
 /* Archive, 1 report, with large number. */
-static void test109_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test109_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	struct hsm_extent he;
@@ -819,7 +819,7 @@ START_TEST(test109)
 END_TEST
 
 /* Archive, with 10 reports, checking progress. */
-static void test110_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test110_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	int i;
@@ -855,7 +855,7 @@ START_TEST(test110)
 END_TEST
 
 /* Archive, with 10 reports in reverse order, checking progress. */
-static void test111_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test111_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	int i;
@@ -892,7 +892,7 @@ END_TEST
 
 /* Archive, with 10 reports, and duplicating them, checking
  * progress. */
-static void test112_progress(struct hsm_copyaction_private *hcp, size_t length)
+static void test112_progress(struct lus_hsm_action_handle *hcp, size_t length)
 {
 	int rc;
 	int i;

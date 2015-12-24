@@ -371,7 +371,7 @@ static inline size_t llapi_hsm_user_request_len(unsigned int itemcount,
  * priv is private state, managed internally by these functions
  */
 struct hsm_copytool_private;
-struct hsm_copyaction_private;
+struct lus_hsm_action_handle;
 
 int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 			      unsigned int archive_count, int *archives,
@@ -381,20 +381,20 @@ int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct);
 int lus_hsm_copytool_recv(struct hsm_copytool_private *priv,
 			  const struct hsm_action_list **hal,
 			  size_t *msgsize);
-int llapi_hsm_action_begin(struct hsm_copyaction_private **phcp,
+int llapi_hsm_action_begin(struct lus_hsm_action_handle **phcp,
 			   const struct hsm_copytool_private *ct,
 			   const struct hsm_action_item *hai,
 			   int restore_mdt_index, int restore_open_flags,
 			   bool is_error);
-int llapi_hsm_action_end(struct hsm_copyaction_private **phcp,
+int llapi_hsm_action_end(struct lus_hsm_action_handle **phcp,
 			 const struct hsm_extent *he,
 			 int hp_flags, int errval);
-int llapi_hsm_action_progress(struct hsm_copyaction_private *hcp,
+int llapi_hsm_action_progress(struct lus_hsm_action_handle *hcp,
 			      const struct hsm_extent *he, __u64 total,
 			      int hp_flags);
-int llapi_hsm_action_get_dfid(const struct hsm_copyaction_private *hcp,
+int llapi_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
 			      lustre_fid *fid);
-int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp);
+int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp);
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     struct llapi_layout *layout);
 const struct hsm_action_item *

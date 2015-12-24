@@ -556,7 +556,7 @@ static int ct_restore_stripe(const char *src, const char *dst, int dst_fd,
 	return rc;
 }
 
-static int ct_copy_data(struct hsm_copyaction_private *hcp, const char *src,
+static int ct_copy_data(struct lus_hsm_action_handle *hcp, const char *src,
 			const char *dst, int src_fd, int dst_fd,
 			const struct hsm_action_item *hai, long hal_flags)
 {
@@ -846,7 +846,7 @@ static bool ct_is_retryable(int err)
 	return err == -ETIMEDOUT;
 }
 
-static int ct_begin_restore(struct hsm_copyaction_private **phcp,
+static int ct_begin_restore(struct lus_hsm_action_handle **phcp,
 			    const struct hsm_action_item *hai,
 			    int mdt_index, int open_flags)
 {
@@ -863,7 +863,7 @@ static int ct_begin_restore(struct hsm_copyaction_private **phcp,
 	return rc;
 }
 
-static int ct_begin(struct hsm_copyaction_private **phcp,
+static int ct_begin(struct lus_hsm_action_handle **phcp,
 		    const struct hsm_action_item *hai)
 {
 	/* Restore takes specific parameters. Call the same function w/ default
@@ -871,10 +871,10 @@ static int ct_begin(struct hsm_copyaction_private **phcp,
 	return ct_begin_restore(phcp, hai, -1, 0);
 }
 
-static int ct_fini(struct hsm_copyaction_private **phcp,
+static int ct_fini(struct lus_hsm_action_handle **phcp,
 		   const struct hsm_action_item *hai, int hp_flags, int ct_rc)
 {
-	struct hsm_copyaction_private	*hcp;
+	struct lus_hsm_action_handle	*hcp;
 	char				 lstr[PATH_MAX];
 	int				 rc;
 
@@ -911,7 +911,7 @@ static int ct_fini(struct hsm_copyaction_private **phcp,
 
 static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 {
-	struct hsm_copyaction_private	*hcp = NULL;
+	struct lus_hsm_action_handle	*hcp = NULL;
 	char				 src[PATH_MAX];
 	char				 dst[PATH_MAX] = "";
 	int				 rc;
@@ -1149,7 +1149,7 @@ out:
 
 static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 {
-	struct hsm_copyaction_private	*hcp = NULL;
+	struct lus_hsm_action_handle	*hcp = NULL;
 	char				 src[PATH_MAX];
 	char				 dst[PATH_MAX];
 	char				 lov_buf[XATTR_SIZE_MAX];
@@ -1266,7 +1266,7 @@ fini:
 
 static int ct_remove(const struct hsm_action_item *hai, const long hal_flags)
 {
-	struct hsm_copyaction_private	*hcp = NULL;
+	struct lus_hsm_action_handle	*hcp = NULL;
 	char				 dst[PATH_MAX];
 	int				 rc;
 

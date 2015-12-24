@@ -77,7 +77,7 @@ struct hsm_copytool_private {
 };
 
 #define CP_PRIV_MAGIC 0x19880429
-struct hsm_copyaction_private {
+struct lus_hsm_action_handle {
 	__u32					 magic;
 	__s32					 data_fd;
 	const struct hsm_copytool_private	*ct_priv;
@@ -480,7 +480,7 @@ out:
  *
  * \return 0 on success.
  */
-static int create_restore_volatile(struct hsm_copyaction_private *hcp,
+static int create_restore_volatile(struct lus_hsm_action_handle *hcp,
 				   int mdt_index, int open_flags)
 {
 	int			 rc;
@@ -545,13 +545,13 @@ err_cleanup:
  *
  * \return 0 on success.
  */
-int llapi_hsm_action_begin(struct hsm_copyaction_private **phcp,
+int llapi_hsm_action_begin(struct lus_hsm_action_handle **phcp,
 			   const struct hsm_copytool_private *ct,
 			   const struct hsm_action_item *hai,
 			   int restore_mdt_index, int restore_open_flags,
 			   bool is_error)
 {
-	struct hsm_copyaction_private	*hcp;
+	struct lus_hsm_action_handle	*hcp;
 	int				 rc;
 
 	hcp = calloc(1, sizeof(*hcp));
@@ -608,10 +608,10 @@ err_out:
  *                         (HP_FLAG_RETRY if the error is retryable).
  * \return 0 on success.
  */
-int llapi_hsm_action_end(struct hsm_copyaction_private **phcp,
+int llapi_hsm_action_end(struct lus_hsm_action_handle **phcp,
 			 const struct hsm_extent *he, int hp_flags, int errval)
 {
-	struct hsm_copyaction_private	*hcp;
+	struct lus_hsm_action_handle	*hcp;
 	struct hsm_action_item		*hai;
 	int				 rc;
 
@@ -686,7 +686,7 @@ err_cleanup:
  *
  * \return 0 on success.
  */
-int llapi_hsm_action_progress(struct hsm_copyaction_private *hcp,
+int llapi_hsm_action_progress(struct lus_hsm_action_handle *hcp,
 			      const struct hsm_extent *he, __u64 total,
 			      int hp_flags)
 {
@@ -721,7 +721,7 @@ int llapi_hsm_action_progress(struct hsm_copyaction_private *hcp,
 /** Get the fid of object to be used for copying data.
  * @return error code if the action is not a copy operation.
  */
-int llapi_hsm_action_get_dfid(const struct hsm_copyaction_private *hcp,
+int llapi_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
 			      lustre_fid *fid)
 {
 	const struct hsm_action_item	*hai = &hcp->copy.hc_hai;
@@ -744,7 +744,7 @@ int llapi_hsm_action_get_dfid(const struct hsm_copyaction_private *hcp,
  * @retval a file descriptor on success.
  * @retval a negative error code on failure.
  */
-int llapi_hsm_action_get_fd(const struct hsm_copyaction_private *hcp)
+int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp)
 {
 	const struct hsm_action_item	*hai = &hcp->copy.hc_hai;
 	int fd;
