@@ -378,9 +378,9 @@ int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 			      struct hsm_copytool_private **priv);
 int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv);
 int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct);
-int llapi_hsm_copytool_recv(struct hsm_copytool_private *priv,
-			    const struct hsm_action_list **hal,
-			    size_t *msgsize);
+int lus_hsm_copytool_recv(struct hsm_copytool_private *priv,
+			  const struct hsm_action_list **hal,
+			  size_t *msgsize);
 int llapi_hsm_action_begin(struct hsm_copyaction_private **phcp,
 			   const struct hsm_copytool_private *ct,
 			   const struct hsm_action_item *hai,

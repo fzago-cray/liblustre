@@ -25,7 +25,7 @@ int \***\ archives\ **struct hsm_copytool_private \*\***\ priv\ **)**
 
 **int lus_hsm_copytool_get_fd(const struct hsm_copytool_private \***\ ct\ **)**
 
-**int llapi_hsm_copytool_recv(struct hsm_copytool_private \***\ priv\ **,
+**int lus_hsm_copytool_recv(struct hsm_copytool_private \***\ priv\ **,
 **struct hsm_action_list \*\***\ hal\ **, int \***\ msgsize\ **)**
 
 **struct hsm_action_item \*hai_first(struct hsm_action_list \***\ hal\ **)**
@@ -57,11 +57,11 @@ Library to communicate with the kernel. This descriptor is only
 intended to be used with **select(2)** or **poll(2)**.
 
 To receive the requests, the application has to call
-**llapi_hsm_copytool_recv**. When it returns 0, a message is available
+**lus_hsm_copytool_recv**. When it returns 0, a message is available
 in *hal*, and its size in bytes is returned in *msgsize*. *hal* points
 to a buffer allocated by the Lustre library. It contains one or more
 HSM requests. This buffer is valid until the next call to
-**llapi_hsm_copytool_recv**.
+**lus_hsm_copytool_recv**.
 
 *hal* is composed of a header of type *struct hsm_action_list*
 followed by one or several HSM requests of type *struct
@@ -101,7 +101,7 @@ return 0 on success. On error, a negative errno is returned.
 **lus_hsm_copytool_get_fd** returns the file descriptor associated
  with the register copytool. On error, a negative errno is returned.
 
-**llapi_hsm_copytool_recv** returns 0 when a message is available. If
+**lus_hsm_copytool_recv** returns 0 when a message is available. If
 the copytool was set to non-blocking operation, -EWOULDBLOCK is
 immediately returned if no message is available. On error, a negative
 errno is returned.

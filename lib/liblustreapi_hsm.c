@@ -374,31 +374,32 @@ int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct)
 	return ct->channel_rfd;
 }
 
-/** Wait for the next hsm_action_list
- * \param ct Opaque private control structure
- * \param halh Action list handle, will be allocated here
- * \param msgsize Number of bytes in the message, will be set here
- * \return 0 valid message received; halh and msgsize are set
- *	   <0 error code
- * Note: The application must not call llapi_hsm_copytool_recv until it has
- * cleared the data in ct->kuch from the previous call.
+/**
+ * Wait for the next hsm_action_list
+ *
+ * \param[in]  ct        Opaque private control structure
+ * \param[out] halh      Action list handle, will be allocated here
+ * \param[out] msgsize   Number of bytes in the message, will be set here
+ *
+ * \retval  0 when a valid message is received; halh and msgsize are set
+ * \retval  a negative errno on error
+ *
+ * Note: The application must not call lus_hsm_copytool_recv until
+ * it has cleared the data in ct->kuch from the previous call.
  */
-int llapi_hsm_copytool_recv(struct hsm_copytool_private *ct,
-			    const struct hsm_action_list **halh,
-			    size_t *msgsize)
+int lus_hsm_copytool_recv(struct hsm_copytool_private *ct,
+			  const struct hsm_action_list **halh,
+			  size_t *msgsize)
 {
 	int rc;
-
-	if (ct == NULL || ct->magic != CT_PRIV_MAGIC)
-		return -EINVAL;
-
-	if (halh == NULL || msgsize == NULL)
-		return -EINVAL;
 
 repeat:
 	rc = get_hsm_comm(ct, halh, msgsize);
 	if (rc < 0)
 		goto out_err;
+
+	/* TODO: the following should go away. We should trust Lustre
+	 * to not send bad messages. */
 
 	/* Check that we have registered for this archive number.
 	 * If 0 registered, we serve any archive. */

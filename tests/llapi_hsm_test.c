@@ -140,7 +140,7 @@ START_TEST(test4)
 }
 END_TEST
 
-/* Test llapi_hsm_copytool_recv in non blocking mode */
+/* Test lus_hsm_copytool_recv in non blocking mode */
 START_TEST(test5)
 {
 	int rc;
@@ -155,44 +155,11 @@ START_TEST(test5)
 
 	/* Hopefully there is nothing lingering */
 	for (i = 0; i < 1000; i++) {
-		rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
-		ck_assert_msg(rc == -EWOULDBLOCK, "llapi_hsm_copytool_recv error: %s",
+		rc = lus_hsm_copytool_recv(ctdata, &hal, &msgsize);
+		ck_assert_msg(rc == -EWOULDBLOCK,
+			      "lus_hsm_copytool_recv error: %s",
 			strerror(-rc));
 	}
-
-	rc = lus_hsm_copytool_unregister(&ctdata);
-	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
-		strerror(-rc));
-}
-END_TEST
-
-/* Test llapi_hsm_copytool_recv with bogus parameters */
-START_TEST(test6)
-{
-	struct hsm_copytool_private *ctdata;
-	const struct hsm_action_list *hal;
-	int rc;
-	size_t msgsize;
-
-	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
-	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
-		strerror(-rc));
-
-	rc = llapi_hsm_copytool_recv(NULL, &hal, &msgsize);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_recv error: %s",
-		      strerror(-rc));
-
-	rc = llapi_hsm_copytool_recv(ctdata, NULL, &msgsize);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_recv error: %s",
-		      strerror(-rc));
-
-	rc = llapi_hsm_copytool_recv(ctdata, &hal, NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_recv error: %s",
-		strerror(-rc));
-
-	rc = llapi_hsm_copytool_recv(ctdata, NULL, NULL);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_copytool_recv error: %s",
-		strerror(-rc));
 
 	rc = lus_hsm_copytool_unregister(&ctdata);
 	ck_assert_msg(rc == 0, "lus_hsm_copytool_unregister failed: %s",
@@ -223,8 +190,8 @@ START_TEST(test7)
 	ck_assert_msg(rc == -1 && errno == EBADF, "write error: %d, %s",
 		rc, strerror(errno));
 
-	rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
-	ck_assert_msg(rc == -EWOULDBLOCK, "llapi_hsm_copytool_recv error: %s",
+	rc = lus_hsm_copytool_recv(ctdata, &hal, &msgsize);
+	ck_assert_msg(rc == -EWOULDBLOCK, "lus_hsm_copytool_recv error: %s",
 		strerror(-rc));
 
 	fds[0].fd = fd;
@@ -498,8 +465,9 @@ helper_archiving(void (*progress)(struct hsm_copyaction_private *hcp,
 			      "bad poll revents: %d", fds[0].revents);
 	}
 
-	rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
-	ck_assert_msg(rc == 0, "llapi_hsm_copytool_recv failed: %s", strerror(-rc));
+	rc = lus_hsm_copytool_recv(ctdata, &hal, &msgsize);
+	ck_assert_msg(rc == 0, "lus_hsm_copytool_recv failed: %s",
+		      strerror(-rc));
 	ck_assert_msg(hal->hal_count == 1, "hal_count=%d", hal->hal_count);
 
 	hai = llapi_hsm_hai_first(hal);
@@ -1022,7 +990,6 @@ int main(int argc, char *argv[])
 	ADD_TEST(test3);
 	ADD_TEST(test4);
 	ADD_TEST(test5);
-	ADD_TEST(test6);
 	ADD_TEST(test7);
 	ADD_TEST(test50);
 	ADD_TEST(test51);

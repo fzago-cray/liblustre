@@ -1879,7 +1879,7 @@ static int ct_run(void)
 
 		CT_TRACE("waiting for message from kernel");
 
-		rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
+		rc = lus_hsm_copytool_recv(ctdata, &hal, &msgsize);
 		if (rc < 0) {
 			if (rc == -ESHUTDOWN) {
 				CT_TRACE("shutting down");

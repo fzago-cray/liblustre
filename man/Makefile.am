@@ -5,7 +5,7 @@ dist_man_MANS = \
 	llapi_hsm_action_get_dfid.3 \
 	llapi_hsm_action_end.3 \
 	lus_hsm_copytool_unregister.3 \
-	llapi_hsm_copytool_recv.3 \
+	lus_hsm_copytool_recv.3 \
 	lus_hsm_copytool_get_fd.3
 
 # Generated man pages. The RST is distributed instead.

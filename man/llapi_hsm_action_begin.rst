@@ -38,7 +38,7 @@ DESCRIPTION
 ===========
 
 When a copytool is ready to process an HSM action received through
-**llapi_hsm_copytool_recv**\ (), it must first call
+**lus_hsm_copytool_recv**\ (), it must first call
 **llapi_hsm_action_begin**\ () to initialize the internal action
 state, stored in *phcp*. *ct* is the opaque copytools handle
 previously returned by **lus_hsm_copytool_register**\ (). *hai* is
@@ -101,7 +101,7 @@ The negative errno can be, but is not limited to:
 SEE ALSO
 ========
 
-**lus_hsm_copytool_register**\ (3), **llapi_hsm_copytool_recv**\ (3),
+**lus_hsm_copytool_register**\ (3), **lus_hsm_copytool_recv**\ (3),
 **lustre**\ (7), **lfs**\ (1)
 
 See *lhsmtool_posix.c* in the Lustre sources for a use case of this
