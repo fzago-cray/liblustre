@@ -22,7 +22,7 @@ const struct lus_hsm_ct_handle \***\ ct\ **, const struct
 hsm_action_item \***\ hai\ **, int** restore_mdt_index\ **, int**
 restore_open_flags\ **, bool** is_error\ **)**
 
-**int llapi_hsm_action_end(struct lus_hsm_action_handle \*\***\ phcp\ **,
+**int lus_hsm_action_end(struct lus_hsm_action_handle \*\***\ phcp\ **,
 const struct hsm_extent \***\ he\ **, int** hp_flags\ **, int** errval\ **)**
 
 **int llapi_hsm_action_progress(struct lus_hsm_action_handle \***\ hcp\ **,
@@ -47,7 +47,7 @@ used for an **HSMA_RESTORE** type of request. *restore_mdt_index* is
 the MDT index on which to create the restored file, or -1 for
 default. If the copytool doesn't intend to process the request, it
 should set *is_error* to **true**, and then call
-**llapi_hsm_action_end**\ ().
+**lus_hsm_action_end**\ ().
 
 While performing a copy (i.e. the HSM request is either
 **HSMA_ARCHIVE** or **HSMA_RESTORE**), the copytool can inform Lustre
@@ -60,7 +60,7 @@ calling **llapi_hsm_current_action**\ (), or by using **lfs
 hsm_action**.
 
 Once the HSM request has been performed, the destination file must be
-closed, and **llapi_hsm_action_end**\ () must be called to free-up the
+closed, and **lus_hsm_action_end**\ () must be called to free-up the
 allocated ressources and signal Lustre that the file is now available
 to consumers. *errval* is set to 0 on success. On error, it must be an
 errno, and hp_flags can be set to **HP_FLAG_RETRY** if the request is

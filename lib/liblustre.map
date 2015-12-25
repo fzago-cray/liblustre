@@ -15,7 +15,7 @@
 		lus_group_lock;
 		lus_group_unlock;
 		lus_hsm_action_begin;
-		llapi_hsm_action_end;
+		lus_hsm_action_end;
 		llapi_hsm_action_get_dfid;
 		llapi_hsm_action_get_fd;
 		llapi_hsm_action_progress;

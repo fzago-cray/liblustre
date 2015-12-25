@@ -895,15 +895,15 @@ static int ct_fini(struct lus_hsm_action_handle **phcp,
 		phcp = &hcp;
 	}
 
-	rc = llapi_hsm_action_end(phcp, &hai->hai_extent, hp_flags, abs(ct_rc));
+	rc = lus_hsm_action_end(phcp, &hai->hai_extent, hp_flags, abs(ct_rc));
 	if (rc == -ECANCELED)
 		CT_ERROR(rc, "completed action on '%s' has been canceled: "
 			 "cookie=%#llx, FID="DFID, lstr, hai->hai_cookie,
 			 PFID(&hai->hai_fid));
 	else if (rc < 0)
-		CT_ERROR(rc, "llapi_hsm_action_end() on '%s' failed", lstr);
+		CT_ERROR(rc, "lus_hsm_action_end() on '%s' failed", lstr);
 	else
-		CT_TRACE("llapi_hsm_action_end() on '%s' ok (rc=%d)",
+		CT_TRACE("lus_hsm_action_end() on '%s' ok (rc=%d)",
 			 lstr, rc);
 
 	return rc;

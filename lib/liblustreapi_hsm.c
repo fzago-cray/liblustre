@@ -530,10 +530,10 @@ err_cleanup:
  * Start processing an HSM action.
  * Should be called by copytools just before starting handling a request.
  * It could be skipped if copytool only want to directly report an error,
- * \see llapi_hsm_action_end().
+ * \see lus_hsm_action_end().
  *
  * \param[out] phcp     Opaque action handle to be passed to
- *                      llapi_hsm_action_progress and llapi_hsm_action_end.
+ *                      llapi_hsm_action_progress and lus_hsm_action_end.
  * \param[in] ct        Copytool handle acquired at registration.
  * \param[in] hai       The hsm_action_item describing the request.
  * \param[in] restore_mdt_index   On restore: MDT index where to create
@@ -601,15 +601,15 @@ err_out:
  * Terminate an HSM action processing.
  * Should be called by copytools just having finished handling the request.
  *
- * \param[in,out]  phcp    Handle returned by llapi_hsm_action_start.
+ * \param[in,out]  phcp    Handle returned by lus_hsm_action_begin.
  * \param[in]      he      The final range of copied data (for copy actions).
  * \param[in]      errval  The status code of the operation.
  * \param[in]      hp_flags   The flags about the termination status
  *                         (HP_FLAG_RETRY if the error is retryable).
  * \return 0 on success.
  */
-int llapi_hsm_action_end(struct lus_hsm_action_handle **phcp,
-			 const struct hsm_extent *he, int hp_flags, int errval)
+int lus_hsm_action_end(struct lus_hsm_action_handle **phcp,
+		       const struct hsm_extent *he, int hp_flags, int errval)
 {
 	struct lus_hsm_action_handle	*hcp;
 	struct hsm_action_item		*hai;

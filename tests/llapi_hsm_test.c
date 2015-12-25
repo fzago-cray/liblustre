@@ -486,8 +486,8 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 		progress(hcp, length);
 
 	/* Done archiving */
-	rc = llapi_hsm_action_end(&hcp, &hai->hai_extent, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_action_end failed: %s", strerror(-rc));
+	rc = lus_hsm_action_end(&hcp, &hai->hai_extent, 0, 0);
+	ck_assert_msg(rc == 0, "lus_hsm_action_end failed: %s", strerror(-rc));
 	ck_assert_msg(hcp == NULL, "hcp is NULL");
 
 	/* Close HSM client */
