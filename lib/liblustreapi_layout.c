@@ -111,23 +111,28 @@ layout_swab_lov_user_md(struct lov_user_md *lum, int object_count)
 /**
  * Allocate storage for a lus_layout with \a num_stripes stripes.
  *
- * \param[in] num_stripes	number of stripes in new layout
+ * \param[in]   num_stripes	number of stripes in new layout
+ * \param[out]  layout          a newly allocated layout
  *
- * \retval	valid pointer if allocation succeeds
- * \retval	NULL if allocation fails
+ * \retval	0 on success, with a new layout
+ * \retval	a negative errno on failure, with layout set to NULL.
  */
-static struct lus_layout *__layout_alloc(unsigned int num_stripes)
+static int __layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
 {
-	struct lus_layout *layout = NULL;
-	size_t size = sizeof(*layout) +
-		(num_stripes * sizeof(layout->llot_objects[0]));
+	struct lus_layout *lo;
+	size_t size = sizeof(*lo) +
+		(num_stripes * sizeof(lo->llot_objects[0]));
+	int rc;
 
-	if (num_stripes > LOV_MAX_STRIPE_COUNT)
-		errno = EINVAL;
-	else
-		layout = calloc(1, size);
+	if (num_stripes > LOV_MAX_STRIPE_COUNT) {
+		*layout = NULL;
+		rc = -EINVAL;
+	} else {
+		*layout = calloc(1, size);
+		rc = *layout ? 0 : -ENOMEM;
+	}
 
-	return layout;
+	return rc;
 }
 
 /**
@@ -146,11 +151,12 @@ static struct lus_layout *layout_from_lum(const struct lov_user_md *lum,
 {
 	struct lus_layout *layout;
 	size_t objects_sz;
+	int rc;
 
 	objects_sz = object_count * sizeof(lum->lmm_objects[0]);
 
-	layout = __layout_alloc(object_count);
-	if (layout == NULL)
+	rc = __layout_alloc(object_count, &layout);
+	if (rc)
 		return NULL;
 
 	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
