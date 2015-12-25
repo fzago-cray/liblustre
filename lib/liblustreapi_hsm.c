@@ -539,12 +539,14 @@ int lus_hsm_action_begin(struct lus_hsm_action_handle **phcp,
 			 int restore_mdt_index, int restore_open_flags,
 			 bool is_error)
 {
-	struct lus_hsm_action_handle	*hcp;
-	int				 rc;
+	struct lus_hsm_action_handle *hcp;
+	int rc;
 
 	hcp = calloc(1, sizeof(*hcp));
-	if (hcp == NULL)
-		return -ENOMEM;
+	if (hcp == NULL) {
+		rc = -ENOMEM;
+		goto err_out;
+	}
 
 	hcp->data_fd = -1;
 	hcp->ct_priv = ct;
@@ -576,10 +578,14 @@ ok_out:
 	return 0;
 
 err_out:
-	if (!(hcp->data_fd < 0))
-		close(hcp->data_fd);
+	if (hcp) {
+		if (!(hcp->data_fd < 0))
+			close(hcp->data_fd);
 
-	free(hcp);
+		free(hcp);
+	}
+
+	*phcp = NULL;
 
 	return rc;
 }
