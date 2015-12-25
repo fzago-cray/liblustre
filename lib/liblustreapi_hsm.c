@@ -760,8 +760,8 @@ int lus_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp)
  * \retval    open fd of the newly imported file on success
  * \retval    a negative errno
  */
-int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
-		     struct llapi_layout *layout)
+int lus_hsm_import(const char *dst, int archive, const struct stat *st,
+		   struct llapi_layout *layout)
 {
 	struct hsm_user_import	 hui;
 	int			 fd = -1;

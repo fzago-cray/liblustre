@@ -26,7 +26,7 @@
 		llapi_hsm_current_action;
 		lus_hsm_hai_first;
 		lus_hsm_hai_next;
-		llapi_hsm_import;
+		lus_hsm_import;
 		llapi_hsm_request;
 		llapi_hsm_state_get;
 		llapi_hsm_state_get_fd;
