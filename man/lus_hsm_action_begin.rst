@@ -31,7 +31,7 @@ const struct hsm_extent \***\ he\ **, __u64** total\ **, int** hp_flags\ **)**
 **int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle \***\ hcp\ **,
 struct lu_fid  \***\ fid\ **)**
 
-**int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle \***\ hcp\ **)**
+**int lus_hsm_action_get_fd(const struct lus_hsm_action_handle \***\ hcp\ **)**
 
 
 DESCRIPTION
@@ -68,14 +68,14 @@ retryable, 0 otherwise. *he* is the interval (*offset*, *length*) of
 the data copied. It can be the *hai_extent* of the HSM request.
 
 For a restore operation, a volatile file, invisible to ls, is
-created. **llapi_hsm_action_get_fd**\ () will return a file descriptor
+created. **lus_hsm_action_get_fd**\ () will return a file descriptor
 to it. It is the responsibility of the copytool to close the returned
 file descriptor when the data transfer is
 done. **lus_hsm_action_get_dfid**\ () will return the FID of the volatile
 file, which can then be used with **lus_open_by_fid**\ () to open
 the file in a different process, or on a different node.
 
-**llapi_hsm_action_get_fd**\ () and **lus_hsm_action_get_dfid**\ ()
+**lus_hsm_action_get_fd**\ () and **lus_hsm_action_get_dfid**\ ()
 can be called for an archive operation too. The returned file
 descriptor and the FID are from the file to be archived.
 
@@ -83,7 +83,7 @@ descriptor and the FID are from the file to be archived.
 RETURN VALUE
 ============
 
-**llapi_hsm_action_get_fd**\ () returns a file descriptor on
+**lus_hsm_action_get_fd**\ () returns a file descriptor on
 success. The other functions return 0 on success. All functions return
 a negative errno on failure.
 

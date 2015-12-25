@@ -954,7 +954,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini_major;
 	}
 
-	src_fd = llapi_hsm_action_get_fd(hcp);
+	src_fd = lus_hsm_action_get_fd(hcp);
 	if (src_fd < 0) {
 		rc = src_fd;
 		CT_ERROR(rc, "cannot open '%s' for read", src);
@@ -1219,7 +1219,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini;
 	}
 
-	dst_fd = llapi_hsm_action_get_fd(hcp);
+	dst_fd = lus_hsm_action_get_fd(hcp);
 	if (dst_fd < 0) {
 		rc = dst_fd;
 		CT_ERROR(rc, "cannot open '%s' for write", dst);

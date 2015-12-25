@@ -736,16 +736,16 @@ int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
  * Get a file descriptor to be used for copying data. It's up to the
  * caller to close the FDs obtained from this function.
  *
- * @retval a file descriptor on success.
- * @retval a negative error code on failure.
+ * \param[in]  hcp    handle returned by lus_hsm_action_begin.
+ *
+ * \retval a file descriptor on success.
+ * \retval a negative errno on failure.
+ * \retval -EINVAL if the action is not a copy operation.
  */
-int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp)
+int lus_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp)
 {
-	const struct hsm_action_item	*hai = &hcp->copy.hc_hai;
+	const struct hsm_action_item *hai = &hcp->copy.hc_hai;
 	int fd;
-
-	if (hcp->magic != CP_PRIV_MAGIC)
-		return -EINVAL;
 
 	if (hai->hai_action == HSMA_ARCHIVE) {
 		return lus_open_by_fid(hcp->ct_priv->lfsh, &hai->hai_dfid,
