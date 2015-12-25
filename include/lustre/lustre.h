@@ -392,8 +392,8 @@ int lus_hsm_action_end(struct lus_hsm_action_handle **phcp,
 int lus_hsm_action_progress(const struct lus_hsm_action_handle *hcp,
 			    const struct hsm_extent *he, uint64_t total,
 			    unsigned int hp_flags);
-int llapi_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
-			      lustre_fid *fid);
+int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
+			    struct lu_fid *fid);
 int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp);
 int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     struct llapi_layout *layout);

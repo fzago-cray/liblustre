@@ -710,16 +710,19 @@ int lus_hsm_action_progress(const struct lus_hsm_action_handle *hcp,
 	return rc;
 }
 
-/** Get the fid of object to be used for copying data.
- * @return error code if the action is not a copy operation.
+/**
+ * Get the fid of object to be used for copying data.
+ *
+ * \param[in]  hcp    handle returned by lus_hsm_action_begin.
+ * \param[out] fid    Pointer to receive the data FID
+ *
+ * \retval 0 on success
+ * \retval -EINVAL if the action is not a copy operation.
  */
-int llapi_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
-			      lustre_fid *fid)
+int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
+			    struct lu_fid *fid)
 {
-	const struct hsm_action_item	*hai = &hcp->copy.hc_hai;
-
-	if (hcp->magic != CP_PRIV_MAGIC)
-		return -EINVAL;
+	const struct hsm_action_item *hai = &hcp->copy.hc_hai;
 
 	if (hai->hai_action != HSMA_RESTORE && hai->hai_action != HSMA_ARCHIVE)
 		return -EINVAL;

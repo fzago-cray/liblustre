@@ -28,8 +28,8 @@ const struct hsm_extent \***\ he\ **, int** hp_flags\ **, int** errval\ **)**
 **int lus_hsm_action_progress(struct lus_hsm_action_handle \***\ hcp\ **,
 const struct hsm_extent \***\ he\ **, __u64** total\ **, int** hp_flags\ **)**
 
-**int llapi_hsm_action_get_dfid(const struct lus_hsm_action_handle \***\ hcp\ **,
-lustre_fid  \***\ fid\ **)**
+**int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle \***\ hcp\ **,
+struct lu_fid  \***\ fid\ **)**
 
 **int llapi_hsm_action_get_fd(const struct lus_hsm_action_handle \***\ hcp\ **)**
 
@@ -71,11 +71,11 @@ For a restore operation, a volatile file, invisible to ls, is
 created. **llapi_hsm_action_get_fd**\ () will return a file descriptor
 to it. It is the responsibility of the copytool to close the returned
 file descriptor when the data transfer is
-done. **llapi_hsm_action_get_dfid**\ () will return the FID of the volatile
+done. **lus_hsm_action_get_dfid**\ () will return the FID of the volatile
 file, which can then be used with **lus_open_by_fid**\ () to open
 the file in a different process, or on a different node.
 
-**llapi_hsm_action_get_fd**\ () and **llapi_hsm_action_get_dfid**\ ()
+**llapi_hsm_action_get_fd**\ () and **lus_hsm_action_get_dfid**\ ()
 can be called for an archive operation too. The returned file
 descriptor and the FID are from the file to be archived.
 

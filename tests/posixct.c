@@ -1194,7 +1194,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini;
 
 	/* get the FID of the volatile file */
-	rc = llapi_hsm_action_get_dfid(hcp, &dfid);
+	rc = lus_hsm_action_get_dfid(hcp, &dfid);
 	if (rc < 0) {
 		CT_ERROR(rc, "restoring "DFID
 			 ", cannot get FID of created volatile file",
