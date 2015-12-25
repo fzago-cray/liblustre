@@ -533,7 +533,7 @@ err_cleanup:
  * \see lus_hsm_action_end().
  *
  * \param[out] phcp     Opaque action handle to be passed to
- *                      llapi_hsm_action_progress and lus_hsm_action_end.
+ *                      lus_hsm_action_progress and lus_hsm_action_end.
  * \param[in] ct        Copytool handle acquired at registration.
  * \param[in] hai       The hsm_action_item describing the request.
  * \param[in] restore_mdt_index   On restore: MDT index where to create
@@ -678,7 +678,7 @@ err_cleanup:
 /**
  * Notify a progress in processing an HSM action.
  *
- * \param[in,out]  hcp       handle returned by llapi_hsm_action_start.
+ * \param[in,out]  hcp       handle returned by lus_hsm_action_begin.
  * \param[in]      he        the range of copied data (for copy actions).
  * \param[in]      total     the expected total of copied data
  *                           (for copy actions).
@@ -686,21 +686,13 @@ err_cleanup:
  *
  * \return 0 on success.
  */
-int llapi_hsm_action_progress(struct lus_hsm_action_handle *hcp,
-			      const struct hsm_extent *he, __u64 total,
-			      int hp_flags)
+int lus_hsm_action_progress(const struct lus_hsm_action_handle *hcp,
+			    const struct hsm_extent *he, uint64_t total,
+			    unsigned int hp_flags)
 {
-	int			 rc;
-	struct hsm_progress	 hp;
-	struct hsm_action_item	*hai;
-
-	if (hcp == NULL || he == NULL)
-		return -EINVAL;
-
-	if (hcp->magic != CP_PRIV_MAGIC)
-		return -EINVAL;
-
-	hai = &hcp->copy.hc_hai;
+	int rc;
+	struct hsm_progress hp;
+	const struct hsm_action_item *hai = &hcp->copy.hc_hai;
 
 	memset(&hp, 0, sizeof(hp));
 

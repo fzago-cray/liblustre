@@ -616,7 +616,7 @@ static int ct_copy_data(struct lus_hsm_action_handle *hcp, const char *src,
 
 	he.offset = offset;
 	he.length = 0;
-	rc = llapi_hsm_action_progress(hcp, &he, length, 0);
+	rc = lus_hsm_action_progress(hcp, &he, length, 0);
 	if (rc < 0) {
 		/* Action has been canceled or something wrong
 		 * is happening. Stop copying data. */
@@ -709,7 +709,7 @@ static int ct_copy_data(struct lus_hsm_action_handle *hcp, const char *src,
 			last_report_time = now;
 			CT_TRACE("%%%llu ", 100 * write_total / length);
 			he.length = write_total;
-			rc = llapi_hsm_action_progress(hcp, &he, length, 0);
+			rc = lus_hsm_action_progress(hcp, &he, length, 0);
 			if (rc < 0) {
 				/* Action has been canceled or something wrong
 				 * is happening. Stop copying data. */

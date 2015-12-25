@@ -124,7 +124,7 @@ SEE ALSO
 ========
 
 **lus_hsm_action_begin**\ (3), **lus_hsm_action_end**\ (3),
-**llapi_hsm_action_progress**\ (3), **llapi_hsm_action_get_dfid**\ (3),
+**lus_hsm_action_progress**\ (3), **llapi_hsm_action_get_dfid**\ (3),
 **lus_hsm_action_get_fd**\ (3), **lustre**\ (7)
 
 See *lhsmtool_posix.c* in the Lustre sources for a use case of this
