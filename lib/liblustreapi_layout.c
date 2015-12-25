@@ -142,12 +142,14 @@ static int __layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
  *
  * \param[in] lum	LOV user metadata structure to copy data from
  * \param[in] object_count  number of objects in the layout
+ * \param[out] lo       newly allocated layout
  *
- * \retval		valid lus_layout pointer on success
- * \retval		NULL if memory allocation fails
+ * \retval		0 with a new allocated layout
+ * \retval		a negative errno on failure
  */
-static struct lus_layout *layout_from_lum(const struct lov_user_md *lum,
-					  size_t object_count)
+static int layout_from_lum(const struct lov_user_md *lum,
+			   size_t object_count,
+			   struct lus_layout **lo)
 {
 	struct lus_layout *layout;
 	size_t objects_sz;
@@ -157,7 +159,7 @@ static struct lus_layout *layout_from_lum(const struct lov_user_md *lum,
 
 	rc = __layout_alloc(object_count, &layout);
 	if (rc)
-		return NULL;
+		return rc;
 
 	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
 
@@ -201,7 +203,9 @@ static struct lus_layout *layout_from_lum(const struct lov_user_md *lum,
 	if (object_count > 0)
 		layout->llot_objects_are_valid = true;
 
-	return layout;
+	*lo = layout;
+
+	return 0;
 }
 
 /**
@@ -457,9 +461,7 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
 	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
 		layout_swab_lov_user_md(lum, object_count);
 
-	*layout = layout_from_lum(lum, object_count);
-
-	return *layout ? 0 : -ENOMEM;
+	return layout_from_lum(lum, object_count, layout);
 }
 
 /**
@@ -487,6 +489,7 @@ struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 	ssize_t bytes_read;
 	int object_count;
 	struct stat st;
+	int rc;
 
 	lum_len = XATTR_SIZE_MAX;
 	lum = malloc(lum_len);
@@ -526,7 +529,9 @@ struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
 		layout_swab_lov_user_md(lum, object_count);
 
-	layout = layout_from_lum(lum, object_count);
+	rc = layout_from_lum(lum, object_count, &layout);
+	errno = -rc;		/* TODO: TEMPORARY until this function
+				 * is normalized too */
 
 out:
 	free(lum);
