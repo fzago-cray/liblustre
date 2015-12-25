@@ -913,8 +913,8 @@ int lus_hsm_state_set_fd(int fd, uint64_t setmask, uint64_t clearmask,
  *
  * see lus_hsm_state_set_fd() for args use and return
  */
-int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
-			__u32 archive_id)
+int lus_hsm_state_set(const char *path, uint64_t setmask, uint64_t clearmask,
+		      unsigned int archive_id)
 {
 	int fd;
 	int rc;

@@ -30,7 +30,7 @@
 		llapi_hsm_request;
 		lus_hsm_state_get;
 		lus_hsm_state_get_fd;
-		llapi_hsm_state_set;
+		lus_hsm_state_set;
 		lus_hsm_state_set_fd;
 		lus_init;
 		lus_initialized;

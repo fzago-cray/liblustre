@@ -258,7 +258,7 @@ START_TEST(test50)
 }
 END_TEST
 
-/* Test llapi_hsm_state_set. */
+/* Test lus_hsm_state_set_fd. */
 START_TEST(test51)
 {
 	int rc;
