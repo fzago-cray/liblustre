@@ -135,6 +135,8 @@ TODO
     for convenience only.
 -   LOV_MAXPOOLNAME doesn't include the ending NUL. That's a trap for
     userspace. Should it be 16 instead of 15?
+-   find a better name for llapi_hsm_state_get_fd, as it doesn't return
+    a file descriptor. llapi_hsm_state_get_from_fd?
 
 Changes from liblustreapi
 -------------------------

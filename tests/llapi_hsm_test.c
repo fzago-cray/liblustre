@@ -233,8 +233,9 @@ START_TEST(test50)
 	fd = create_testfile(100);
 
 	/* With fd variant */
-	rc = llapi_hsm_state_get_fd(fd, &hus);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_get_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_get_fd(fd, &hus);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_get_fd failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == 0, "state=%u", hus.hus_states);
 
 	rc = close(fd);
@@ -276,7 +277,7 @@ START_TEST(test51)
 		ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s",
 			strerror(-rc));
 
-		rc = llapi_hsm_state_get_fd(fd, &hus);
+		rc = lus_hsm_state_get_fd(fd, &hus);
 		ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hus.hus_states == HS_EXISTS, "state=%u",

@@ -830,29 +830,27 @@ out:
 /**
  * Return the current HSM states and HSM requests related to a file.
  *
- * \param fd   Opened file descriptor of a Lustre file
- * \param hus  Should be allocated by caller. Will be filled with
- *             current file states.
+ * \param[in]   fd     Opened file descriptor of a Lustre file
+ * \param[out]  hus    Structure allocated by caller, which will be filled
+ *                     up with the current HSM file states.
  *
  * \retval 0 on success.
- * \retval -errno on error.
+ * \retval negative errno on error.
  */
-int llapi_hsm_state_get_fd(int fd, struct hsm_user_state *hus)
+int lus_hsm_state_get_fd(int fd, struct hsm_user_state *hus)
 {
 	int rc;
 
 	rc = ioctl(fd, LL_IOC_HSM_STATE_GET, hus);
-	/* If error, save errno value */
-	rc = rc ? -errno : 0;
 
-	return rc;
+	return rc ? -errno : 0;
 }
 
 /**
  * Return the current HSM states and HSM requests related to file pointed by \a
  * path.
  *
- * see llapi_hsm_state_get_fd() for args use and return
+ * see lus_hsm_state_get_fd() for args use and return
  */
 int llapi_hsm_state_get(const char *path, struct hsm_user_state *hus)
 {
@@ -863,7 +861,7 @@ int llapi_hsm_state_get(const char *path, struct hsm_user_state *hus)
 	if (fd < 0)
 		return -errno;
 
-	rc = llapi_hsm_state_get_fd(fd, hus);
+	rc = lus_hsm_state_get_fd(fd, hus);
 
 	close(fd);
 	return rc;
