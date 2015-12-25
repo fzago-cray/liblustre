@@ -223,7 +223,7 @@ static int create_testfile(size_t length)
 	return fd;
 }
 
-/* Test llapi_hsm_state_get. */
+/* Test lus_hsm_state_get. */
 START_TEST(test50)
 {
 	struct hsm_user_state hus;
@@ -242,13 +242,13 @@ START_TEST(test50)
 	ck_assert_msg(rc == 0, "close failed: %s", strerror(errno));
 
 	/* Without fd */
-	rc = llapi_hsm_state_get(testfile, &hus);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
+	rc = lus_hsm_state_get(testfile, &hus);
+	ck_assert_msg(rc == 0, "lus_hsm_state_get failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == 0, "state=%u", hus.hus_states);
 
 	memset(&hus, 0xaa, sizeof(hus));
-	rc = llapi_hsm_state_get(testfile, &hus);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
+	rc = lus_hsm_state_get(testfile, &hus);
+	ck_assert_msg(rc == 0, "lus_hsm_state_get failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == 0, "state=%u", hus.hus_states);
 	ck_assert_msg(hus.hus_archive_id == 0, "archive_id=%u", hus.hus_archive_id);
 	ck_assert_msg(hus.hus_in_progress_state == 0, "hus_in_progress_state=%u",
@@ -486,8 +486,8 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 		      strerror(-rc));
 
 	/* Final check */
-	rc = llapi_hsm_state_get(testfile, &hus);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
+	rc = lus_hsm_state_get(testfile, &hus);
+	ck_assert_msg(rc == 0, "lus_hsm_state_get failed: %s", strerror(-rc));
 	ck_assert_msg(hus.hus_states == (HS_EXISTS | HS_ARCHIVED),
 		      "state=%u", hus.hus_states);
 }

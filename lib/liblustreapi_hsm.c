@@ -847,12 +847,17 @@ int lus_hsm_state_get_fd(int fd, struct hsm_user_state *hus)
 }
 
 /**
- * Return the current HSM states and HSM requests related to file pointed by \a
- * path.
+ * Return the current HSM states and HSM requests related to the file
+ * pointed by \a path.
  *
- * see lus_hsm_state_get_fd() for args use and return
+ * \param[in]   path    Full file name
+ * \param[out]  hus     Structure allocated by caller, which will be filled
+ *                      up with the current HSM file states.
+ *
+ * \retval 0 on success.
+ * \retval negative errno on error.
  */
-int llapi_hsm_state_get(const char *path, struct hsm_user_state *hus)
+int lus_hsm_state_get(const char *path, struct hsm_user_state *hus)
 {
 	int fd;
 	int rc;
