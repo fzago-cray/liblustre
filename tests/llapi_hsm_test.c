@@ -129,17 +129,6 @@ START_TEST(test3)
 }
 END_TEST
 
-/* Bad parameters to lus_hsm_copytool_unregister(). */
-START_TEST(test4)
-{
-	int rc;
-
-	rc = lus_hsm_copytool_unregister(NULL);
-	ck_assert_msg(rc == -EINVAL, "lus_hsm_copytool_unregister error: %s",
-		strerror(-rc));
-}
-END_TEST
-
 /* Test lus_hsm_copytool_recv in non blocking mode */
 START_TEST(test5)
 {
@@ -989,7 +978,6 @@ int main(int argc, char *argv[])
 	ADD_TEST(test1);
 	ADD_TEST(test2);
 	ADD_TEST(test3);
-	ADD_TEST(test4);
 	ADD_TEST(test5);
 	ADD_TEST(test7);
 	ADD_TEST(test50);

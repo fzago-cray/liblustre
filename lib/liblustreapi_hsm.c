@@ -330,10 +330,11 @@ out_err:
 /**
  * Deregister a copytool
  *
- * \param[out]  priv	  Opaque private control structure
+ * \param[in,out]  priv    Copytool handle acquired at registration.
  *
  * \retval 0 on success.
- * \retval negative errno on error, with priv set to NULL.
+ * \retval a future version of the library might return a negative
+ *         errno.
  *
  * Note: under Linux, until lus_hsm_copytool_unregister is called
  * (or the program is killed), the libcfs module will be referenced
@@ -341,17 +342,11 @@ out_err:
  */
 int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle **priv)
 {
-	struct lus_hsm_ct_handle *ct;
-
-	if (priv == NULL || *priv == NULL)
-		return -EINVAL;
-
-	ct = *priv;
-
-	close_hsm_comm(ct);
-
-	free(ct);
-	*priv = NULL;
+	if (*priv) {
+		close_hsm_comm(*priv);
+		free(*priv);
+		*priv = NULL;
+	}
 
 	return 0;
 }
