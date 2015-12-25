@@ -179,7 +179,7 @@ section should help porting.
     with
       hur = malloc(llapi_hsm_user_request_len(x, y))
     This is more flexible as the caller can reuse the hur, resetting
-    it between calls to llapi_hsm_request.
+    it between calls to lus_hsm_request.
 -   for consistency and to better reflect its role, struct
     hsm_copyaction_private is now struct lus_hsm_action_handle
 

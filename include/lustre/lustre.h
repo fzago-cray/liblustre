@@ -339,8 +339,8 @@ struct hsm_action_item {
 	char       hai_data[0];
 } __attribute__((packed));
 
-int llapi_hsm_request(const struct lustre_fs_h *lfsh,
-		      const struct hsm_user_request *request);
+int lus_hsm_request(const struct lustre_fs_h *lfsh,
+		    const struct hsm_user_request *request);
 int lus_hsm_current_action(const char *path,
 			   struct hsm_current_action *hca);
 int lus_hsm_state_get_fd(int fd, struct hsm_user_state *hus);

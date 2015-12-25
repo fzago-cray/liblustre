@@ -450,8 +450,8 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 
 	close(fd);
 
-	rc = llapi_hsm_request(lfsh, hur);
-	ck_assert_msg(rc == 0, "llapi_hsm_request failed: %s", strerror(-rc));
+	rc = lus_hsm_request(lfsh, hur);
+	ck_assert_msg(rc == 0, "lus_hsm_request failed: %s", strerror(-rc));
 
 	free(hur);
 

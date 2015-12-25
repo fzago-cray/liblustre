@@ -955,8 +955,8 @@ int lus_hsm_current_action(const char *path, struct hsm_current_action *hca)
  *
  * \return 0 on success, or a negative errno on error.
  */
-int llapi_hsm_request(const struct lustre_fs_h *lfsh,
-		      const struct hsm_user_request *request)
+int lus_hsm_request(const struct lustre_fs_h *lfsh,
+		    const struct hsm_user_request *request)
 {
 	int rc;
 
