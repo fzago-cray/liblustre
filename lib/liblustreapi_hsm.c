@@ -75,7 +75,7 @@ struct lus_hsm_ct_handle {
 };
 
 struct lus_hsm_action_handle {
-	__s32					 data_fd;
+	int					 data_fd;
 	const struct lus_hsm_ct_handle		*ct_priv;
 	struct hsm_copy				 copy;
 	struct stat				 stat;
@@ -579,7 +579,7 @@ ok_out:
 
 err_out:
 	if (hcp) {
-		if (!(hcp->data_fd < 0))
+		if (hcp->data_fd != -1)
 			close(hcp->data_fd);
 
 		free(hcp);
@@ -604,16 +604,9 @@ err_out:
 int lus_hsm_action_end(struct lus_hsm_action_handle **phcp,
 		       const struct hsm_extent *he, int hp_flags, int errval)
 {
-	struct lus_hsm_action_handle	*hcp;
-	struct hsm_action_item		*hai;
-	int				 rc;
-
-	if (phcp == NULL || *phcp == NULL || he == NULL)
-		return -EINVAL;
-
-	hcp = *phcp;
-
-	hai = &hcp->copy.hc_hai;
+	struct lus_hsm_action_handle *hcp = *phcp;
+	struct hsm_action_item *hai = &hcp->copy.hc_hai;
+	int rc;
 
 	if (hai->hai_action == HSMA_RESTORE && errval == 0) {
 		struct timeval tv[2];
@@ -643,20 +636,17 @@ end:
 
 	/* Fill the last missing data that will be needed by
 	 * kernel to send a hsm_progress. */
-	hcp->copy.hc_flags  = hp_flags;
+	hcp->copy.hc_flags = hp_flags;
 	hcp->copy.hc_errval = abs(errval);
 
 	hcp->copy.hc_hai.hai_extent = *he;
 
 	rc = ioctl(hcp->ct_priv->lfsh->mount_fd, LL_IOC_HSM_COPY_END,
 		   &hcp->copy);
-	if (rc) {
+	if (rc)
 		rc = -errno;
-		goto err_cleanup;
-	}
 
-err_cleanup:
-	if (!(hcp->data_fd < 0))
+	if (hcp->data_fd >= 0)
 		close(hcp->data_fd);
 
 	free(hcp);
