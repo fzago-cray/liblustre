@@ -64,9 +64,7 @@
 #include "internal.h"
 
 /****** HSM Copytool API ********/
-#define CT_PRIV_MAGIC 0xC0BE2001
 struct lus_hsm_ct_handle {
-	int			 magic;
 	const struct lustre_fs_h *lfsh;
 	int			 channel_rfd;
 	__u32			 archives;
@@ -286,7 +284,6 @@ int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 	if (ct == NULL)
 		return -ENOMEM;
 
-	ct->magic = CT_PRIV_MAGIC;
 	ct->lfsh = lfsh;
 	ct->channel_rfd = -1;
 
@@ -350,8 +347,6 @@ int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle **priv)
 		return -EINVAL;
 
 	ct = *priv;
-	if (ct->magic != CT_PRIV_MAGIC)
-		return -EINVAL;
 
 	close_hsm_comm(ct);
 
