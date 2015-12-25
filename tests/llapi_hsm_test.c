@@ -268,17 +268,18 @@ START_TEST(test51)
 
 	fd = create_testfile(100);
 
-	rc = llapi_hsm_state_set_fd(fd, 0, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
 	/* Set archive id */
 	for (i = 0; i <= 32; i++) {
-		rc = llapi_hsm_state_set_fd(fd, HS_EXISTS, 0, i);
-		ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s",
+		rc = lus_hsm_state_set_fd(fd, HS_EXISTS, 0, i);
+		ck_assert_msg(rc == 0, "lus_hsm_state_set_fd failed: %s",
 			strerror(-rc));
 
 		rc = lus_hsm_state_get_fd(fd, &hus);
-		ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s",
+		ck_assert_msg(rc == 0, "lus_hsm_state_set_fd failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hus.hus_states == HS_EXISTS, "state=%u",
 			hus.hus_states);
@@ -287,14 +288,14 @@ START_TEST(test51)
 	}
 
 	/* Invalid archive numbers */
-	rc = llapi_hsm_state_set_fd(fd, HS_EXISTS, 0, 33);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_EXISTS, 0, 33);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_EXISTS, 0, 151);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_EXISTS, 0, 151);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_EXISTS, 0, -1789);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_EXISTS, 0, -1789);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd: %s", strerror(-rc));
 
 	/* Settable flags, with respect of the HSM file state transition rules:
 	 *	DIRTY without EXISTS: no dirty if no archive was created
@@ -302,78 +303,92 @@ START_TEST(test51)
 	 *	RELEASED without ARCHIVED: do not release a non-archived file
 	 *	LOST without ARCHIVED: cannot lost a non-archived file.
 	 */
-	rc = llapi_hsm_state_set_fd(fd, HS_DIRTY, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_DIRTY, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_EXISTS, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, 0, HS_EXISTS, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_DIRTY, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_DIRTY, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_EXISTS, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_EXISTS, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_DIRTY, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, HS_DIRTY, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_RELEASED, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, HS_RELEASED, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_LOST, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, HS_LOST, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_ARCHIVED, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_ARCHIVED, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_RELEASED, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_RELEASED, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_LOST, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_LOST, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_DIRTY|HS_EXISTS, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, HS_DIRTY|HS_EXISTS, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_RELEASED, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_RELEASED, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_DIRTY|HS_EXISTS, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_DIRTY|HS_EXISTS, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_ARCHIVED, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd failed: %s",
+	rc = lus_hsm_state_set_fd(fd, 0, HS_ARCHIVED, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_LOST, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_LOST, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_ARCHIVED, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_ARCHIVED, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_NORELEASE, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_NORELEASE, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_NORELEASE, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_NORELEASE, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, HS_NOARCHIVE, 0, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, HS_NOARCHIVE, 0, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0, HS_NOARCHIVE, 0);
-	ck_assert_msg(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0, HS_NOARCHIVE, 0);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_state_set_fd failed: %s", strerror(-rc));
 
 	/* Bogus flags for good measure. */
-	rc = llapi_hsm_state_set_fd(fd, 0x00080000, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0x00080000, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd: %s", strerror(-rc));
 
-	rc = llapi_hsm_state_set_fd(fd, 0x80000000, 0, 0);
-	ck_assert_msg(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
+	rc = lus_hsm_state_set_fd(fd, 0x80000000, 0, 0);
+	ck_assert_msg(rc == -EINVAL, "lus_hsm_state_set_fd: %s", strerror(-rc));
 
 	close(fd);
 }

@@ -875,27 +875,28 @@ int lus_hsm_state_get(const char *path, struct hsm_user_state *hus)
 /**
  * Set HSM states of file.
  *
- * Using the provided bitmasks, the current HSM states for this file will be
- * changed. \a archive_id could be used to change the archive number also. Set
- * it to 0 if you do not want to change it.
+ * Change the current HSM states for this file using the provided
+ * bitmasks. The archive number will be updated to \a archive_id,
+ * unless its value is zero.
  *
  * \param fd           Opened file descriptor of a Lustre file
- * \param setmask      Bitmask for flag to be set.
- * \param clearmask    Bitmask for flag to be cleared.
+ * \param setmask      Bitmask for flag to be set (enum hsm_states).
+ * \param clearmask    Bitmask for flag to be cleared (enum hsm_states).
  * \param archive_id   Archive number identifier to use. 0 means no change.
  *
  * \retval 0 on success.
- * \retval -errno on error.
+ * \retval a negative errno on error.
  */
-int llapi_hsm_state_set_fd(int fd, __u64 setmask, __u64 clearmask,
-			   __u32 archive_id)
+int lus_hsm_state_set_fd(int fd, uint64_t setmask, uint64_t clearmask,
+			 unsigned int archive_id)
 {
-	struct hsm_state_set	 hss;
-	int			 rc;
+	struct hsm_state_set hss;
+	int rc;
 
 	hss.hss_valid = HSS_SETMASK|HSS_CLEARMASK;
 	hss.hss_setmask = setmask;
 	hss.hss_clearmask = clearmask;
+
 	/* Change archive_id if provided. We can only change
 	 * to set something different than 0. */
 	if (archive_id > 0) {
@@ -903,16 +904,14 @@ int llapi_hsm_state_set_fd(int fd, __u64 setmask, __u64 clearmask,
 		hss.hss_archive_id = archive_id;
 	}
 	rc = ioctl(fd, LL_IOC_HSM_STATE_SET, &hss);
-	/* If error, save errno value */
-	rc = rc ? -errno : 0;
 
-	return rc;
+	return rc ? -errno : 0;
 }
 
 /**
  * Set HSM states of file pointed by \a path.
  *
- * see llapi_hsm_state_set_fd() for args use and return
+ * see lus_hsm_state_set_fd() for args use and return
  */
 int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
 			__u32 archive_id)
@@ -924,7 +923,7 @@ int llapi_hsm_state_set(const char *path, __u64 setmask, __u64 clearmask,
 	if (fd < 0)
 		return -errno;
 
-	rc = llapi_hsm_state_set_fd(fd, setmask, clearmask, archive_id);
+	rc = lus_hsm_state_set_fd(fd, setmask, clearmask, archive_id);
 
 	close(fd);
 	return rc;
