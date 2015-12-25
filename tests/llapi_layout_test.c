@@ -15,7 +15,7 @@
  */
 
 /*
- * These tests exercise the llapi_layout API which abstracts the layout
+ * These tests exercise the lus_layout API which abstracts the layout
  * of a Lustre file behind an opaque data type.  They assume a Lustre
  * file system with at least 2 OSTs and a pool containing at least the
  * first 2 OSTs.
@@ -58,7 +58,7 @@ START_TEST(test0)
 	int fd;
 	uint64_t count;
 	uint64_t size;
-	struct llapi_layout *layout = llapi_layout_alloc(T0_STRIPE_COUNT);
+	struct lus_layout *layout = llapi_layout_alloc(T0_STRIPE_COUNT);
 	char path[PATH_MAX];
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
@@ -104,7 +104,7 @@ START_TEST(test0)
 }
 END_TEST
 
-static void __test1_helper(struct llapi_layout *layout)
+static void __test1_helper(struct lus_layout *layout)
 {
 	uint64_t ost0;
 	uint64_t ost1;
@@ -141,7 +141,7 @@ START_TEST(test1)
 	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
-	struct llapi_layout *layout = llapi_layout_get_by_path(path, 0);
+	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
 	ck_assert_msg(layout != NULL, "errno = %d", errno);
 	__test1_helper(layout);
 	llapi_layout_free(layout);
@@ -160,7 +160,7 @@ START_TEST(test2)
 	fd = open(path, O_RDONLY);
 	ck_assert_msg(fd >= 0, "open(%s): errno = %d", path, errno);
 
-	struct llapi_layout *layout = llapi_layout_get_by_fd(fd, 0);
+	struct lus_layout *layout = llapi_layout_get_by_fd(fd, 0);
 	ck_assert_msg(layout != NULL, "errno = %d", errno);
 
 	rc = close(fd);
@@ -175,7 +175,7 @@ END_TEST
 START_TEST(test3)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	lustre_fid fid;
 	char fidstr[4096];
 	char path[PATH_MAX];
@@ -226,7 +226,7 @@ START_TEST(test4)
 	ck_assert_msg(rc == 0, "system(%s): exit status %d", cmd, WEXITSTATUS(rc));
 
 	errno = 0;
-	struct llapi_layout *layout = llapi_layout_get_by_path(path, 0);
+	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
 	ck_assert_msg(layout != NULL, "errno = %d", errno);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
@@ -258,7 +258,7 @@ START_TEST(test5)
 {
 	int rc;
 	char path[PATH_MAX];
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T5FILE);
 
@@ -275,7 +275,7 @@ END_TEST
 START_TEST(test6)
 {
 	errno = 0;
-	struct llapi_layout *layout = llapi_layout_get_by_fd(9999, 0);
+	struct lus_layout *layout = llapi_layout_get_by_fd(9999, 0);
 	ck_assert_msg(layout == NULL && errno == EBADF, "errno = %d", errno);
 }
 END_TEST
@@ -316,7 +316,7 @@ START_TEST(test7)
 	rc = seteuid(uid);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	errno = 0;
-	struct llapi_layout *layout = llapi_layout_get_by_path(path, 0);
+	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
 	ck_assert_msg(layout == NULL && errno == EACCES, "errno = %d", errno);
 	rc = seteuid(myuid);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -331,7 +331,7 @@ START_TEST(test8)
 {
 	int fd;
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	uint64_t count;
 	uint64_t size;
 	uint64_t pattern;
@@ -370,7 +370,7 @@ END_TEST
 #define T9_DESC		"verify llapi_layout_pattern_set() return values"
 START_TEST(test9)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	int rc;
 
 	layout = llapi_layout_alloc(0);
@@ -404,7 +404,7 @@ START_TEST(test10)
 {
 	int rc;
 	uint64_t count;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 
 	layout = llapi_layout_alloc(0);
 	ck_assert_msg(layout != NULL, "errno = %d", errno);
@@ -447,7 +447,7 @@ START_TEST(test11)
 {
 	int rc;
 	uint64_t size;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 
 	layout = llapi_layout_alloc(0);
 	ck_assert_msg(layout != NULL, "errno = %d", errno);
@@ -490,7 +490,7 @@ END_TEST
 START_TEST(test12)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
 	layout = llapi_layout_alloc(0);
@@ -534,7 +534,7 @@ START_TEST(test13)
 	int rc;
 	int fd;
 	uint64_t idx;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T13FILE);
@@ -604,7 +604,7 @@ END_TEST
 START_TEST(test14)
 {
 	int rc;
-	struct llapi_layout *layout = llapi_layout_alloc(0);
+	struct lus_layout *layout = llapi_layout_alloc(0);
 
 	/* NULL path */
 	errno = 0;
@@ -624,7 +624,7 @@ START_TEST(test15)
 	int rc;
 	int fd;
 	uint64_t count;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T15FILE);
@@ -667,8 +667,8 @@ START_TEST(test16)
 {
 	int		rc;
 	int		fd;
-	struct llapi_layout	*deflayout;
-	struct llapi_layout	*filelayout;
+	struct lus_layout	*deflayout;
+	struct lus_layout	*filelayout;
 	char		path[PATH_MAX];
 	uint64_t	fsize;
 	uint64_t	fcount;
@@ -687,7 +687,7 @@ START_TEST(test16)
 	rc = llapi_layout_stripe_count_get(deflayout, &dcount);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	/* First, with a default struct llapi_layout */
+	/* First, with a default struct lus_layout */
 	filelayout = llapi_layout_alloc(0);
 	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
 
@@ -744,7 +744,7 @@ START_TEST(test17)
 	int fd;
 	int osts_all;
 	uint64_t osts_layout;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T17FILE);
@@ -787,7 +787,7 @@ START_TEST(test18)
 {
 	int rc;
 	int fd;
-	struct llapi_layout *layout = llapi_layout_alloc(0);
+	struct lus_layout *layout = llapi_layout_alloc(0);
 	char path[PATH_MAX];
 	char pool[LOV_MAXPOOLNAME*2 + 1];
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
@@ -828,7 +828,7 @@ END_TEST
 #define T19_DESC	"Maximum length pool name is NULL-terminated"
 START_TEST(test19)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char *name = "0123456789abcde";
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 	int rc;
@@ -850,8 +850,8 @@ START_TEST(test20)
 {
 	int		rc;
 	int		fd;
-	struct llapi_layout	*deflayout;
-	struct llapi_layout	*filelayout;
+	struct lus_layout	*deflayout;
+	struct lus_layout	*filelayout;
 	char		path[PATH_MAX];
 	uint64_t	fsize;
 	uint64_t	fcount;
@@ -906,7 +906,7 @@ END_TEST
 #define T21_DESC	"llapi_layout_file_create fails for non-Lustre file"
 START_TEST(test21)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char template[PATH_MAX];
 	int fd;
 	int rc;
@@ -967,7 +967,7 @@ END_TEST
 #define T23_DESC	"llapi_layout_get_by_path fails for non-Lustre file"
 START_TEST(test23)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	char template[PATH_MAX];
 	int fd;
 	int rc;
@@ -995,7 +995,7 @@ START_TEST(test24)
 {
 	int fd;
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	uint64_t count;
 	uint64_t size;
 	uint64_t pattern;
@@ -1037,7 +1037,7 @@ END_TEST
 START_TEST(test25)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	uint64_t count;
 	uint64_t size;
 	uint64_t pattern;
@@ -1077,7 +1077,7 @@ END_TEST
 START_TEST(test26)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	const char *lfs = getenv("LFS");
 	uint64_t count;
 	uint64_t size;
@@ -1126,7 +1126,7 @@ END_TEST
 START_TEST(test27)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	const char *lfs = getenv("LFS");
 	uint64_t count;
 	uint64_t size;
@@ -1178,7 +1178,7 @@ END_TEST
 START_TEST(test28)
 {
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	const char *lfs = getenv("LFS");
 	uint64_t count;
 	char dirpath[PATH_MAX];
@@ -1255,7 +1255,7 @@ START_TEST(test100)
 	struct lov_user_md *lum = (struct lov_user_md *)_lum;
 	size_t lum_len = sizeof(_lum);
 	int rc;
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	uint64_t count;
 	uint64_t size;
 	char mypool[LOV_MAXPOOLNAME + 1];

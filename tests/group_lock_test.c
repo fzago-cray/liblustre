@@ -303,7 +303,7 @@ START_TEST(test14)
 	int fd;
 	const int gid = 1234;
 	char buf[10000];
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 
 	cleanup();
 

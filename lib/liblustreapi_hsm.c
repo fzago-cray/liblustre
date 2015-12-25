@@ -751,12 +751,12 @@ int lus_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp)
  * \retval    a negative errno
  */
 int lus_hsm_import(const char *dst, int archive, const struct stat *st,
-		   struct llapi_layout *layout)
+		   struct lus_layout *layout)
 {
 	struct hsm_user_import	 hui;
 	int			 fd = -1;
 	int			 rc = 0;
-	struct llapi_layout	*def_layout = NULL;
+	struct lus_layout	*def_layout = NULL;
 
 	/* We need a layout. */
 	if (layout == NULL) {

@@ -46,7 +46,7 @@
  * Deal with v1 versus v3 format issues only when we read or write
  * files.
  */
-struct llapi_layout {
+struct lus_layout {
 	uint32_t	llot_magic;
 	uint64_t	llot_pattern;
 	uint64_t	llot_pattern_flags;
@@ -109,16 +109,16 @@ llapi_layout_swab_lov_user_md(struct lov_user_md *lum, int object_count)
 }
 
 /**
- * Allocate storage for a llapi_layout with \a num_stripes stripes.
+ * Allocate storage for a lus_layout with \a num_stripes stripes.
  *
  * \param[in] num_stripes	number of stripes in new layout
  *
  * \retval	valid pointer if allocation succeeds
  * \retval	NULL if allocation fails
  */
-static struct llapi_layout *__llapi_layout_alloc(unsigned int num_stripes)
+static struct lus_layout *__llapi_layout_alloc(unsigned int num_stripes)
 {
-	struct llapi_layout *layout = NULL;
+	struct lus_layout *layout = NULL;
 	size_t size = sizeof(*layout) +
 		(num_stripes * sizeof(layout->llot_objects[0]));
 
@@ -131,20 +131,20 @@ static struct llapi_layout *__llapi_layout_alloc(unsigned int num_stripes)
 }
 
 /**
- * Copy the data from a lov_user_md to a newly allocated llapi_layout.
+ * Copy the data from a lov_user_md to a newly allocated lus_layout.
  *
  * The caller is responsible for freeing the returned pointer.
  *
  * \param[in] lum	LOV user metadata structure to copy data from
  * \param[in] object_count  number of objects in the layout
  *
- * \retval		valid llapi_layout pointer on success
+ * \retval		valid lus_layout pointer on success
  * \retval		NULL if memory allocation fails
  */
-static struct llapi_layout *
+static struct lus_layout *
 llapi_layout_from_lum(const struct lov_user_md *lum, size_t object_count)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	size_t objects_sz;
 
 	objects_sz = object_count * sizeof(lum->lmm_objects[0]);
@@ -199,7 +199,7 @@ llapi_layout_from_lum(const struct lov_user_md *lum, size_t object_count)
 }
 
 /**
- * Copy the data from a llapi_layout to a newly allocated lov_user_md.
+ * Copy the data from a lus_layout to a newly allocated lov_user_md.
  *
  * The caller is responsible for freeing the returned pointer.
  *
@@ -213,7 +213,7 @@ llapi_layout_from_lum(const struct lov_user_md *lum, size_t object_count)
  * \retval	NULL if memory allocation fails
  */
 static struct lov_user_md *
-llapi_layout_to_lum(const struct llapi_layout *layout)
+llapi_layout_to_lum(const struct lus_layout *layout)
 {
 	struct lov_user_md *lum;
 	size_t lum_size;
@@ -299,8 +299,8 @@ static void get_parent_dir(const char *path, char *buf, size_t size)
  * \param[in] src	layout to inherit values from
  * \param[in] dest	layout to receive inherited values
  */
-static void inherit_layout_attributes(const struct llapi_layout *src,
-					struct llapi_layout *dest)
+static void inherit_layout_attributes(const struct lus_layout *src,
+					struct lus_layout *dest)
 {
 	if (dest->llot_pattern == LLAPI_LAYOUT_DEFAULT)
 		dest->llot_pattern = src->llot_pattern;
@@ -320,7 +320,7 @@ static void inherit_layout_attributes(const struct llapi_layout *src,
  * \retval true		all attributes are specified
  * \retval false	at least one attribute is unspecified
  */
-static bool is_fully_specified(const struct llapi_layout *layout)
+static bool is_fully_specified(const struct lus_layout *layout)
 {
 	return  layout->llot_pattern != LLAPI_LAYOUT_DEFAULT &&
 		layout->llot_stripe_size != LLAPI_LAYOUT_DEFAULT &&
@@ -332,12 +332,12 @@ static bool is_fully_specified(const struct llapi_layout *layout)
  *
  * \param[in] num_stripes	number of stripes in new layout
  *
- * \retval	valid llapi_layout pointer on success
+ * \retval	valid lus_layout pointer on success
  * \retval	NULL if allocation fails
  */
-struct llapi_layout *llapi_layout_alloc(unsigned int num_stripes)
+struct lus_layout *llapi_layout_alloc(unsigned int num_stripes)
 {
-	struct llapi_layout *layout;
+	struct lus_layout *layout;
 	size_t size;
 
 	if (num_stripes > LOV_MAX_STRIPE_COUNT)
@@ -436,7 +436,7 @@ static int llapi_layout_objects_in_lum(const struct lov_user_md *lum,
  * \retval    0 on success, or negative errno on error.
  */
 int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
-			   struct llapi_layout **layout)
+			   struct lus_layout **layout)
 {
 	int object_count;
 
@@ -471,14 +471,14 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
  * \param[in] fd	open file descriptor
  * \param[in] flags	open file descriptor
  *
- * \retval	valid llapi_layout pointer on success
+ * \retval	valid lus_layout pointer on success
  * \retval	NULL if an error occurs
  */
-struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
+struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 {
 	size_t lum_len;
 	struct lov_user_md *lum;
-	struct llapi_layout *layout = NULL;
+	struct lus_layout *layout = NULL;
 	ssize_t bytes_read;
 	int object_count;
 	struct stat st;
@@ -546,13 +546,13 @@ out:
  *
  * \param[in] path	path for which to get the expected layout
  *
- * \retval	valid llapi_layout pointer on success
+ * \retval	valid lus_layout pointer on success
  * \retval	NULL if an error occurs
  */
-static struct llapi_layout *llapi_layout_expected(const char *path)
+static struct lus_layout *llapi_layout_expected(const char *path)
 {
-	struct llapi_layout	*path_layout = NULL;
-	struct llapi_layout	*donor_layout;
+	struct lus_layout	*path_layout = NULL;
+	struct lus_layout	*donor_layout;
 	char			donor_path[PATH_MAX];
 	struct stat st;
 	int fd;
@@ -634,12 +634,12 @@ static struct llapi_layout *llapi_layout_expected(const char *path)
  * \param[in] path	path for which to get the layout
  * \param[in] flags	flags to control how layout is retrieved
  *
- * \retval	valid llapi_layout pointer on success
+ * \retval	valid lus_layout pointer on success
  * \retval	NULL if an error occurs
  */
-struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
+struct lus_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
 {
-	struct llapi_layout *layout = NULL;
+	struct lus_layout *layout = NULL;
 	int fd;
 	int tmp;
 
@@ -664,16 +664,16 @@ struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
  * \param[in] lfsh	  An opaque handle returned by lus_open_fs()
  * \param[in] fid	  Lustre identifier of file to get layout for
  *
- * \retval	valid llapi_layout pointer on success
+ * \retval	valid lus_layout pointer on success
  * \retval	NULL if an error occurs
  */
-struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
+struct lus_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 					     const lustre_fid *fid,
 					     uint32_t flags)
 {
 	int fd;
 	int tmp;
-	struct llapi_layout *layout = NULL;
+	struct lus_layout *layout = NULL;
 
 	fd = lus_open_by_fid(lfsh, fid, O_RDONLY);
 	if (fd < 0)
@@ -688,7 +688,7 @@ struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 }
 
 /** * Free memory allocated for \a layout. */
-void llapi_layout_free(struct llapi_layout *layout)
+void llapi_layout_free(struct lus_layout *layout)
 {
 	free(layout);
 }
@@ -702,7 +702,7 @@ void llapi_layout_free(struct llapi_layout *layout)
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_stripe_count_get(const struct llapi_layout *layout,
+int llapi_layout_stripe_count_get(const struct lus_layout *layout,
 				  uint64_t *count)
 {
 	if (layout == NULL || count == NULL ||
@@ -715,7 +715,7 @@ int llapi_layout_stripe_count_get(const struct llapi_layout *layout,
 }
 
 /*
- * The llapi_layout API functions have these extra validity checks since
+ * The lus_layout API functions have these extra validity checks since
  * they use intuitively named macros to denote special behavior, whereas
  * the old API uses 0 and -1.
  */
@@ -752,7 +752,7 @@ static bool llapi_layout_stripe_index_is_valid(int64_t stripe_index)
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_stripe_count_set(struct llapi_layout *layout,
+int llapi_layout_stripe_count_set(struct lus_layout *layout,
 				  uint64_t count)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
@@ -775,7 +775,7 @@ int llapi_layout_stripe_count_set(struct llapi_layout *layout,
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_stripe_size_get(const struct llapi_layout *layout,
+int llapi_layout_stripe_size_get(const struct lus_layout *layout,
 				 uint64_t *size)
 {
 	if (layout == NULL || size == NULL ||
@@ -798,7 +798,7 @@ int llapi_layout_stripe_size_get(const struct llapi_layout *layout,
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_stripe_size_set(struct llapi_layout *layout,
+int llapi_layout_stripe_size_set(struct lus_layout *layout,
 				 uint64_t size)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
@@ -821,7 +821,7 @@ int llapi_layout_stripe_size_set(struct llapi_layout *layout,
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_pattern_get(const struct llapi_layout *layout,
+int llapi_layout_pattern_get(const struct lus_layout *layout,
 			     uint64_t *pattern)
 {
 	if (layout == NULL || pattern == NULL ||
@@ -845,7 +845,7 @@ int llapi_layout_pattern_get(const struct llapi_layout *layout,
  * \retval	-1 if arguments are invalid or RAID pattern
  *		is unsupported
  */
-int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern)
+int llapi_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
 		errno = EINVAL;
@@ -873,7 +873,7 @@ int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern)
  * \retval	0 on success
  * \retval	-1 on error, with errno set.
  */
-int llapi_layout_pattern_flags_set(struct llapi_layout *layout,
+int llapi_layout_pattern_flags_set(struct lus_layout *layout,
 				   uint64_t pattern_flags)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
@@ -905,7 +905,7 @@ int llapi_layout_pattern_flags_set(struct llapi_layout *layout,
  * \retval	-1 if arguments are invalid or an unsupported stripe number
  *		was specified
  */
-int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
+int llapi_layout_ost_index_set(struct lus_layout *layout, int stripe_number,
 			       uint64_t ost_index)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
@@ -936,7 +936,7 @@ int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
  * \retval	0 on success
  * \retval	-1 or error, with errno set
  */
-int llapi_layout_ost_index_get(const struct llapi_layout *layout,
+int llapi_layout_ost_index_get(const struct lus_layout *layout,
 			       uint64_t stripe_number, uint64_t *idx)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
@@ -965,7 +965,7 @@ int llapi_layout_ost_index_get(const struct llapi_layout *layout,
  * \retval	0 on success
  * \retval	-1 if arguments are invalid
  */
-int llapi_layout_pool_name_get(const struct llapi_layout *layout, char *dest,
+int llapi_layout_pool_name_get(const struct lus_layout *layout, char *dest,
 			       size_t n)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
@@ -988,7 +988,7 @@ int llapi_layout_pool_name_get(const struct llapi_layout *layout, char *dest,
  * \retval	0 on success
  * \retval	-1 if arguments are invalid or pool name is too long
  */
-int llapi_layout_pool_name_set(struct llapi_layout *layout,
+int llapi_layout_pool_name_set(struct lus_layout *layout,
 			       const char *pool_name)
 {
 	char *ptr;
@@ -1018,7 +1018,7 @@ int llapi_layout_pool_name_set(struct llapi_layout *layout,
 /* Helper for llapi_layout_file_open and llapi_layout_file_openat. */
 static int layout_file_open_internal(int dir_fd, const char *path,
 				     int open_flags, mode_t mode,
-				     const struct llapi_layout *layout)
+				     const struct lus_layout *layout)
 {
 	int fd;
 	int rc;
@@ -1086,7 +1086,7 @@ static int layout_file_open_internal(int dir_fd, const char *path,
  * \retval		-1 if an error occurred
  */
 int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
-			   const struct llapi_layout *layout)
+			   const struct lus_layout *layout)
 {
 	return layout_file_open_internal(-1, path, open_flags,
 					 mode, layout);
@@ -1109,7 +1109,7 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
  * \retval		-1 if an error occurred
  */
 int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
-			     mode_t mode, const struct llapi_layout *layout)
+			     mode_t mode, const struct lus_layout *layout)
 {
 	return layout_file_open_internal(dir_fd, path, open_flags,
 					 mode, layout);
@@ -1130,7 +1130,7 @@ int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
  * \retval		-1 if an error occurred
  */
 int llapi_layout_file_create(const char *path, int open_flags, int mode,
-			     const struct llapi_layout *layout)
+			     const struct lus_layout *layout)
 {
 	return layout_file_open_internal(-1, path,
 					 open_flags | O_CREAT | O_EXCL,

@@ -19,7 +19,7 @@ SYNOPSIS
 
 **int lus_create_volatile_by_fid(const struct lustre_fs_h \***\
 lfsh\ **, const lustre_fid \***\ parent_fid\ **, int** mdt_idx\ **,
-int** open_flags\ **, mode_t** mode\ **, const struct llapi_layout
+int** open_flags\ **, mode_t** mode\ **, const struct lus_layout
 \***\ layout\ **)**
 
 

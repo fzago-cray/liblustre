@@ -160,43 +160,43 @@ struct lov_user_md_v1 {
 /*
  * Layouts
  */
-struct llapi_layout;
-struct llapi_layout *llapi_layout_get_by_path(const char *path, uint32_t flags);
-struct llapi_layout *llapi_layout_get_by_fd(int fd, uint32_t flags);
-struct llapi_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
+struct lus_layout;
+struct lus_layout *llapi_layout_get_by_path(const char *path, uint32_t flags);
+struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags);
+struct lus_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 					     const lustre_fid *fid,
 					     uint32_t flags);
-struct llapi_layout *llapi_layout_alloc(unsigned int num_stripes);
-void llapi_layout_free(struct llapi_layout *layout);
-int llapi_layout_stripe_count_get(const struct llapi_layout *layout,
+struct lus_layout *llapi_layout_alloc(unsigned int num_stripes);
+void llapi_layout_free(struct lus_layout *layout);
+int llapi_layout_stripe_count_get(const struct lus_layout *layout,
 				  uint64_t *count);
-int llapi_layout_stripe_count_set(struct llapi_layout *layout, uint64_t count);
-int llapi_layout_stripe_size_get(const struct llapi_layout *layout,
+int llapi_layout_stripe_count_set(struct lus_layout *layout, uint64_t count);
+int llapi_layout_stripe_size_get(const struct lus_layout *layout,
 				 uint64_t *size);
-int llapi_layout_stripe_size_set(struct llapi_layout *layout, uint64_t size);
-int llapi_layout_pattern_get(const struct llapi_layout *layout,
+int llapi_layout_stripe_size_set(struct lus_layout *layout, uint64_t size);
+int llapi_layout_pattern_get(const struct lus_layout *layout,
 			     uint64_t *pattern);
-int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern);
-int llapi_layout_pattern_flags_set(struct llapi_layout *layout,
+int llapi_layout_pattern_set(struct lus_layout *layout, uint64_t pattern);
+int llapi_layout_pattern_flags_set(struct lus_layout *layout,
 				   uint64_t pattern_flags);
-int llapi_layout_ost_index_get(const struct llapi_layout *layout,
+int llapi_layout_ost_index_get(const struct lus_layout *layout,
 			       uint64_t stripe_number, uint64_t *index);
-int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
+int llapi_layout_ost_index_set(struct lus_layout *layout, int stripe_number,
 			       uint64_t index);
-int llapi_layout_pool_name_get(const struct llapi_layout *layout,
+int llapi_layout_pool_name_get(const struct lus_layout *layout,
 			       char *pool_name, size_t pool_name_len);
-int llapi_layout_pool_name_set(struct llapi_layout *layout,
+int llapi_layout_pool_name_set(struct lus_layout *layout,
 			       const char *pool_name);
 int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
-			   const struct llapi_layout *layout);
+			   const struct lus_layout *layout);
 int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
-			     mode_t mode, const struct llapi_layout *layout);
+			     mode_t mode, const struct lus_layout *layout);
 int llapi_layout_file_create(const char *path, int open_flags, int mode,
-			     const struct llapi_layout *layout);
+			     const struct lus_layout *layout);
 int lus_fswap_layouts(int fd1, int fd2, uint64_t dv1, uint64_t dv2,
 		      uint64_t flags);
 int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
-			   struct llapi_layout **layout);
+			   struct lus_layout **layout);
 
 /*
  * Misc
@@ -215,7 +215,7 @@ int lus_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
 int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 			       const lustre_fid *parent_fid,
 			       int mdt_idx, int open_flags, mode_t mode,
-			       const struct llapi_layout *layout);
+			       const struct lus_layout *layout);
 int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		  char *parent_name, size_t parent_name_len);
 int lus_fid2parent(const struct lustre_fs_h *lfsh,
@@ -396,7 +396,7 @@ int lus_hsm_action_get_dfid(const struct lus_hsm_action_handle *hcp,
 			    struct lu_fid *fid);
 int lus_hsm_action_get_fd(const struct lus_hsm_action_handle *hcp);
 int lus_hsm_import(const char *dst, int archive, const struct stat *st,
-		   struct llapi_layout *layout);
+		   struct lus_layout *layout);
 const struct hsm_action_item *
 lus_hsm_hai_first(const struct hsm_action_list *hal);
 const struct hsm_action_item *

@@ -344,7 +344,7 @@ int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
 			       const lustre_fid *parent_fid,
 			       int mdt_idx, int open_flags, mode_t mode,
-			       const struct llapi_layout *layout)
+			       const struct lus_layout *layout)
 {
 	char path[PATH_MAX];
 	int fd;
