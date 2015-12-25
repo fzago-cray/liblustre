@@ -18,7 +18,7 @@ SYNOPSIS
 **#include <lustre/lustre.h>**
 
 **int llapi_hsm_action_begin(struct lus_hsm_action_handle \*\***\ phcp\ **,
-const struct hsm_copytool_private \***\ ct\ **, const struct
+const struct lus_hsm_ct_handle \***\ ct\ **, const struct
 hsm_action_item \***\ hai\ **, int** restore_mdt_index\ **, int**
 restore_open_flags\ **, bool** is_error\ **)**
 

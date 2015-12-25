@@ -19,13 +19,13 @@ SYNOPSIS
 
 **int lus_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
 unsigned int** archive_count\ **,
-int \***\ archives\ **struct hsm_copytool_private \*\***\ priv\ **)**
+int \***\ archives\ **struct lus_hsm_ct_handle \*\***\ priv\ **)**
 
-**int lus_hsm_copytool_unregister(struct hsm_copytool_private \*\***\ priv**)**
+**int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle \*\***\ priv**)**
 
-**int lus_hsm_copytool_get_fd(const struct hsm_copytool_private \***\ ct\ **)**
+**int lus_hsm_copytool_get_fd(const struct lus_hsm_ct_handle \***\ ct\ **)**
 
-**int lus_hsm_copytool_recv(struct hsm_copytool_private \***\ priv\ **,
+**int lus_hsm_copytool_recv(struct lus_hsm_ct_handle \***\ priv\ **,
 **struct hsm_action_list \*\***\ hal\ **, int \***\ msgsize\ **)**
 
 **struct hsm_action_item \*lus_hsm_hai_first(struct hsm_action_list \***\ hal\ **)**

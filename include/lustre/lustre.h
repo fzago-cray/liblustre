@@ -370,19 +370,19 @@ static inline size_t llapi_hsm_user_request_len(unsigned int itemcount,
  * HSM copytool interface.
  * priv is private state, managed internally by these functions
  */
-struct hsm_copytool_private;
+struct lus_hsm_ct_handle;
 struct lus_hsm_action_handle;
 
 int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 			      unsigned int archive_count, int *archives,
-			      struct hsm_copytool_private **priv);
-int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv);
-int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct);
-int lus_hsm_copytool_recv(struct hsm_copytool_private *priv,
+			      struct lus_hsm_ct_handle **priv);
+int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle **priv);
+int lus_hsm_copytool_get_fd(const struct lus_hsm_ct_handle *ct);
+int lus_hsm_copytool_recv(struct lus_hsm_ct_handle *priv,
 			  const struct hsm_action_list **hal,
 			  size_t *msgsize);
 int llapi_hsm_action_begin(struct lus_hsm_action_handle **phcp,
-			   const struct hsm_copytool_private *ct,
+			   const struct lus_hsm_ct_handle *ct,
 			   const struct hsm_action_item *hai,
 			   int restore_mdt_index, int restore_open_flags,
 			   bool is_error);

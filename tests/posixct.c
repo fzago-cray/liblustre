@@ -146,7 +146,7 @@ struct options opt = {
 	.o_chunk_size = ONE_MB,
 };
 
-/* hsm_copytool_private will hold an open FD on the lustre mount point
+/* lus_hsm_ct_handle will hold an open FD on the lustre mount point
  * for us. Additionally open one on the archive FS root to make sure
  * it doesn't drop out from under us (and remind the admin to shutdown
  * the copytool before unmounting). */
@@ -158,7 +158,7 @@ static int err_minor;
 
 static char cmd_name[PATH_MAX];
 
-static struct hsm_copytool_private *ctdata;
+static struct lus_hsm_ct_handle *ctdata;
 
 static inline double ct_now(void)
 {

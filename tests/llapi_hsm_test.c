@@ -54,7 +54,7 @@ START_TEST(test1)
 {
 	int i;
 	int rc;
-	struct hsm_copytool_private *ctdata;
+	struct lus_hsm_ct_handle *ctdata;
 
 	for (i = 0; i < 2000; i++) {
 		rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata);
@@ -74,8 +74,8 @@ END_TEST
 START_TEST(test2)
 {
 	int rc;
-	struct hsm_copytool_private *ctdata1;
-	struct hsm_copytool_private *ctdata2;
+	struct lus_hsm_ct_handle *ctdata1;
+	struct lus_hsm_ct_handle *ctdata2;
 
 	rc = lus_hsm_copytool_register(lfsh, 0, NULL, &ctdata1);
 	ck_assert_msg(rc == 0, "lus_hsm_copytool_register failed: %s",
@@ -99,7 +99,7 @@ END_TEST
 START_TEST(test3)
 {
 	int rc;
-	struct hsm_copytool_private *ctdata;
+	struct lus_hsm_ct_handle *ctdata;
 	int archives[33];
 
 	rc = lus_hsm_copytool_register(lfsh, 1, NULL, &ctdata);
@@ -145,7 +145,7 @@ START_TEST(test5)
 {
 	int rc;
 	int i;
-	struct hsm_copytool_private *ctdata;
+	struct lus_hsm_ct_handle *ctdata;
 	const struct hsm_action_list *hal;
 	size_t msgsize;
 
@@ -171,7 +171,7 @@ END_TEST
 START_TEST(test7)
 {
 	int rc;
-	struct hsm_copytool_private *ctdata;
+	struct lus_hsm_ct_handle *ctdata;
 	const struct hsm_action_list *hal;
 	size_t msgsize;
 	int fd;
@@ -416,7 +416,7 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 {
 	int rc;
 	int fd;
-	struct hsm_copytool_private *ctdata;
+	struct lus_hsm_ct_handle *ctdata;
 	struct hsm_user_request	*hur;
 	const struct hsm_action_list	*hal;
 	const struct hsm_action_item	*hai;

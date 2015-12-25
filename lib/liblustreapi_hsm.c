@@ -65,7 +65,7 @@
 
 /****** HSM Copytool API ********/
 #define CT_PRIV_MAGIC 0xC0BE2001
-struct hsm_copytool_private {
+struct lus_hsm_ct_handle {
 	int			 magic;
 	const struct lustre_fs_h *lfsh;
 	int			 channel_rfd;
@@ -80,7 +80,7 @@ struct hsm_copytool_private {
 struct lus_hsm_action_handle {
 	__u32					 magic;
 	__s32					 data_fd;
-	const struct hsm_copytool_private	*ct_priv;
+	const struct lus_hsm_ct_handle		*ct_priv;
 	struct hsm_copy				 copy;
 	struct stat				 stat;
 };
@@ -116,7 +116,7 @@ enum ct_event {
 
 /* Open a communication channel with the kernel to retrieve HSM
  * events. Return 0 on success, or -1 on error. */
-static int open_hsm_comm(struct hsm_copytool_private *ct)
+static int open_hsm_comm(struct lus_hsm_ct_handle *ct)
 {
 	struct lustre_kernelcomm channel;
 	int pipefd[2];
@@ -162,7 +162,7 @@ out_err:
 }
 
 /* Clsoe the HSM connection opened by open_hsm_conn. */
-static void close_hsm_comm(struct hsm_copytool_private *ct)
+static void close_hsm_comm(struct lus_hsm_ct_handle *ct)
 {
 	struct lustre_kernelcomm channel = {
 		.lk_group = KUC_GRP_HSM,
@@ -181,7 +181,7 @@ static void close_hsm_comm(struct hsm_copytool_private *ct)
 /* Get a message from HSM. Return 0 on success and set hal and
  * hal_len. Return a negative errno on error. The caller is expected
  * to handle -EWOULDBLOCK. */
-static int get_hsm_comm(struct hsm_copytool_private *ct,
+static int get_hsm_comm(struct lus_hsm_ct_handle *ct,
 			const struct hsm_action_list **hal,
 			size_t *hal_len)
 {
@@ -265,9 +265,9 @@ static int get_hsm_comm(struct hsm_copytool_private *ct,
  */
 int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
 			      unsigned int archive_count, int *archives,
-			      struct hsm_copytool_private **priv)
+			      struct lus_hsm_ct_handle **priv)
 {
-	struct hsm_copytool_private *ct;
+	struct lus_hsm_ct_handle *ct;
 	int rc;
 
 	*priv = NULL;
@@ -342,9 +342,9 @@ out_err:
  * (or the program is killed), the libcfs module will be referenced
  * and unremovable, even after Lustre services stop.
  */
-int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv)
+int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle **priv)
 {
-	struct hsm_copytool_private *ct;
+	struct lus_hsm_ct_handle *ct;
 
 	if (priv == NULL || *priv == NULL)
 		return -EINVAL;
@@ -369,7 +369,7 @@ int lus_hsm_copytool_unregister(struct hsm_copytool_private **priv)
  * \retval  -EINVAL on error
  * \retval  the file descriptor for reading HSM events from the kernel
  */
-int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct)
+int lus_hsm_copytool_get_fd(const struct lus_hsm_ct_handle *ct)
 {
 	return ct->channel_rfd;
 }
@@ -387,7 +387,7 @@ int lus_hsm_copytool_get_fd(const struct hsm_copytool_private *ct)
  * Note: The application must not call lus_hsm_copytool_recv until
  * it has cleared the data in ct->kuch from the previous call.
  */
-int lus_hsm_copytool_recv(struct hsm_copytool_private *ct,
+int lus_hsm_copytool_recv(struct lus_hsm_ct_handle *ct,
 			  const struct hsm_action_list **halh,
 			  size_t *msgsize)
 {
@@ -546,7 +546,7 @@ err_cleanup:
  * \return 0 on success.
  */
 int llapi_hsm_action_begin(struct lus_hsm_action_handle **phcp,
-			   const struct hsm_copytool_private *ct,
+			   const struct lus_hsm_ct_handle *ct,
 			   const struct hsm_action_item *hai,
 			   int restore_mdt_index, int restore_open_flags,
 			   bool is_error)

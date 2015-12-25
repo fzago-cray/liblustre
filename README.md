@@ -65,7 +65,7 @@ lfsh is an opaque handle that can then be passed to various functions:
     lustre_fid *fid, int open_flags)
 
     int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh, int
-    archive_count, int *archives, struct hsm_copytool_private **priv)
+    archive_count, int *archives, struct lus_hsm_ct_handle **priv)
 
 ### posix copytool
 
