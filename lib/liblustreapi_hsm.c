@@ -929,7 +929,7 @@ int lus_hsm_state_set(const char *path, uint64_t setmask, uint64_t clearmask,
  * \retval 0 on success.
  * \retval -errno on error.
  */
-int llapi_hsm_current_action(const char *path, struct hsm_current_action *hca)
+int lus_hsm_current_action(const char *path, struct hsm_current_action *hca)
 {
 	int fd;
 	int rc;

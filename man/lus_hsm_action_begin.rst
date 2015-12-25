@@ -56,7 +56,7 @@ of the progress of the operation with **lus_hsm_action_progress**\
 interval must be unique; i.e. there must not be any overlap. *length*
 is the total length that is expected to be transfered. *hp_flags*
 should be 0. The progress can be checked on any Lustre client by
-calling **llapi_hsm_current_action**\ (), or by using **lfs
+calling **lus_hsm_current_action**\ (), or by using **lfs
 hsm_action**.
 
 Once the HSM request has been performed, the destination file must be

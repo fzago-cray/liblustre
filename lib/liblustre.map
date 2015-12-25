@@ -23,7 +23,7 @@
 		lus_hsm_copytool_recv;
 		lus_hsm_copytool_register;
 		lus_hsm_copytool_unregister;
-		llapi_hsm_current_action;
+		lus_hsm_current_action;
 		lus_hsm_hai_first;
 		lus_hsm_hai_next;
 		lus_hsm_import;

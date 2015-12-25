@@ -341,8 +341,8 @@ struct hsm_action_item {
 
 int llapi_hsm_request(const struct lustre_fs_h *lfsh,
 		      const struct hsm_user_request *request);
-int llapi_hsm_current_action(const char *path,
-			     struct hsm_current_action *hca);
+int lus_hsm_current_action(const char *path,
+			   struct hsm_current_action *hca);
 int lus_hsm_state_get_fd(int fd, struct hsm_user_state *hus);
 int lus_hsm_state_get(const char *path, struct hsm_user_state *hus);
 int lus_hsm_state_set_fd(int fd, uint64_t setmask, uint64_t clearmask,

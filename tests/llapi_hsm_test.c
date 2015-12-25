@@ -394,7 +394,7 @@ START_TEST(test51)
 }
 END_TEST
 
-/* Test llapi_hsm_current_action */
+/* Test lus_hsm_current_action */
 START_TEST(test52)
 {
 	int rc;
@@ -405,8 +405,9 @@ START_TEST(test52)
 	fd = create_testfile(100);
 	close(fd);
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s", strerror(-rc));
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_current_action failed: %s", strerror(-rc));
 	ck_assert_msg(hca.hca_state, "hca_state=%u", hca.hca_state);
 	ck_assert_msg(hca.hca_action, "hca_state=%u", hca.hca_action);
 }
@@ -533,8 +534,8 @@ static void test101_progress(struct lus_hsm_action_handle *hcp, size_t length)
 			strerror(-rc));
 	}
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -569,8 +570,8 @@ static void test102_progress(struct lus_hsm_action_handle *hcp, size_t length)
 			strerror(-rc));
 	}
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -601,8 +602,8 @@ static void test103_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -639,8 +640,8 @@ static void test104_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -671,8 +672,8 @@ static void test105_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -706,8 +707,8 @@ static void test106_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -738,8 +739,8 @@ static void test107_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == -EINVAL, "lus_hsm_action_progress error: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -773,8 +774,8 @@ static void test108_progress(struct lus_hsm_action_handle *hcp, size_t length)
 			strerror(-rc));
 	}
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -805,8 +806,8 @@ static void test109_progress(struct lus_hsm_action_handle *hcp, size_t length)
 	ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 		strerror(-rc));
 
-	rc = llapi_hsm_current_action(testfile, &hca);
-	ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+	rc = lus_hsm_current_action(testfile, &hca);
+	ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 		strerror(-rc));
 	ck_assert_msg(hca.hca_state == HPS_RUNNING,
 		"hca_state=%u", hca.hca_state);
@@ -839,8 +840,8 @@ static void test110_progress(struct lus_hsm_action_handle *hcp, size_t length)
 		ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 			strerror(-rc));
 
-		rc = llapi_hsm_current_action(testfile, &hca);
-		ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+		rc = lus_hsm_current_action(testfile, &hca);
+		ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hca.hca_state == HPS_RUNNING,
 			"hca_state=%u", hca.hca_state);
@@ -875,8 +876,8 @@ static void test111_progress(struct lus_hsm_action_handle *hcp, size_t length)
 		ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 			strerror(-rc));
 
-		rc = llapi_hsm_current_action(testfile, &hca);
-		ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+		rc = lus_hsm_current_action(testfile, &hca);
+		ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hca.hca_state == HPS_RUNNING,
 			"hca_state=%u", hca.hca_state);
@@ -912,8 +913,8 @@ static void test112_progress(struct lus_hsm_action_handle *hcp, size_t length)
 		ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 			strerror(-rc));
 
-		rc = llapi_hsm_current_action(testfile, &hca);
-		ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+		rc = lus_hsm_current_action(testfile, &hca);
+		ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hca.hca_state == HPS_RUNNING,
 			"hca_state=%u", hca.hca_state);
@@ -931,8 +932,8 @@ static void test112_progress(struct lus_hsm_action_handle *hcp, size_t length)
 		ck_assert_msg(rc == 0, "lus_hsm_action_progress failed: %s",
 			strerror(-rc));
 
-		rc = llapi_hsm_current_action(testfile, &hca);
-		ck_assert_msg(rc == 0, "llapi_hsm_current_action failed: %s",
+		rc = lus_hsm_current_action(testfile, &hca);
+		ck_assert_msg(rc == 0, "lus_hsm_current_action failed: %s",
 			strerror(-rc));
 		ck_assert_msg(hca.hca_state == HPS_RUNNING,
 			"hca_state=%u", hca.hca_state);
