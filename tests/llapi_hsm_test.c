@@ -477,8 +477,9 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 
 	/* "Begin" archiving */
 	hcp = NULL;
-	rc = llapi_hsm_action_begin(&hcp, ctdata, hai, -1, 0, false);
-	ck_assert_msg(rc == 0, "llapi_hsm_action_begin failed: %s", strerror(-rc));
+	rc = lus_hsm_action_begin(&hcp, ctdata, hai, -1, 0, false);
+	ck_assert_msg(rc == 0,
+		      "lus_hsm_action_begin failed: %s", strerror(-rc));
 	ck_assert_msg(hcp != NULL, "hcp is NULL");
 
 	if (progress)

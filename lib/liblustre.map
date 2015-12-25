@@ -14,7 +14,7 @@
 		lus_get_mountpoint;
 		lus_group_lock;
 		lus_group_unlock;
-		llapi_hsm_action_begin;
+		lus_hsm_action_begin;
 		llapi_hsm_action_end;
 		llapi_hsm_action_get_dfid;
 		llapi_hsm_action_get_fd;

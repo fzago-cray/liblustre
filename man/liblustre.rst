@@ -25,5 +25,5 @@ SEE ALSO
 ========
 
 The HSM API is documented in **lus_hsm_copytool_register**\ (3) and
-**llapi_hsm_action_begin**\ (3).
+**lus_hsm_action_begin**\ (3).
 

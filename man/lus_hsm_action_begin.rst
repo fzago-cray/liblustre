@@ -1,6 +1,6 @@
-======================
-llapi_hsm_action_begin
-======================
+====================
+lus_hsm_action_begin
+====================
 
 ------------------------------
 Lustre API copytool management
@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int llapi_hsm_action_begin(struct lus_hsm_action_handle \*\***\ phcp\ **,
+**int lus_hsm_action_begin(struct lus_hsm_action_handle \*\***\ phcp\ **,
 const struct lus_hsm_ct_handle \***\ ct\ **, const struct
 hsm_action_item \***\ hai\ **, int** restore_mdt_index\ **, int**
 restore_open_flags\ **, bool** is_error\ **)**
@@ -39,7 +39,7 @@ DESCRIPTION
 
 When a copytool is ready to process an HSM action received through
 **lus_hsm_copytool_recv**\ (), it must first call
-**llapi_hsm_action_begin**\ () to initialize the internal action
+**lus_hsm_action_begin**\ () to initialize the internal action
 state, stored in *phcp*. *ct* is the opaque copytools handle
 previously returned by **lus_hsm_copytool_register**\ (). *hai* is
 the request. *restore_mdt_index* and *restore_open_flags* are only

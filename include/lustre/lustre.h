@@ -381,11 +381,11 @@ int lus_hsm_copytool_get_fd(const struct lus_hsm_ct_handle *ct);
 int lus_hsm_copytool_recv(struct lus_hsm_ct_handle *priv,
 			  const struct hsm_action_list **hal,
 			  size_t *msgsize);
-int llapi_hsm_action_begin(struct lus_hsm_action_handle **phcp,
-			   const struct lus_hsm_ct_handle *ct,
-			   const struct hsm_action_item *hai,
-			   int restore_mdt_index, int restore_open_flags,
-			   bool is_error);
+int lus_hsm_action_begin(struct lus_hsm_action_handle **phcp,
+			 const struct lus_hsm_ct_handle *ct,
+			 const struct hsm_action_item *hai,
+			 int restore_mdt_index, int restore_open_flags,
+			 bool is_error);
 int llapi_hsm_action_end(struct lus_hsm_action_handle **phcp,
 			 const struct hsm_extent *he,
 			 int hp_flags, int errval);

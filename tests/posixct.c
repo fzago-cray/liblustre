@@ -853,11 +853,11 @@ static int ct_begin_restore(struct lus_hsm_action_handle **phcp,
 	char	 src[PATH_MAX];
 	int	 rc;
 
-	rc = llapi_hsm_action_begin(phcp, ctdata, hai, mdt_index, open_flags,
-				    false);
+	rc = lus_hsm_action_begin(phcp, ctdata, hai, mdt_index, open_flags,
+				  false);
 	if (rc < 0) {
 		ct_path_lustre(src, sizeof(src), &hai->hai_fid);
-		CT_ERROR(rc, "llapi_hsm_action_begin() on '%s' failed", src);
+		CT_ERROR(rc, "lus_hsm_action_begin() on '%s' failed", src);
 	}
 
 	return rc;
@@ -886,9 +886,9 @@ static int ct_fini(struct lus_hsm_action_handle **phcp,
 	ct_path_lustre(lstr, sizeof(lstr), &hai->hai_fid);
 
 	if (phcp == NULL || *phcp == NULL) {
-		rc = llapi_hsm_action_begin(&hcp, ctdata, hai, -1, 0, true);
+		rc = lus_hsm_action_begin(&hcp, ctdata, hai, -1, 0, true);
 		if (rc < 0) {
-			CT_ERROR(rc, "llapi_hsm_action_begin() on '%s' failed",
+			CT_ERROR(rc, "lus_hsm_action_begin() on '%s' failed",
 				 lstr);
 			return rc;
 		}
