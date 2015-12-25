@@ -74,9 +74,7 @@ struct lus_hsm_ct_handle {
 	unsigned char            hal[65536];
 };
 
-#define CP_PRIV_MAGIC 0x19880429
 struct lus_hsm_action_handle {
-	__u32					 magic;
 	__s32					 data_fd;
 	const struct lus_hsm_ct_handle		*ct_priv;
 	struct hsm_copy				 copy;
@@ -574,7 +572,6 @@ int lus_hsm_action_begin(struct lus_hsm_action_handle **phcp,
 	}
 
 ok_out:
-	hcp->magic = CP_PRIV_MAGIC;
 	*phcp = hcp;
 	return 0;
 
@@ -609,9 +606,6 @@ int lus_hsm_action_end(struct lus_hsm_action_handle **phcp,
 		return -EINVAL;
 
 	hcp = *phcp;
-
-	if (hcp->magic != CP_PRIV_MAGIC)
-		return -EINVAL;
 
 	hai = &hcp->copy.hc_hai;
 
