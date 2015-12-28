@@ -679,15 +679,13 @@ int lus_layout_get_by_path(const char *path, uint32_t flags,
  *
  * \param[in] lfsh	  An opaque handle returned by lus_open_fs()
  * \param[in] fid	  Lustre identifier of file to get layout for
- * \param[in] flags	  flags to control how layout is retrieved
  * \param[out]  layout    requested layout
  *
  * \retval 0 on success
  * \retval a negative errno on failure, with layout set to NULL.
  */
-int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
-			    const lustre_fid *fid,
-			    uint32_t flags, struct lus_layout **layout)
+int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+			  struct lus_layout **layout)
 {
 	int fd;
 	int rc;

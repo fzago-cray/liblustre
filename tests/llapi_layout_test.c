@@ -192,7 +192,7 @@ START_TEST(test3)
 	snprintf(fidstr, sizeof(fidstr), "0x%"PRIx64":0x%x:0x%x",
 		 (uint64_t)fid.f_seq, fid.f_oid, fid.f_ver);
 
-	rc = llapi_layout_get_by_fid(lfsh, &fid, 0, &layout);
+	rc = lus_layout_get_by_fid(lfsh, &fid, &layout);
 	ck_assert_msg(layout != NULL, "fidstr = %s, rc = %d", fidstr, rc);
 
 	__test1_helper(layout);

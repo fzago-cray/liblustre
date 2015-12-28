@@ -164,9 +164,8 @@ struct lus_layout;
 int lus_layout_get_by_path(const char *path, uint32_t flags,
 			   struct lus_layout **layout);
 int lus_layout_get_by_fd(int fd, struct lus_layout **layout);
-int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
-			    const lustre_fid *fid,
-			    uint32_t flags, struct lus_layout **layout);
+int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+			  struct lus_layout **layout);
 int llapi_layout_alloc(unsigned int num_stripes, struct lus_layout **layout);
 void llapi_layout_free(struct lus_layout *layout);
 int llapi_layout_stripe_count_get(const struct lus_layout *layout,
