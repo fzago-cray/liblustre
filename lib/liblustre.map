@@ -39,7 +39,7 @@
 		llapi_layout_file_open;
 		llapi_layout_file_openat;
 		llapi_layout_free;
-		llapi_layout_get_by_fd;
+		lus_layout_get_by_fd;
 		llapi_layout_get_by_fid;
 		lus_layout_get_by_path;
 		llapi_layout_ost_index_get;

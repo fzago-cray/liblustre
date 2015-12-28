@@ -165,7 +165,7 @@ START_TEST(test2)
 	fd = open(path, O_RDONLY);
 	ck_assert_msg(fd >= 0, "open(%s): errno = %d", path, errno);
 
-	rc = llapi_layout_get_by_fd(fd, 0, &layout);
+	rc = lus_layout_get_by_fd(fd, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = close(fd);
@@ -275,13 +275,13 @@ START_TEST(test5)
 }
 END_TEST
 
-#define T6_DESC		"llapi_layout_get_by_fd EBADF handling"
+#define T6_DESC		"lus_layout_get_by_fd EBADF handling"
 START_TEST(test6)
 {
 	int rc;
 	struct lus_layout *layout;
 
-	rc = llapi_layout_get_by_fd(9999, 0, &layout);
+	rc = lus_layout_get_by_fd(9999, &layout);
 	ck_assert_msg(layout == NULL && rc == -EBADF, "rc = %d", rc);
 }
 END_TEST

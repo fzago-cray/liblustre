@@ -163,7 +163,7 @@ struct lov_user_md_v1 {
 struct lus_layout;
 int lus_layout_get_by_path(const char *path, uint32_t flags,
 			   struct lus_layout **layout);
-int llapi_layout_get_by_fd(int fd, uint32_t flags, struct lus_layout **layout);
+int lus_layout_get_by_fd(int fd, struct lus_layout **layout);
 int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 			    const lustre_fid *fid,
 			    uint32_t flags, struct lus_layout **layout);

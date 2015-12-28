@@ -472,13 +472,12 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
  * we fail with -EINTR.
  *
  * \param[in] fd	open file descriptor
- * \param[in] flags	flags to control how layout is retrieved
  * \param[out]  layout  requested layout
  *
  * \retval 0 on success
  * \retval a negative errno on failure, with layout set to NULL.
  */
-int llapi_layout_get_by_fd(int fd, uint32_t flags, struct lus_layout **layout)
+int lus_layout_get_by_fd(int fd, struct lus_layout **layout)
 {
 	size_t lum_len;
 	struct lov_user_md *lum;
@@ -577,7 +576,7 @@ static int layout_expected(const char *path, struct lus_layout **layout)
 			return -errno;
 		rc = -errno;
 	} else {
-		rc = llapi_layout_get_by_fd(fd, 0, &path_layout);
+		rc = lus_layout_get_by_fd(fd, &path_layout);
 		close(fd);
 	}
 
@@ -669,7 +668,7 @@ int lus_layout_get_by_path(const char *path, uint32_t flags,
 	if (fd < 0)
 		return -errno;
 
-	rc = llapi_layout_get_by_fd(fd, flags, layout);
+	rc = lus_layout_get_by_fd(fd, layout);
 	close(fd);
 
 	return rc;
@@ -699,7 +698,7 @@ int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
 	if (fd < 0)
 		return fd;
 
-	rc = llapi_layout_get_by_fd(fd, flags, layout);
+	rc = lus_layout_get_by_fd(fd, layout);
 	close(fd);
 
 	return rc;
