@@ -161,12 +161,13 @@ struct lov_user_md_v1 {
  * Layouts
  */
 struct lus_layout;
-struct lus_layout *llapi_layout_get_by_path(const char *path, uint32_t flags);
-struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags);
-struct lus_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
-					     const lustre_fid *fid,
-					     uint32_t flags);
-struct lus_layout *llapi_layout_alloc(unsigned int num_stripes);
+int lus_layout_get_by_path(const char *path, uint32_t flags,
+			   struct lus_layout **layout);
+int llapi_layout_get_by_fd(int fd, uint32_t flags, struct lus_layout **layout);
+int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
+			    const lustre_fid *fid,
+			    uint32_t flags, struct lus_layout **layout);
+int llapi_layout_alloc(unsigned int num_stripes, struct lus_layout **layout);
 void llapi_layout_free(struct lus_layout *layout);
 int llapi_layout_stripe_count_get(const struct lus_layout *layout,
 				  uint64_t *count);

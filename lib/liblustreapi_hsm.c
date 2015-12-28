@@ -760,12 +760,12 @@ int lus_hsm_import(const char *dst, int archive, const struct stat *st,
 
 	/* We need a layout. */
 	if (layout == NULL) {
-		def_layout = llapi_layout_alloc(0);
+		rc = llapi_layout_alloc(0, &def_layout);
 
-		if (def_layout == NULL) {
-			log_msg(LUS_LOG_ERROR, ENOMEM,
+		if (rc) {
+			log_msg(LUS_LOG_ERROR, -rc,
 				"cannot allocate a new layout for import");
-			return -EINVAL;
+			return rc;
 		}
 		layout = def_layout;
 	}

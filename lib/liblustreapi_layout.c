@@ -344,36 +344,32 @@ static bool is_fully_specified(const struct lus_layout *layout)
  * \retval	valid lus_layout pointer on success
  * \retval	NULL if allocation fails
  */
-struct lus_layout *llapi_layout_alloc(unsigned int num_stripes)
+int llapi_layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
 {
-	struct lus_layout *layout;
-	size_t size;
+	struct lus_layout *lo;
+	int rc;
 
-	if (num_stripes > LOV_MAX_STRIPE_COUNT)
-		return NULL;
-
-	size = sizeof(*layout) +
-		(num_stripes * sizeof(layout->llot_objects[0]));
-
-	layout = calloc(1, size);
-	if (layout == NULL)
-		return NULL;
+	rc = __layout_alloc(num_stripes, &lo);
+	if (rc)
+		return rc;
 
 	/* Set defaults. */
-	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
-	layout->llot_pattern = LLAPI_LAYOUT_DEFAULT;
-	layout->llot_stripe_size = LLAPI_LAYOUT_DEFAULT;
+	lo->llot_magic = LLAPI_LAYOUT_MAGIC;
+	lo->llot_pattern = LLAPI_LAYOUT_DEFAULT;
+	lo->llot_stripe_size = LLAPI_LAYOUT_DEFAULT;
 	if (num_stripes == 0) {
-		layout->llot_stripe_count = LLAPI_LAYOUT_DEFAULT;
-		layout->llot_objects_are_valid = false;
+		lo->llot_stripe_count = LLAPI_LAYOUT_DEFAULT;
+		lo->llot_objects_are_valid = false;
 	} else {
-		layout->llot_stripe_count = num_stripes;
-		layout->llot_objects_are_valid = true;
+		lo->llot_stripe_count = num_stripes;
+		lo->llot_objects_are_valid = true;
 	}
-	layout->llot_stripe_offset = LLAPI_LAYOUT_DEFAULT;
-	layout->llot_pool_name[0] = '\0';
+	lo->llot_stripe_offset = LLAPI_LAYOUT_DEFAULT;
+	lo->llot_pool_name[0] = '\0';
 
-	return layout;
+	*layout = lo;
+
+	return 0;
 }
 
 /**
@@ -473,41 +469,45 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
  * inherit default values, so return a default layout.
  *
  * If the kernel gives us back less than the expected amount of data,
- * we fail with errno set to EINTR.
+ * we fail with -EINTR.
  *
  * \param[in] fd	open file descriptor
- * \param[in] flags	open file descriptor
+ * \param[in] flags	flags to control how layout is retrieved
+ * \param[out]  layout  requested layout
  *
- * \retval	valid lus_layout pointer on success
- * \retval	NULL if an error occurs
+ * \retval 0 on success
+ * \retval a negative errno on failure, with layout set to NULL.
  */
-struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
+int llapi_layout_get_by_fd(int fd, uint32_t flags, struct lus_layout **layout)
 {
 	size_t lum_len;
 	struct lov_user_md *lum;
-	struct lus_layout *layout = NULL;
 	ssize_t bytes_read;
 	int object_count;
 	struct stat st;
 	int rc;
 
+	*layout = NULL;
+
 	lum_len = XATTR_SIZE_MAX;
 	lum = malloc(lum_len);
 	if (lum == NULL)
-		return NULL;
+		return -ENOMEM;
 
 	bytes_read = fgetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_len);
 	if (bytes_read < 0) {
 		if (errno == EOPNOTSUPP)
-			errno = ENOTTY;
+			rc = -ENOTTY;
 		else if (errno == ENODATA)
-			layout = llapi_layout_alloc(0);
+			rc = llapi_layout_alloc(0, layout);
+		else
+			rc = -errno;
 		goto out;
 	}
 
 	/* Return an error if we got back a partial layout. */
 	if (layout_lum_truncated(lum, bytes_read)) {
-		errno = EINTR;
+		rc = -EINTR;
 		goto out;
 	}
 
@@ -517,11 +517,13 @@ struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 	 * yet have an empty lum->lmm_objects array. For non-directories the
 	 * amount of data returned from the kernel must be consistent
 	 * with the stripe count. */
-	if (fstat(fd, &st) < 0)
+	if (fstat(fd, &st) < 0) {
+		rc = -errno;
 		goto out;
+	}
 
 	if (!S_ISDIR(st.st_mode) && object_count != lum->lmm_stripe_count) {
-		errno = EINTR;
+		rc = -EINTR;
 		goto out;
 	}
 
@@ -529,13 +531,11 @@ struct lus_layout *llapi_layout_get_by_fd(int fd, uint32_t flags)
 	    lum->lmm_magic == __bswap_32(LOV_MAGIC_V3))
 		layout_swab_lov_user_md(lum, object_count);
 
-	rc = layout_from_lum(lum, object_count, &layout);
-	errno = -rc;		/* TODO: TEMPORARY until this function
-				 * is normalized too */
+	rc = layout_from_lum(lum, object_count, layout);
 
 out:
 	free(lum);
-	return layout;
+	return rc;
 }
 
 /**
@@ -555,11 +555,12 @@ out:
  * values that would be assigned to a new file in a given directory.
  *
  * \param[in] path	path for which to get the expected layout
+ * \param[out]  layout  requested layout
  *
- * \retval	valid lus_layout pointer on success
- * \retval	NULL if an error occurs
+ * \retval 0 on success
+ * \retval a negative errno on failure, with layout set to NULL.
  */
-static struct lus_layout *layout_expected(const char *path)
+static int layout_expected(const char *path, struct lus_layout **layout)
 {
 	struct lus_layout	*path_layout = NULL;
 	struct lus_layout	*donor_layout;
@@ -568,35 +569,37 @@ static struct lus_layout *layout_expected(const char *path)
 	int fd;
 	int rc;
 
+	*layout = NULL;
+
 	fd = open(path, O_RDONLY);
-	if (fd < 0 && errno != ENOENT)
-		return NULL;
-
-	if (fd >= 0) {
-		int tmp;
-
-		path_layout = llapi_layout_get_by_fd(fd, 0);
-		tmp = errno;
+	if (fd < 0) {
+		if (errno != ENOENT)
+			return -errno;
+		rc = -errno;
+	} else {
+		rc = llapi_layout_get_by_fd(fd, 0, &path_layout);
 		close(fd);
-		errno = tmp;
 	}
 
 	if (path_layout == NULL) {
-		if (errno != ENODATA && errno != ENOENT)
-			return NULL;
+		if (rc != -ENODATA && rc != -ENOENT)
+			return rc;
 
-		path_layout = llapi_layout_alloc(0);
-		if (path_layout == NULL)
-			return NULL;
+		rc = llapi_layout_alloc(0, &path_layout);
+		if (rc != 0)
+			return rc;
 	}
 
-	if (is_fully_specified(path_layout))
-		return path_layout;
+	if (is_fully_specified(path_layout)) {
+		*layout = path_layout;
+		return 0;
+	}
 
 	rc = stat(path, &st);
 	if (rc < 0 && errno != ENOENT) {
+		rc = -errno;
 		llapi_layout_free(path_layout);
-		return NULL;
+		return rc;
 	}
 
 	/* If path is a not a directory or doesn't exist, inherit unspecified
@@ -604,12 +607,14 @@ static struct lus_layout *layout_expected(const char *path)
 	if ((rc == 0 && !S_ISDIR(st.st_mode)) ||
 	    (rc < 0 && errno == ENOENT)) {
 		get_parent_dir(path, donor_path, sizeof(donor_path));
-		donor_layout = llapi_layout_get_by_path(donor_path, 0);
+		rc = lus_layout_get_by_path(donor_path, 0, &donor_layout);
 		if (donor_layout != NULL) {
 			inherit_layout_attributes(donor_layout, path_layout);
 			llapi_layout_free(donor_layout);
-			if (is_fully_specified(path_layout))
-				return path_layout;
+			if (is_fully_specified(path_layout)) {
+				*layout = path_layout;
+				return 0;
+			}
 		}
 	}
 
@@ -620,18 +625,19 @@ static struct lus_layout *layout_expected(const char *path)
 #endif
 	if (rc < 0) {
 		llapi_layout_free(path_layout);
-		return NULL;
+		return rc;
 	}
-	donor_layout = llapi_layout_get_by_path(donor_path, 0);
-	if (donor_layout == NULL) {
+	rc = lus_layout_get_by_path(donor_path, 0, &donor_layout);
+	if (rc != 0) {
 		llapi_layout_free(path_layout);
-		return NULL;
+		return rc;
 	}
 
 	inherit_layout_attributes(donor_layout, path_layout);
 	llapi_layout_free(donor_layout);
 
-	return path_layout;
+	*layout = path_layout;
+	return 0;
 }
 
 /**
@@ -643,29 +649,30 @@ static struct lus_layout *layout_expected(const char *path)
  *
  * \param[in] path	path for which to get the layout
  * \param[in] flags	flags to control how layout is retrieved
+ * \param[out]  layout  requested layout
  *
- * \retval	valid lus_layout pointer on success
- * \retval	NULL if an error occurs
+ * \retval 0 on success
+ * \retval a negative errno on failure, with layout set to NULL.
  */
-struct lus_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
+int lus_layout_get_by_path(const char *path, uint32_t flags,
+			   struct lus_layout **layout)
 {
-	struct lus_layout *layout = NULL;
 	int fd;
-	int tmp;
+	int rc;
+
+	*layout = NULL;
 
 	if (flags & LAYOUT_GET_EXPECTED)
-		return layout_expected(path);
+		return layout_expected(path, layout);
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-		return layout;
+		return -errno;
 
-	layout = llapi_layout_get_by_fd(fd, flags);
-	tmp = errno;
+	rc = llapi_layout_get_by_fd(fd, flags, layout);
 	close(fd);
-	errno = tmp;
 
-	return layout;
+	return rc;
 }
 
 /**
@@ -673,28 +680,29 @@ struct lus_layout *llapi_layout_get_by_path(const char *path, uint32_t flags)
  *
  * \param[in] lfsh	  An opaque handle returned by lus_open_fs()
  * \param[in] fid	  Lustre identifier of file to get layout for
+ * \param[in] flags	  flags to control how layout is retrieved
+ * \param[out]  layout    requested layout
  *
- * \retval	valid lus_layout pointer on success
- * \retval	NULL if an error occurs
+ * \retval 0 on success
+ * \retval a negative errno on failure, with layout set to NULL.
  */
-struct lus_layout *llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
-					     const lustre_fid *fid,
-					     uint32_t flags)
+int llapi_layout_get_by_fid(const struct lustre_fs_h *lfsh,
+			    const lustre_fid *fid,
+			    uint32_t flags, struct lus_layout **layout)
 {
 	int fd;
-	int tmp;
-	struct lus_layout *layout = NULL;
+	int rc;
+
+	*layout = NULL;
 
 	fd = lus_open_by_fid(lfsh, fid, O_RDONLY);
 	if (fd < 0)
-		return NULL;
+		return fd;
 
-	layout = llapi_layout_get_by_fd(fd, flags);
-	tmp = errno;
+	rc = llapi_layout_get_by_fd(fd, flags, layout);
 	close(fd);
-	errno = tmp;
 
-	return layout;
+	return rc;
 }
 
 /** * Free memory allocated for \a layout. */

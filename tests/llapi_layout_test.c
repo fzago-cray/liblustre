@@ -58,11 +58,12 @@ START_TEST(test0)
 	int fd;
 	uint64_t count;
 	uint64_t size;
-	struct lus_layout *layout = llapi_layout_alloc(T0_STRIPE_COUNT);
+	struct lus_layout *layout;
 	char path[PATH_MAX];
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
-	ck_assert_msg(layout != NULL, "errno %d", errno);
+	rc = llapi_layout_alloc(T0_STRIPE_COUNT, &layout);
+	ck_assert_msg(layout != NULL, "rc %d", rc);
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
 
@@ -139,10 +140,13 @@ static void __test1_helper(struct lus_layout *layout)
 START_TEST(test1)
 {
 	char path[PATH_MAX];
+	struct lus_layout *layout;
+	int rc;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
-	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	__test1_helper(layout);
 	llapi_layout_free(layout);
 }
@@ -154,14 +158,15 @@ START_TEST(test2)
 	int fd;
 	int rc;
 	char path[PATH_MAX];
+	struct lus_layout *layout;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
 
 	fd = open(path, O_RDONLY);
 	ck_assert_msg(fd >= 0, "open(%s): errno = %d", path, errno);
 
-	struct lus_layout *layout = llapi_layout_get_by_fd(fd, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_get_by_fd(fd, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "close(%s): errno = %d", path, errno);
@@ -186,9 +191,9 @@ START_TEST(test3)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	snprintf(fidstr, sizeof(fidstr), "0x%"PRIx64":0x%x:0x%x",
 		 (uint64_t)fid.f_seq, fid.f_oid, fid.f_ver);
-	errno = 0;
-	layout = llapi_layout_get_by_fid(lfsh, &fid, 0);
-	ck_assert_msg(layout != NULL, "fidstr = %s, errno = %d", fidstr, errno);
+
+	rc = llapi_layout_get_by_fid(lfsh, &fid, 0, &layout);
+	ck_assert_msg(layout != NULL, "fidstr = %s, rc = %d", fidstr, rc);
 
 	__test1_helper(layout);
 	llapi_layout_free(layout);
@@ -210,6 +215,7 @@ START_TEST(test4)
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 	char cmd[4096];
 	char path[PATH_MAX];
+	struct lus_layout *layout;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T4FILE);
 
@@ -225,9 +231,8 @@ START_TEST(test4)
 	rc = system(cmd);
 	ck_assert_msg(rc == 0, "system(%s): exit status %d", cmd, WEXITSTATUS(rc));
 
-	errno = 0;
-	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(count == T4_STRIPE_COUNT, "%"PRIu64" != %d", count,
@@ -253,7 +258,7 @@ START_TEST(test4)
 END_TEST
 
 #define T5FILE		"t5"
-#define T5_DESC		"llapi_layout_get_by_path ENOENT handling"
+#define T5_DESC		"lus_layout_get_by_path ENOENT handling"
 START_TEST(test5)
 {
 	int rc;
@@ -265,23 +270,24 @@ START_TEST(test5)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	errno = 0;
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout == NULL && errno == ENOENT, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout == NULL && rc == -ENOENT, "rc = %d", rc);
 }
 END_TEST
 
 #define T6_DESC		"llapi_layout_get_by_fd EBADF handling"
 START_TEST(test6)
 {
-	errno = 0;
-	struct lus_layout *layout = llapi_layout_get_by_fd(9999, 0);
-	ck_assert_msg(layout == NULL && errno == EBADF, "errno = %d", errno);
+	int rc;
+	struct lus_layout *layout;
+
+	rc = llapi_layout_get_by_fd(9999, 0, &layout);
+	ck_assert_msg(layout == NULL && rc == -EBADF, "rc = %d", rc);
 }
 END_TEST
 
 #define T7FILE		"t7"
-#define T7_DESC		"llapi_layout_get_by_path EACCES handling"
+#define T7_DESC		"lus_layout_get_by_path EACCES handling"
 START_TEST(test7)
 {
 	int fd;
@@ -291,6 +297,7 @@ START_TEST(test7)
 	const char *runas = getenv("RUNAS_ID");
 	struct passwd *pw;
 	uid_t uid;
+	struct lus_layout *layout;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T7FILE);
 	ck_assert_msg(myuid == 0, "myuid = %d", myuid); /* Need root for this test. */
@@ -315,18 +322,18 @@ START_TEST(test7)
 	}
 	rc = seteuid(uid);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	errno = 0;
-	struct lus_layout *layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout == NULL && errno == EACCES, "errno = %d", errno);
+
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout == NULL && rc == -EACCES, "rc = %d", rc);
 	rc = seteuid(myuid);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 }
 END_TEST
 
-/* llapi_layout_get_by_path() returns default layout for file with no
+/* lus_layout_get_by_path() returns default layout for file with no
  * striping attributes. */
 #define T8FILE		"t8"
-#define T8_DESC		"llapi_layout_get_by_path ENODATA handling"
+#define T8_DESC		"lus_layout_get_by_path ENODATA handling"
 START_TEST(test8)
 {
 	int fd;
@@ -346,8 +353,8 @@ START_TEST(test8)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
@@ -373,8 +380,8 @@ START_TEST(test9)
 	struct lus_layout *layout;
 	int rc;
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	errno = 0;
 	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_INVALID);
@@ -406,8 +413,8 @@ START_TEST(test10)
 	uint64_t count;
 	struct lus_layout *layout;
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* invalid stripe count */
 	errno = 0;
@@ -449,8 +456,8 @@ START_TEST(test11)
 	uint64_t size;
 	struct lus_layout *layout;
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* negative stripe size */
 	errno = 0;
@@ -493,8 +500,8 @@ START_TEST(test12)
 	struct lus_layout *layout;
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* NULL layout */
 	errno = 0;
@@ -539,8 +546,8 @@ START_TEST(test13)
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T13FILE);
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* Only setting OST index for stripe 0 is supported for now. */
 	errno = 0;
@@ -589,8 +596,8 @@ START_TEST(test13)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	llapi_layout_free(layout);
 
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	errno = 0;
 	rc = llapi_layout_ost_index_get(layout, T13_STRIPE_COUNT + 1, &idx);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -604,10 +611,13 @@ END_TEST
 START_TEST(test14)
 {
 	int rc;
-	struct lus_layout *layout = llapi_layout_alloc(0);
+	struct lus_layout *layout;
+
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(rc == 0 && layout != NULL, "rc = %d, layout = %p",
+		      rc, layout);
 
 	/* NULL path */
-	errno = 0;
 	rc = llapi_layout_file_create(NULL, 0, 0, layout);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
@@ -632,8 +642,8 @@ START_TEST(test15)
 	rc = unlink(path);
 	ck_assert_msg(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_set(layout, T15_STRIPE_COUNT);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
@@ -651,8 +661,8 @@ START_TEST(test15)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	llapi_layout_free(layout);
 
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0 && count == T15_STRIPE_COUNT,
 		"rc = %d, %"PRIu64" != %d", rc, count, T15_STRIPE_COUNT);
@@ -680,16 +690,17 @@ START_TEST(test16)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	deflayout = llapi_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(deflayout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED,
+				    &deflayout);
+	ck_assert_msg(deflayout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_size_get(deflayout, &dsize);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_stripe_count_get(deflayout, &dcount);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
 	/* First, with a default struct lus_layout */
-	filelayout = llapi_layout_alloc(0);
-	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &filelayout);
+	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
@@ -699,8 +710,8 @@ START_TEST(test16)
 
 	llapi_layout_free(filelayout);
 
-	filelayout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &filelayout);
+	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(filelayout, &fcount);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -719,8 +730,8 @@ START_TEST(test16)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	llapi_layout_free(filelayout);
-	filelayout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &filelayout);
+	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(filelayout, &fcount);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -751,8 +762,8 @@ START_TEST(test17)
 
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_set(layout, LLAPI_LAYOUT_WIDE);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	fd = llapi_layout_file_create(path, 0, 0640, layout);
@@ -769,8 +780,8 @@ START_TEST(test17)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_get(layout, &osts_layout);
 	ck_assert_msg(osts_layout == osts_all, "%"PRIu64" != %d", osts_layout,
 		osts_all);
@@ -787,7 +798,7 @@ START_TEST(test18)
 {
 	int rc;
 	int fd;
-	struct lus_layout *layout = llapi_layout_alloc(0);
+	struct lus_layout *layout;
 	char path[PATH_MAX];
 	char pool[LOV_MAXPOOLNAME*2 + 1];
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
@@ -796,7 +807,8 @@ START_TEST(test18)
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T18FILE);
 
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
@@ -815,8 +827,8 @@ START_TEST(test18)
 
 	llapi_layout_free(layout);
 
-	layout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	rc = strcmp(mypool, poolname);
@@ -833,8 +845,8 @@ START_TEST(test19)
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 	int rc;
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_pool_name_set(layout, name);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
@@ -863,8 +875,8 @@ START_TEST(test20)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	filelayout = llapi_layout_alloc(0);
-	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &filelayout);
+	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_size_set(filelayout, LLAPI_LAYOUT_DEFAULT);
 	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
@@ -880,11 +892,12 @@ START_TEST(test20)
 
 	llapi_layout_free(filelayout);
 
-	deflayout = llapi_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(deflayout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED,
+				    &deflayout);
+	ck_assert_msg(deflayout != NULL, "rc = %d", rc);
 
-	filelayout = llapi_layout_get_by_path(path, 0);
-	ck_assert_msg(filelayout != NULL, "errno = %d", errno);
+	rc = lus_layout_get_by_path(path, 0, &filelayout);
+	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(filelayout, &fcount);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -919,8 +932,8 @@ START_TEST(test21)
 	rc = unlink(template);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	layout = llapi_layout_alloc(0);
-	ck_assert_msg(layout != NULL, "errno = %d", errno);
+	rc = llapi_layout_alloc(0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	fd = llapi_layout_file_create(template, 0, 0640, layout);
 	ck_assert_msg(fd == -1 && errno == ENOTTY,
@@ -964,7 +977,7 @@ START_TEST(test22)
 }
 END_TEST
 
-#define T23_DESC	"llapi_layout_get_by_path fails for non-Lustre file"
+#define T23_DESC	"lus_layout_get_by_path fails for non-Lustre file"
 START_TEST(test23)
 {
 	struct lus_layout *layout;
@@ -978,16 +991,16 @@ START_TEST(test23)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", fd);
 
-	layout = llapi_layout_get_by_path(template, 0);
-	ck_assert_msg(layout == NULL && errno == ENOTTY,
-		      "errno = %d, template = %s", errno, template);
+	rc = lus_layout_get_by_path(template, 0, &layout);
+	ck_assert_msg(layout == NULL && rc == -ENOTTY,
+		      "rc = %d, template = %s", rc, template);
 
 	rc = unlink(template);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 }
 END_TEST
 
-/* llapi_layout_get_by_path(path, LAYOUT_GET_EXPECTED) returns expected layout
+/* lus_layout_get_by_path(path, LAYOUT_GET_EXPECTED) returns expected layout
  * for file with unspecified layout. */
 #define T24FILE		"t24"
 #define T24_DESC	"LAYOUT_GET_EXPECTED works with existing file"
@@ -1010,8 +1023,8 @@ START_TEST(test24)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	layout = llapi_layout_get_by_path(path, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	rc = lus_layout_get_by_path(path, LAYOUT_GET_EXPECTED, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
@@ -1030,7 +1043,7 @@ START_TEST(test24)
 END_TEST
 
 #if 0
-/* llapi_layout_get_by_path(path, LAYOUT_GET_EXPECTED) returns expected layout
+/* lus_layout_get_by_path(path, LAYOUT_GET_EXPECTED) returns expected layout
  * for directory with unspecified layout. */
 #define T25DIR		"d25"
 #define T25_DESC	"LAYOUT_GET_EXPECTED works with directory"
@@ -1050,8 +1063,8 @@ START_TEST(test25)
 	rc = mkdir(dir, 0750);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	layout = llapi_layout_get_by_path(dir, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	layout = lus_layout_get_by_path(dir, LAYOUT_GET_EXPECTED);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
@@ -1069,7 +1082,7 @@ START_TEST(test25)
 }
 END_TEST
 
-/* llapi_layout_get_by_path(path, LAYOUT_GET_EXPECTED) correctly combines
+/* lus_layout_get_by_path(path, LAYOUT_GET_EXPECTED) correctly combines
  * specified attributes of parent directory with attributes filesystem root. */
 #define T26DIR		"d26"
 #define T26_DESC	"LAYOUT_GET_EXPECTED partially specified parent"
@@ -1099,8 +1112,8 @@ START_TEST(test26)
 	rc = system(cmd);
 	ck_assert_msg(rc == 0, "system(%s): exit status %d", cmd, WEXITSTATUS(rc));
 
-	layout = llapi_layout_get_by_path(dir, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	layout = lus_layout_get_by_path(dir, LAYOUT_GET_EXPECTED);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
@@ -1118,7 +1131,7 @@ START_TEST(test26)
 }
 END_TEST
 
-/* llapi_layout_get_by_path(path, LAYOUT_GET_EXPECTED) work with
+/* lus_layout_get_by_path(path, LAYOUT_GET_EXPECTED) work with
  * non existing file. */
 #define T27DIR		"d27"
 #define T27_DESC	"LAYOUT_GET_EXPECTED with non existing file"
@@ -1151,8 +1164,8 @@ START_TEST(test27)
 	rc = system(cmd);
 	ck_assert_msg(rc == 0, "system(%s): exit status %d", cmd, WEXITSTATUS(rc));
 
-	layout = llapi_layout_get_by_path(filepath, LAYOUT_GET_EXPECTED);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	layout = lus_layout_get_by_path(filepath, LAYOUT_GET_EXPECTED);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
@@ -1198,8 +1211,8 @@ START_TEST(test28)
 	rc = system(cmd);
 	ck_assert_msg(rc == 0, "system(%s): exit status %d", cmd, WEXITSTATUS(rc));
 
-	layout = llapi_layout_get_by_path(dirpath, 0);
-	ck_assert_msg(layout != NULL, "errno = %d\n", errno);
+	rc = lus_layout_get_by_path(dirpath, 0, &layout);
+	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
