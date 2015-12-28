@@ -339,12 +339,13 @@ static bool is_fully_specified(const struct lus_layout *layout)
 /**
  * Allocate and initialize a new layout with \a num_stripes stripes.
  *
- * \param[in] num_stripes	number of stripes in new layout
+ * \param[in] num_stripes    number of stripes in new layout
+ * \param[out]  layout       allocated layout
  *
  * \retval	valid lus_layout pointer on success
- * \retval	NULL if allocation fails
+ * \retval	0 on success, or negative errno on failure.
  */
-int llapi_layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
+int lus_layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
 {
 	struct lus_layout *lo;
 	int rc;
@@ -498,7 +499,7 @@ int lus_layout_get_by_fd(int fd, struct lus_layout **layout)
 		if (errno == EOPNOTSUPP)
 			rc = -ENOTTY;
 		else if (errno == ENODATA)
-			rc = llapi_layout_alloc(0, layout);
+			rc = lus_layout_alloc(0, layout);
 		else
 			rc = -errno;
 		goto out;
@@ -584,7 +585,7 @@ static int layout_expected(const char *path, struct lus_layout **layout)
 		if (rc != -ENODATA && rc != -ENOENT)
 			return rc;
 
-		rc = llapi_layout_alloc(0, &path_layout);
+		rc = lus_layout_alloc(0, &path_layout);
 		if (rc != 0)
 			return rc;
 	}

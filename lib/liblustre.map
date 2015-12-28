@@ -34,7 +34,7 @@
 		lus_hsm_state_set_fd;
 		lus_init;
 		lus_initialized;
-		llapi_layout_alloc;
+		lus_layout_alloc;
 		llapi_layout_file_create;
 		llapi_layout_file_open;
 		llapi_layout_file_openat;

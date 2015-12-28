@@ -760,7 +760,7 @@ int lus_hsm_import(const char *dst, int archive, const struct stat *st,
 
 	/* We need a layout. */
 	if (layout == NULL) {
-		rc = llapi_layout_alloc(0, &def_layout);
+		rc = lus_layout_alloc(0, &def_layout);
 
 		if (rc) {
 			log_msg(LUS_LOG_ERROR, -rc,

@@ -308,7 +308,7 @@ START_TEST(test14)
 	cleanup();
 
 	layout = NULL;
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_ptr_ne(layout, 0);
 	ck_assert_int_eq(rc, 0);
 	rc = llapi_layout_stripe_count_set(layout, 2);

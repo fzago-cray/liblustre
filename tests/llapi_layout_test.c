@@ -62,7 +62,7 @@ START_TEST(test0)
 	char path[PATH_MAX];
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
-	rc = llapi_layout_alloc(T0_STRIPE_COUNT, &layout);
+	rc = lus_layout_alloc(T0_STRIPE_COUNT, &layout);
 	ck_assert_msg(layout != NULL, "rc %d", rc);
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T0FILE);
@@ -380,7 +380,7 @@ START_TEST(test9)
 	struct lus_layout *layout;
 	int rc;
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	errno = 0;
@@ -413,7 +413,7 @@ START_TEST(test10)
 	uint64_t count;
 	struct lus_layout *layout;
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* invalid stripe count */
@@ -456,7 +456,7 @@ START_TEST(test11)
 	uint64_t size;
 	struct lus_layout *layout;
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* negative stripe size */
@@ -500,7 +500,7 @@ START_TEST(test12)
 	struct lus_layout *layout;
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* NULL layout */
@@ -546,7 +546,7 @@ START_TEST(test13)
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T13FILE);
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* Only setting OST index for stripe 0 is supported for now. */
@@ -613,7 +613,7 @@ START_TEST(test14)
 	int rc;
 	struct lus_layout *layout;
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(rc == 0 && layout != NULL, "rc = %d, layout = %p",
 		      rc, layout);
 
@@ -642,7 +642,7 @@ START_TEST(test15)
 	rc = unlink(path);
 	ck_assert_msg(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_set(layout, T15_STRIPE_COUNT);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -699,7 +699,7 @@ START_TEST(test16)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
 	/* First, with a default struct lus_layout */
-	rc = llapi_layout_alloc(0, &filelayout);
+	rc = lus_layout_alloc(0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
@@ -762,7 +762,7 @@ START_TEST(test17)
 
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_set(layout, LLAPI_LAYOUT_WIDE);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -807,7 +807,7 @@ START_TEST(test18)
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T18FILE);
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	rc = unlink(path);
@@ -845,7 +845,7 @@ START_TEST(test19)
 	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
 	int rc;
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_pool_name_set(layout, name);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -875,7 +875,7 @@ START_TEST(test20)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	rc = llapi_layout_alloc(0, &filelayout);
+	rc = lus_layout_alloc(0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
 	rc = llapi_layout_stripe_size_set(filelayout, LLAPI_LAYOUT_DEFAULT);
@@ -932,7 +932,7 @@ START_TEST(test21)
 	rc = unlink(template);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	rc = llapi_layout_alloc(0, &layout);
+	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	fd = llapi_layout_file_create(template, 0, 0640, layout);
