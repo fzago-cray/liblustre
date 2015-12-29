@@ -936,17 +936,15 @@ int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
  * \param[out]  idx	       Integer to store index in
  *
  * \retval	0 on success
- * \retval	-1 or error, with errno set
+ * \retval	-EINVAL if an argument is invalid
  */
-int llapi_layout_ost_index_get(const struct lus_layout *layout,
-			       uint64_t stripe_number, uint64_t *idx)
+int lus_layout_get_ost_index(const struct lus_layout *layout,
+			     uint64_t stripe_number, uint64_t *idx)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
 	    stripe_number >= layout->llot_stripe_count ||
-	    idx == NULL  || layout->llot_objects_are_valid == false) {
-		errno = EINVAL;
-		return -1;
-	}
+	    idx == NULL  || layout->llot_objects_are_valid == false)
+		return -EINVAL;
 
 	if (layout->llot_objects[stripe_number].l_ost_idx == -1)
 		*idx = LLAPI_LAYOUT_DEFAULT;

@@ -128,10 +128,10 @@ static void __test1_helper(struct lus_layout *layout)
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
-	rc = llapi_layout_ost_index_get(layout, 0, &ost0);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_ost_index_get(layout, 1, &ost1);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_ost_index(layout, 0, &ost0);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
+	rc = lus_layout_get_ost_index(layout, 1, &ost1);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(ost0 == T0_OST_OFFSET, "%"PRIu64" != %d", ost0, T0_OST_OFFSET);
 	ck_assert_msg(ost1 != ost0, "%"PRIu64" == %"PRIu64, ost0, ost1);
 }
@@ -248,10 +248,10 @@ START_TEST(test4)
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
-	rc = llapi_layout_ost_index_get(layout, 0, &ost0);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_ost_index_get(layout, 1, &ost1);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_ost_index(layout, 0, &ost0);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
+	rc = lus_layout_get_ost_index(layout, 1, &ost1);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(ost1 != ost0, "%"PRIu64" == %"PRIu64, ost0, ost1);
 
 	lus_layout_free(layout);
@@ -552,20 +552,18 @@ START_TEST(test13)
 	rc = lus_layout_set_ost_index(NULL, 0, 1);
 	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_ost_index_get(NULL, 0, &idx);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_get_ost_index(NULL, 0, &idx);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL index */
-	errno = 0;
-	rc = llapi_layout_ost_index_get(layout, 0, NULL);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_get_ost_index(layout, 0, NULL);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* Layout not read from file so has no OST data. */
 	rc = lus_layout_stripe_set_count(layout, T13_STRIPE_COUNT);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
-	rc = llapi_layout_ost_index_get(layout, 0, &idx);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_get_ost_index(layout, 0, &idx);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* n greater than stripe count*/
 	rc = unlink(path);
@@ -580,9 +578,8 @@ START_TEST(test13)
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
-	errno = 0;
-	rc = llapi_layout_ost_index_get(layout, T13_STRIPE_COUNT + 1, &idx);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_get_ost_index(layout, T13_STRIPE_COUNT + 1, &idx);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
