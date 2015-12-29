@@ -176,7 +176,7 @@ int lus_layout_stripe_get_size(const struct lus_layout *layout,
 int lus_layout_stripe_set_size(struct lus_layout *layout, uint64_t size);
 int lus_layout_pattern_get(const struct lus_layout *layout,
 			   uint64_t *pattern);
-int llapi_layout_pattern_set(struct lus_layout *layout, uint64_t pattern);
+int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern);
 int llapi_layout_pattern_flags_set(struct lus_layout *layout,
 				   uint64_t pattern_flags);
 int llapi_layout_ost_index_get(const struct lus_layout *layout,

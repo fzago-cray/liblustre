@@ -851,24 +851,21 @@ int lus_layout_pattern_get(const struct lus_layout *layout,
  * Set the RAID pattern of \a layout.
  *
  * \param[in] layout	layout to set pattern in
- * \param[in] pattern	value to be set
+ * \param[in] pattern	value to be set (LLAPI_LAYOUT_DEFAULT or
+ *                      LLAPI_LAYOUT_RAID0)
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid or RAID pattern
- *		is unsupported
+ * \retval	-EINVAL if an argument is invalid
+ * \retval	-EOPNOTSUPP if the RAID pattern is unsupported
  */
-int llapi_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
+int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
-		errno = EINVAL;
-		return -1;
-	}
+	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC)
+		return -EINVAL;
 
 	if (pattern != LLAPI_LAYOUT_DEFAULT &&
-	    pattern != LLAPI_LAYOUT_RAID0) {
-		errno = EOPNOTSUPP;
-		return -1;
-	}
+	    pattern != LLAPI_LAYOUT_RAID0)
+		return -EOPNOTSUPP;
 
 	layout->llot_pattern = pattern;
 

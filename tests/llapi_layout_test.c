@@ -374,8 +374,8 @@ START_TEST(test8)
 }
 END_TEST
 
-/* Verify llapi_layout_patter_set() return values for various inputs. */
-#define T9_DESC		"verify llapi_layout_pattern_set() return values"
+/* Verify lus_layout_pattern_set() return values for various inputs. */
+#define T9_DESC		"verify lus_layout_pattern_set() return values"
 START_TEST(test9)
 {
 	struct lus_layout *layout;
@@ -384,23 +384,17 @@ START_TEST(test9)
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_INVALID);
-	ck_assert_msg(rc == -1 && errno == EOPNOTSUPP, "rc = %d, errno = %d", rc,
-		      errno);
+	rc = lus_layout_pattern_set(layout, LLAPI_LAYOUT_INVALID);
+	ck_assert_msg(rc == -EOPNOTSUPP, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_pattern_set(NULL, LLAPI_LAYOUT_DEFAULT);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc,
-		      errno);
+	rc = lus_layout_pattern_set(NULL, LLAPI_LAYOUT_DEFAULT);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_DEFAULT);
-	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_pattern_set(layout, LLAPI_LAYOUT_DEFAULT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_RAID0);
-	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_pattern_set(layout, LLAPI_LAYOUT_RAID0);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
