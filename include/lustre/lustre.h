@@ -181,8 +181,8 @@ int lus_layout_pattern_set_flags(struct lus_layout *layout,
 				   uint64_t pattern_flags);
 int llapi_layout_ost_index_get(const struct lus_layout *layout,
 			       uint64_t stripe_number, uint64_t *index);
-int llapi_layout_ost_index_set(struct lus_layout *layout, int stripe_number,
-			       uint64_t index);
+int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
+			     uint64_t index);
 int llapi_layout_pool_name_get(const struct lus_layout *layout,
 			       char *pool_name, size_t pool_name_len);
 int llapi_layout_pool_name_set(struct lus_layout *layout,

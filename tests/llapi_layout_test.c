@@ -93,8 +93,8 @@ START_TEST(test0)
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
 	/* ost_index */
-	rc = llapi_layout_ost_index_set(layout, 0, T0_OST_OFFSET);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_set_ost_index(layout, 0, T0_OST_OFFSET);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	/* create */
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
@@ -538,24 +538,19 @@ START_TEST(test13)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* Only setting OST index for stripe 0 is supported for now. */
-	errno = 0;
-	rc = llapi_layout_ost_index_set(layout, 1, 1);
-	ck_assert_msg(rc == -1 && errno == EOPNOTSUPP, "rc = %d, errno = %d",
-		rc, errno);
+	rc = lus_layout_set_ost_index(layout, 1, 1);
+	ck_assert_msg(rc == -EOPNOTSUPP, "rc = %d", rc);
 
 	/* invalid OST index */
-	errno = 0;
-	rc = llapi_layout_ost_index_set(layout, 0, LLAPI_LAYOUT_INVALID);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_ost_index(layout, 0, LLAPI_LAYOUT_INVALID);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_ost_index_set(layout, 0, -1);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_ost_index(layout, 0, -1);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL layout */
-	errno = 0;
-	rc = llapi_layout_ost_index_set(NULL, 0, 1);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_ost_index(NULL, 0, 1);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	errno = 0;
 	rc = llapi_layout_ost_index_get(NULL, 0, &idx);

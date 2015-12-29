@@ -43,7 +43,7 @@
 		lus_layout_get_by_fid;
 		lus_layout_get_by_path;
 		llapi_layout_ost_index_get;
-		llapi_layout_ost_index_set;
+		lus_layout_set_ost_index;
 		lus_layout_pattern_get;
 		lus_layout_pattern_set;
 		lus_layout_pattern_set_flags;

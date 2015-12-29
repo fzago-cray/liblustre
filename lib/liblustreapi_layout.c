@@ -911,19 +911,15 @@ int lus_layout_pattern_set_flags(struct lus_layout *layout,
  * \retval	-1 if arguments are invalid or an unsupported stripe number
  *		was specified
  */
-int llapi_layout_ost_index_set(struct lus_layout *layout, int stripe_number,
-			       uint64_t ost_index)
+int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
+			     uint64_t ost_index)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    !layout_stripe_index_is_valid(ost_index)) {
-		errno = EINVAL;
-		return -1;
-	}
+	    !layout_stripe_index_is_valid(ost_index))
+		return -EINVAL;
 
-	if (stripe_number != 0) {
-		errno = EOPNOTSUPP;
-		return -1;
-	}
+	if (stripe_number != 0)
+		return -EOPNOTSUPP;
 
 	layout->llot_stripe_offset = ost_index;
 
