@@ -770,8 +770,8 @@ int lus_hsm_import(const char *dst, int archive, const struct stat *st,
 		layout = def_layout;
 	}
 
-	if (llapi_layout_pattern_flags_set(layout,
-					   LLAPI_LAYOUT_RELEASED) != 0) {
+	if (lus_layout_pattern_set_flags(layout,
+					 LLAPI_LAYOUT_RELEASED) != 0) {
 		log_msg(LUS_LOG_ERROR, EINVAL,
 			"invalid striping information for importing '%s'",
 			dst);

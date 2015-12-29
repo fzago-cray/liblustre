@@ -880,21 +880,18 @@ int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
  *                             LLAPI_LAYOUT_RELEASED is supported.
  *
  * \retval	0 on success
- * \retval	-1 on error, with errno set.
+ * \retval	-EINVAL if an argument is invalid
+ * \retval	-EOPNOTSUPP if the pattern flag is not supported
  */
-int llapi_layout_pattern_flags_set(struct lus_layout *layout,
-				   uint64_t pattern_flags)
+int lus_layout_pattern_set_flags(struct lus_layout *layout,
+				 uint64_t pattern_flags)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
-		errno = EINVAL;
-		return -1;
-	}
+	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC)
+		return -EINVAL;
 
 	/* Reject if an unknown flag is set */
-	if ((pattern_flags & ~(LLAPI_LAYOUT_RELEASED)) != 0) {
-		errno = EOPNOTSUPP;
-		return -1;
-	}
+	if ((pattern_flags & ~(LLAPI_LAYOUT_RELEASED)) != 0)
+		return -EOPNOTSUPP;
 
 	layout->llot_pattern_flags = pattern_flags;
 

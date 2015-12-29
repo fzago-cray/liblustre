@@ -46,7 +46,7 @@
 		llapi_layout_ost_index_set;
 		lus_layout_pattern_get;
 		lus_layout_pattern_set;
-		llapi_layout_pattern_flags_set;
+		lus_layout_pattern_set_flags;
 		llapi_layout_pool_name_get;
 		llapi_layout_pool_name_set;
 		lus_layout_stripe_get_count;
