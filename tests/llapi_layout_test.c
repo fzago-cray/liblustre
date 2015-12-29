@@ -97,8 +97,8 @@ START_TEST(test0)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	/* create */
-	fd = llapi_layout_file_create(path, 0, 0660, layout);
-	ck_assert_msg(fd >= 0, "path = %s, errno = %d", path, errno);
+	fd = lus_layout_file_create(path, 0, 0660, layout);
+	ck_assert_msg(fd >= 0, "path = %s, fd = %d", path, fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	lus_layout_free(layout);
@@ -565,8 +565,8 @@ START_TEST(test13)
 	ck_assert_msg(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 	rc = lus_layout_stripe_set_count(layout, T13_STRIPE_COUNT);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
-	fd = llapi_layout_file_create(path, 0, 0644, layout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0644, layout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	lus_layout_free(layout);
@@ -580,8 +580,8 @@ START_TEST(test13)
 }
 END_TEST
 
-/* Verify llapi_layout_file_create() returns errors as expected */
-#define T14_DESC	"llapi_layout_file_create error handling"
+/* Verify lus_layout_file_create() returns errors as expected */
+#define T14_DESC	"lus_layout_file_create error handling"
 START_TEST(test14)
 {
 	int rc;
@@ -592,8 +592,13 @@ START_TEST(test14)
 		      rc, layout);
 
 	/* NULL path */
-	rc = llapi_layout_file_create(NULL, 0, 0, layout);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_file_create(NULL, 0, 0, layout);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
+
+	/* Non-existent path */
+	rc = lus_layout_file_create("/ghfd/hgfd/jhd/trgv/gas/gfsd",
+				    0, 0, layout);
+	ck_assert_msg(rc == -ENOENT, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
@@ -621,17 +626,16 @@ START_TEST(test15)
 	rc = lus_layout_stripe_set_count(layout, T15_STRIPE_COUNT);
 	ck_assert_msg(rc == 0, "rc = %d");
 
-	errno = 0;
-	fd = llapi_layout_file_create(path, 0, 0640, layout);
-	ck_assert_msg(fd >= 0, "fd = %d, errno = %d", fd, errno);
+	fd = lus_layout_file_create(path, 0, 0640, layout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
 	rc = lus_layout_stripe_set_count(layout, T15_STRIPE_COUNT - 1);
 	ck_assert_msg(rc == 0, "rc = %d");
-	errno = 0;
-	fd = llapi_layout_file_open(path, 0, 0640, layout);
-	ck_assert_msg(fd >= 0, "fd = %d, errno = %d", fd, errno);
+
+	fd = lus_layout_file_open(path, 0, 0640, layout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	lus_layout_free(layout);
@@ -677,8 +681,8 @@ START_TEST(test16)
 	rc = lus_layout_alloc(0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
-	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0640, filelayout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -700,8 +704,8 @@ START_TEST(test16)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0640, filelayout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	lus_layout_free(filelayout);
@@ -741,8 +745,8 @@ START_TEST(test17)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = lus_layout_stripe_set_count(layout, LLAPI_LAYOUT_WIDE);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
-	fd = llapi_layout_file_create(path, 0, 0640, layout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0640, layout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	lus_layout_free(layout);
@@ -796,8 +800,8 @@ START_TEST(test18)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
-	fd = llapi_layout_file_create(path, 0, 0640, layout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0640, layout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
@@ -860,8 +864,8 @@ START_TEST(test20)
 	rc = lus_layout_stripe_set_count(filelayout, LLAPI_LAYOUT_DEFAULT);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 
-	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, 0640, filelayout);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
@@ -892,7 +896,7 @@ START_TEST(test20)
 }
 END_TEST
 
-#define T21_DESC	"llapi_layout_file_create fails for non-Lustre file"
+#define T21_DESC	"lus_layout_file_create fails for non-Lustre file"
 START_TEST(test21)
 {
 	struct lus_layout *layout;
@@ -911,15 +915,15 @@ START_TEST(test21)
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
-	fd = llapi_layout_file_create(template, 0, 0640, layout);
-	ck_assert_msg(fd == -1 && errno == ENOTTY,
-		"fd = %d, errno = %d, template = %s", fd, errno, template);
+	fd = lus_layout_file_create(template, 0, 0640, layout);
+	ck_assert_msg(fd == -ENOTTY,
+		"fd = %d, template = %s", fd, template);
 	lus_layout_free(layout);
 }
 END_TEST
 
 #define T22FILE		"t22"
-#define T22_DESC	"llapi_layout_file_create applied mode correctly"
+#define T22_DESC	"lus_layout_file_create applied mode correctly"
 START_TEST(test22)
 {
 	int		rc;
@@ -937,8 +941,8 @@ START_TEST(test22)
 
 	umask_orig = umask(S_IWGRP | S_IWOTH);
 
-	fd = llapi_layout_file_create(path, 0, mode_in, NULL);
-	ck_assert_msg(fd >= 0, "errno = %d", errno);
+	fd = lus_layout_file_create(path, 0, mode_in, NULL);
+	ck_assert_msg(fd >= 0, "fd = %d", fd);
 
 	(void) umask(umask_orig);
 

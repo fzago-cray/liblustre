@@ -1011,22 +1011,19 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 	return 0;
 }
 
-/* Helper for llapi_layout_file_open and llapi_layout_file_openat. */
+/* Helper for lus_layout_file_open and lus_layout_file_openat. */
 static int file_open_internal(int dir_fd, const char *path,
 			      int open_flags, mode_t mode,
 			      const struct lus_layout *layout)
 {
 	int fd;
 	int rc;
-	int tmp;
 	struct lov_user_md *lum;
 	size_t lum_size;
 
 	if (path == NULL ||
-	    (layout != NULL && layout->llot_magic != LLAPI_LAYOUT_MAGIC)) {
-		errno = EINVAL;
-		return -1;
-	}
+	    (layout != NULL && layout->llot_magic != LLAPI_LAYOUT_MAGIC))
+		return -EINVAL;
 
 	/* Object creation must be postponed until after layout attributes
 	 * have been applied. */
@@ -1038,30 +1035,31 @@ static int file_open_internal(int dir_fd, const char *path,
 	else
 		fd = openat(dir_fd, path, open_flags, mode);
 
-	if (layout == NULL || fd < 0)
+	if (fd < 0)
+		return -errno;
+
+	if (layout == NULL)
 		return fd;
 
 	lum = layout_to_lum(layout);
 
 	if (lum == NULL) {
-		tmp = errno;
 		close(fd);
-		errno = tmp;
-		return -1;
+		return -EINVAL;
 	}
 
 	lum_size = lov_user_md_size(0, lum->lmm_magic);
 
 	rc = fsetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_size, 0);
 	if (rc < 0) {
-		tmp = errno;
+		rc = errno;
 		close(fd);
-		errno = tmp;
-		fd = -1;
+		free(lum);
+
+		return rc == EOPNOTSUPP ? -ENOTTY : -rc;
 	}
 
 	free(lum);
-	errno = errno == EOPNOTSUPP ? ENOTTY : errno;
 
 	return fd;
 }
@@ -1078,11 +1076,11 @@ static int file_open_internal(int dir_fd, const char *path,
  * \param[in] mode		permissions to create new file with
  * \param[in] layout		layout to create new file with
  *
- * \retval		non-negative file descriptor on successful open
- * \retval		-1 if an error occurred
+ * \retval a non-negative file descriptor on successful open
+ * \retval a negative errno on error
  */
-int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
-			   const struct lus_layout *layout)
+int lus_layout_file_open(const char *path, int open_flags, mode_t mode,
+			 const struct lus_layout *layout)
 {
 	return file_open_internal(-1, path, open_flags, mode, layout);
 }
@@ -1100,11 +1098,11 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
  * \param[in] mode		permissions to create new file with
  * \param[in] layout		layout to create new file with
  *
- * \retval		non-negative file descriptor on successful open
- * \retval		-1 if an error occurred
+ * \retval a non-negative file descriptor on successful open
+ * \retval a negative errno on error
  */
-int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
-			     mode_t mode, const struct lus_layout *layout)
+int lus_layout_file_openat(int dir_fd, const char *path, int open_flags,
+			   mode_t mode, const struct lus_layout *layout)
 {
 	return file_open_internal(dir_fd, path, open_flags, mode, layout);
 }
@@ -1120,11 +1118,11 @@ int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,
  * \param[in] mode		permissions to create new file with
  * \param[in] layout		layout to create new file with
  *
- * \retval		non-negative file descriptor on successful open
- * \retval		-1 if an error occurred
+ * \retval a non-negative file descriptor on successful open
+ * \retval a negative errno on error
  */
-int llapi_layout_file_create(const char *path, int open_flags, int mode,
-			     const struct lus_layout *layout)
+int lus_layout_file_create(const char *path, int open_flags, int mode,
+			   const struct lus_layout *layout)
 {
 	return file_open_internal(-1, path, open_flags | O_CREAT | O_EXCL,
 				  mode, layout);

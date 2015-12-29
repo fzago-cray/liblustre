@@ -779,8 +779,7 @@ int lus_hsm_import(const char *dst, int archive, const struct stat *st,
 		goto out;
 	}
 
-	fd = llapi_layout_file_open(dst, O_CREAT | O_WRONLY,
-				    st->st_mode, layout);
+	fd = lus_layout_file_open(dst, O_CREAT | O_WRONLY, st->st_mode, layout);
 	if (fd < 0) {
 		log_msg(LUS_LOG_ERROR, fd,
 			    "cannot create '%s' for import", dst);

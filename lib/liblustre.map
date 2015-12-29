@@ -35,9 +35,9 @@
 		lus_init;
 		lus_initialized;
 		lus_layout_alloc;
-		llapi_layout_file_create;
-		llapi_layout_file_open;
-		llapi_layout_file_openat;
+		lus_layout_file_create;
+		lus_layout_file_open;
+		lus_layout_file_openat;
 		lus_layout_free;
 		lus_layout_get_by_fd;
 		lus_layout_get_by_fid;
