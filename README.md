@@ -107,8 +107,6 @@ its interaction with Lustre is similar to the copytool.
 TODO
 ----
 
--   change the name of the prefix. llapi_ will conflict with
-    liblustreapi. What about lus_ ?
 -   All exported API functions should be documented in their sources,
     not in the headers. Format should be the same as lustre (doxygen)
     and conformity enforced during build.
@@ -119,8 +117,6 @@ TODO
 -   llapi\_path2parent should probably have an lfsh arg and discriminate
     between full path and relative paths. lfsh would be used only if a
     relative path is passed. Same with path2fid.
--   llapi\_open\_by\_fid and some layout function should return -errno
-    on error, not -1 with errno set.
 -   remove recno from lus\_fid2path since it's unused
 -   lus_fid2path and lus_fd2parent should use a newer ioctl that
     optionally copies the path directly into an application buffer to
@@ -145,6 +141,10 @@ Changes from liblustreapi
 Some functions have disappeared and other have been renamed. This
 section should help porting.
 
+-   The prefix for the functions is lus_ instead of llapi_
+-   Every function has been updated to return 0 on success or a negative
+    errno on failure. If the function returns some allocated memory,
+    it is done through a parameter.
 -   LPU64 is gone. Use "%llu". Cast if necessary.
 -   LPX64 is gone. Use "%\#llx". Cast if necessary.
 -   LPX64i is gone. Use "%llx". Cast if necessary.
