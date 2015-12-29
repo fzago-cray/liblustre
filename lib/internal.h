@@ -238,39 +238,6 @@ enum kuc_generic_message_type {
 };
 
 /*
- * JSON
- */
-enum llapi_json_types {
-	LLAPI_JSON_INTEGER = 1,
-	LLAPI_JSON_BIGNUM,
-	LLAPI_JSON_REAL,
-	LLAPI_JSON_STRING
-};
-
-struct llapi_json_item {
-	char		*lji_key;
-	__u32		 lji_type;
-	union {
-		int	 lji_integer;
-		__u64	 lji_u64;
-		double	 lji_real;
-		char	*lji_string;
-	};
-	struct llapi_json_item	*lji_next;
-};
-
-struct llapi_json_item_list {
-	int			ljil_item_count;
-	struct llapi_json_item	*ljil_items;
-};
-
-int llapi_json_init_list(struct llapi_json_item_list **item_list);
-int llapi_json_destroy_list(struct llapi_json_item_list **item_list);
-int llapi_json_add_item(struct llapi_json_item_list **item_list,
-			const char *key, __u32 type, const void *val);
-int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
-
-/*
  * IOCTLs
  */
 #define OBD_IOC_GETMDNAME	_IOR ('f', 131, char[MAX_OBD_NAME])
