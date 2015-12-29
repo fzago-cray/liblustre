@@ -78,8 +78,8 @@ START_TEST(test0)
 		      T0_STRIPE_COUNT);
 
 	/* stripe size */
-	rc = llapi_layout_stripe_size_set(layout, T0_STRIPE_SIZE);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_size(layout, T0_STRIPE_SIZE);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = lus_layout_stripe_get_size(layout, &size);
 	ck_assert_msg(rc == 0 && size == T0_STRIPE_SIZE, "%"PRIu64" != %d",
 		      size, T0_STRIPE_SIZE);
@@ -458,24 +458,21 @@ START_TEST(test11)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* negative stripe size */
-	errno = 0;
-	rc = llapi_layout_stripe_size_set(layout, -1);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_size(layout, -1);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* invalid stripe size */
-	errno = 0;
-	rc = llapi_layout_stripe_size_set(layout, LLAPI_LAYOUT_INVALID);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_size(layout, LLAPI_LAYOUT_INVALID);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* stripe size too big */
-	errno = 0;
-	rc = llapi_layout_stripe_size_set(layout, (1ULL << 33));
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_size(layout, (1ULL << 33));
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL layout */
 	errno = 0;
-	rc = llapi_layout_stripe_size_set(NULL, 1048576);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_size(NULL, 1048576);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	rc = lus_layout_stripe_get_size(NULL, &size);
 	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
@@ -876,8 +873,8 @@ START_TEST(test20)
 	rc = lus_layout_alloc(0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
-	rc = llapi_layout_stripe_size_set(filelayout, LLAPI_LAYOUT_DEFAULT);
-	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_size(filelayout, LLAPI_LAYOUT_DEFAULT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	rc = lus_layout_stripe_set_count(filelayout, LLAPI_LAYOUT_DEFAULT);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
