@@ -16,7 +16,7 @@
 /*
  * Miscellaneous functions.
  *
- * llapi_parse_size should not be provided by the lustre library
+ * lus_parse_size should not be provided by the lustre library
  * because it is not specifically a lustre function to parse command
  * line arguments. But this function may also be used by other lustre
  * tools such as lfs. So put it there too.
@@ -49,8 +49,8 @@
  *                       whether it means 'bytes' or 'block' of 512 bytes
  */
 /* TODO: Does an application even care about size_units? Can that be removed? */
-int llapi_parse_size(const char *string, unsigned long long *size,
-		     unsigned long long *size_units, bool b_is_bytes)
+int lus_parse_size(const char *string, unsigned long long *size,
+		   unsigned long long *size_units, bool b_is_bytes)
 {
 	char *endptr;
 	const char *specifiers = "bbKkMmGgTtPpEe"; /* b is doubled */

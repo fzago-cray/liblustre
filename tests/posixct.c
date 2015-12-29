@@ -307,7 +307,7 @@ static int ct_parseopts(int argc, char * const *argv)
 		case 'b': /* -b and -c have both a number with unit as arg */
 		case 'c':
 			unit = ONE_MB;
-			if (llapi_parse_size(optarg, &value, &unit, 0) < 0) {
+			if (lus_parse_size(optarg, &value, &unit, 0) < 0) {
 				rc = -EINVAL;
 				CT_ERROR(rc, "bad value for -%c '%s'", c,
 					 optarg);

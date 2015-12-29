@@ -32,7 +32,7 @@ START_TEST(chomp) { unittest_chomp(); } END_TEST
 START_TEST(mdt_index) { unittest_mdt_index(); } END_TEST
 START_TEST(param_lmv) { unittest_param_lmv(); } END_TEST
 START_TEST(read_procfs_value) { unittest_read_procfs_value(); } END_TEST
-START_TEST(parse_size) { unittest_llapi_parse_size(); } END_TEST
+START_TEST(parse_size) { unittest_lus_parse_size(); } END_TEST
 START_TEST(t_strscpy) { unittest_strscpy(); } END_TEST
 START_TEST(t_strscat) { unittest_strscat(); } END_TEST
 START_TEST(fid2path) { unittest_lus_fid2path(); } END_TEST
