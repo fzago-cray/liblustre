@@ -87,8 +87,8 @@ START_TEST(test0)
 	/* pool_name */
 	rc = llapi_layout_pool_name_set(layout, poolname);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
@@ -123,8 +123,8 @@ static void __test1_helper(struct lus_layout *layout)
 	ck_assert_msg(size == T0_STRIPE_SIZE, "%"PRIu64" != %d", size,
 		      T0_STRIPE_SIZE);
 
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
@@ -243,8 +243,8 @@ START_TEST(test4)
 	ck_assert_msg(size == T4_STRIPE_SIZE, "%"PRIu64" != %d", size,
 		      T4_STRIPE_SIZE);
 
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 
@@ -502,14 +502,12 @@ START_TEST(test12)
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
 	/* NULL layout */
-	errno = 0;
-	rc = llapi_layout_pool_name_get(NULL, mypool, sizeof(mypool));
-	ck_assert_msg(errno == EINVAL, "poolname = %s, errno = %d", poolname, errno);
+	rc = lus_layout_get_pool_name(NULL, mypool, sizeof(mypool));
+	ck_assert_msg(rc == -EINVAL, "poolname = %s", poolname);
 
 	/* NULL buffer */
-	errno = 0;
-	rc = llapi_layout_pool_name_get(layout, NULL, sizeof(mypool));
-	ck_assert_msg(errno == EINVAL, "poolname = %s, errno = %d", poolname, errno);
+	rc = lus_layout_get_pool_name(layout, NULL, sizeof(mypool));
+	ck_assert_msg(rc == -EINVAL, "poolname = %s", poolname);
 
 	/* Pool name too long*/
 	errno = 0;
@@ -797,8 +795,8 @@ START_TEST(test18)
 	rc = llapi_layout_pool_name_set(layout, pool);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 	fd = llapi_layout_file_create(path, 0, 0640, layout);
@@ -810,8 +808,8 @@ START_TEST(test18)
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
 	lus_layout_free(layout);
@@ -830,9 +828,9 @@ START_TEST(test19)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_pool_name_set(layout, name);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(strlen(name) == strlen(mypool), "name = %s, str = %s", name,
-		      mypool);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(strlen(name) == strlen(mypool), "name = %s, str = %s",
+		      name, mypool);
 	lus_layout_free(layout);
 }
 END_TEST
@@ -1268,8 +1266,8 @@ START_TEST(test100)
 		      strerror(-rc));
 	ck_assert_msg(size == 131072, "%llu != 131072", size);
 
-	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_str_eq(mypool, "pooltest");
 
 	/* Pattern 1 is LOV_PATTERN_RAID0, which is LLAPI_LAYOUT_RAID0. */

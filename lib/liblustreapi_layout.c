@@ -958,25 +958,25 @@ int lus_layout_get_ost_index(const struct lus_layout *layout,
  *
  * Get the pool name of layout \a layout.
  *
- * \param[in] layout	layout to get pool name from
- * \param[out] dest	buffer to store pool name in
- * \param[in] n		size in bytes of buffer \a dest
+ * \param[in]  layout	      layout to get pool name from
+ * \param[out] pool_name      buffer to store pool name in
+ * \param[in]  pool_name_len  size in bytes of buffer \a dest
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	a negative errno on failure
  */
-int llapi_layout_pool_name_get(const struct lus_layout *layout, char *dest,
-			       size_t n)
+int lus_layout_get_pool_name(const struct lus_layout *layout,
+			     char *pool_name, size_t pool_name_len)
 {
+	int rc;
+
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    dest == NULL) {
-		errno = EINVAL;
-		return -1;
-	}
+	    pool_name == NULL)
+		return -EINVAL;
 
-	strncpy(dest, layout->llot_pool_name, n);
+	rc = strscpy(pool_name, layout->llot_pool_name, pool_name_len);
 
-	return 0;
+	return rc >= 0 ? 0 : -ENOSPC;
 }
 
 /**
