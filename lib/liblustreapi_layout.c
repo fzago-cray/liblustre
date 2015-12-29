@@ -982,32 +982,28 @@ int lus_layout_get_pool_name(const struct lus_layout *layout,
 /**
  * Set the name of the pool of layout \a layout.
  *
- * \param[in] layout	layout to set pool name in
- * \param[in] pool_name	pool name to set
+ * \param[in] layout	 layout to set pool name in
+ * \param[in] pool_name	 pool name to set
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid or pool name is too long
+ * \retval	a negative errno on error
  */
-int llapi_layout_pool_name_set(struct lus_layout *layout,
-			       const char *pool_name)
+int lus_layout_set_pool_name(struct lus_layout *layout,
+			     const char *pool_name)
 {
 	char *ptr;
 
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    pool_name == NULL) {
-		errno = EINVAL;
-		return -1;
-	}
+	    pool_name == NULL)
+		return -EINVAL;
 
 	/* Strip off any 'fsname.' portion. */
 	ptr = strchr(pool_name, '.');
 	if (ptr != NULL)
 		pool_name = ptr + 1;
 
-	if (strlen(pool_name) > LOV_MAXPOOLNAME) {
-		errno = EINVAL;
-		return -1;
-	}
+	if (strlen(pool_name) > LOV_MAXPOOLNAME)
+		return -EINVAL;
 
 	strncpy(layout->llot_pool_name, pool_name,
 		sizeof(layout->llot_pool_name));

@@ -185,8 +185,8 @@ int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
 			     uint64_t index);
 int lus_layout_get_pool_name(const struct lus_layout *layout,
 			     char *pool_name, size_t pool_name_len);
-int llapi_layout_pool_name_set(struct lus_layout *layout,
-			       const char *pool_name);
+int lus_layout_set_pool_name(struct lus_layout *layout,
+			     const char *pool_name);
 int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 			   const struct lus_layout *layout);
 int llapi_layout_file_openat(int dir_fd, const char *path, int open_flags,

@@ -85,8 +85,8 @@ START_TEST(test0)
 		      size, T0_STRIPE_SIZE);
 
 	/* pool_name */
-	rc = llapi_layout_pool_name_set(layout, poolname);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_set_pool_name(layout, poolname);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = strcmp(mypool, poolname);
@@ -492,14 +492,12 @@ START_TEST(test12)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* NULL layout */
-	errno = 0;
-	rc = llapi_layout_pool_name_set(NULL, "foo");
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_pool_name(NULL, "foo");
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL pool name */
-	errno = 0;
-	rc = llapi_layout_pool_name_set(layout, NULL);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_pool_name(layout, NULL);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL layout */
 	rc = lus_layout_get_pool_name(NULL, mypool, sizeof(mypool));
@@ -510,9 +508,8 @@ START_TEST(test12)
 	ck_assert_msg(rc == -EINVAL, "poolname = %s", poolname);
 
 	/* Pool name too long*/
-	errno = 0;
-	rc = llapi_layout_pool_name_set(layout, "0123456789abcdef");
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_set_pool_name(layout, "0123456789abcdef");
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
@@ -792,8 +789,8 @@ START_TEST(test18)
 	rc = unlink(path);
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
-	rc = llapi_layout_pool_name_set(layout, pool);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_set_pool_name(layout, pool);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
 	ck_assert_msg(rc == 0, "rc = %d", rc);
@@ -826,8 +823,8 @@ START_TEST(test19)
 
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
-	rc = llapi_layout_pool_name_set(layout, name);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_set_pool_name(layout, name);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = lus_layout_get_pool_name(layout, mypool, sizeof(mypool));
 	ck_assert_msg(strlen(name) == strlen(mypool), "name = %s, str = %s",
 		      name, mypool);
