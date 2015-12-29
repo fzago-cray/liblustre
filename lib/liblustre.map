@@ -49,7 +49,7 @@
 		llapi_layout_pattern_flags_set;
 		llapi_layout_pool_name_get;
 		llapi_layout_pool_name_set;
-		llapi_layout_stripe_count_get;
+		lus_layout_stripe_get_count;
 		llapi_layout_stripe_count_set;
 		llapi_layout_stripe_size_get;
 		llapi_layout_stripe_size_set;

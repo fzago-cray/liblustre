@@ -720,17 +720,17 @@ void lus_layout_free(struct lus_layout *layout)
  * \param[out] count	integer to store stripe count in
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	negative errno if arguments are invalid
  */
-int llapi_layout_stripe_count_get(const struct lus_layout *layout,
-				  uint64_t *count)
+int lus_layout_stripe_get_count(const struct lus_layout *layout,
+				uint64_t *count)
 {
 	if (layout == NULL || count == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
-		errno = EINVAL;
-		return -1;
-	}
+	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
+		return -EINVAL;
+
 	*count = layout->llot_stripe_count;
+
 	return 0;
 }
 
