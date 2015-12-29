@@ -833,16 +833,14 @@ int lus_layout_stripe_set_size(struct lus_layout *layout,
  * \param[out] pattern	integer to store pattern in
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	a negative errno if arguments are invalid
  */
-int llapi_layout_pattern_get(const struct lus_layout *layout,
-			     uint64_t *pattern)
+int lus_layout_pattern_get(const struct lus_layout *layout,
+			   uint64_t *pattern)
 {
 	if (layout == NULL || pattern == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
-		errno = EINVAL;
-		return -1;
-	}
+	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
+		return -EINVAL;
 
 	*pattern = layout->llot_pattern;
 

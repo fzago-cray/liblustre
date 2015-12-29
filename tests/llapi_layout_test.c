@@ -365,8 +365,8 @@ START_TEST(test8)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == LLAPI_LAYOUT_DEFAULT, "size = %"PRIu64"\n", size);
 
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern == LLAPI_LAYOUT_DEFAULT, "pattern = %"PRIu64"\n",
 		      pattern);
 
@@ -1029,8 +1029,8 @@ START_TEST(test24)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	lus_layout_free(layout);
@@ -1069,8 +1069,8 @@ START_TEST(test25)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	lus_layout_free(layout);
@@ -1118,8 +1118,8 @@ START_TEST(test26)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == T26_STRIPE_SIZE, "size = %"PRIu64, size);
 
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	lus_layout_free(layout);
@@ -1170,8 +1170,8 @@ START_TEST(test27)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == T27_STRIPE_SIZE, "size = %"PRIu64, size);
 
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	lus_layout_free(layout);
@@ -1287,8 +1287,8 @@ START_TEST(test100)
 	ck_assert_str_eq(mypool, "pooltest");
 
 	/* Pattern 1 is LOV_PATTERN_RAID0, which is LLAPI_LAYOUT_RAID0. */
-	rc = llapi_layout_pattern_get(layout, &pattern);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_pattern_get(layout, &pattern);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(pattern == LLAPI_LAYOUT_RAID0, "pattern = %llx",
 		      (unsigned long long)pattern);
 }
