@@ -358,8 +358,8 @@ int lus_hsm_state_set(const char *path, uint64_t setmask, uint64_t clearmask,
  *
  * \return the length of memory to allocate
  */
-static inline size_t llapi_hsm_user_request_len(unsigned int itemcount,
-						unsigned int data_len)
+static inline size_t lus_hsm_user_request_len(unsigned int itemcount,
+					      unsigned int data_len)
 {
 	return sizeof(struct hsm_user_request) +
 		sizeof(struct hsm_user_item) * itemcount +

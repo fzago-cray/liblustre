@@ -178,7 +178,7 @@ section should help porting.
 -   llapi_hsm_user_request_alloc is gone. The caller can replace
       hur = llapi_hsm_user_request_alloc(x, y)
     with
-      hur = malloc(llapi_hsm_user_request_len(x, y))
+      hur = malloc(lus_hsm_user_request_len(x, y))
     This is more flexible as the caller can reuse the hur, resetting
     it between calls to lus_hsm_request.
 -   for consistency and to better reflect its role, struct

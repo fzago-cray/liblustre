@@ -949,7 +949,7 @@ int lus_hsm_current_action(const char *path, struct hsm_current_action *hca)
  * Send a HSM request to Lustre.
  *
  * \param[in]  lfsh     An opened Lustre fs opaque handle
- * \param[in]  request  The request, of at least llapi_hsm_user_request_len
+ * \param[in]  request  The request, of at least lus_hsm_user_request_len
  *                      bytes long.
  *
  * \return 0 on success, or a negative errno on error.

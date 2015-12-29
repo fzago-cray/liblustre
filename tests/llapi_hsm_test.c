@@ -437,7 +437,7 @@ helper_archiving(void (*progress)(struct lus_hsm_action_handle *hcp,
 		      strerror(-rc));
 
 	/* Create and send the archive request. */
-	hur = calloc(1, llapi_hsm_user_request_len(1, 0));
+	hur = calloc(1, lus_hsm_user_request_len(1, 0));
 	ck_assert_msg(hur != NULL, "calloc returned NULL");
 
 	hur->hur_request.hr_action = HUA_ARCHIVE;
