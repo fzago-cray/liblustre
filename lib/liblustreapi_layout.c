@@ -770,16 +770,14 @@ static bool layout_stripe_index_is_valid(int64_t stripe_index)
  * \param[in] count	value to be set
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	a negative errno if arguments are invalid
  */
-int llapi_layout_stripe_count_set(struct lus_layout *layout,
-				  uint64_t count)
+int lus_layout_stripe_set_count(struct lus_layout *layout,
+				uint64_t count)
 {
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    !layout_stripe_count_is_valid(count)) {
-		errno = EINVAL;
-		return -1;
-	}
+	    !layout_stripe_count_is_valid(count))
+		return -EINVAL;
 
 	layout->llot_stripe_count = count;
 

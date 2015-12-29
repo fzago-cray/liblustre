@@ -71,8 +71,8 @@ START_TEST(test0)
 	ck_assert_msg(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
 	/* stripe count */
-	rc = llapi_layout_stripe_count_set(layout, T0_STRIPE_COUNT);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_count(layout, T0_STRIPE_COUNT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = lus_layout_stripe_get_count(layout, &count);
 	ck_assert_msg(rc == 0 && count == T0_STRIPE_COUNT, "%"PRIu64" != %d", count,
 		      T0_STRIPE_COUNT);
@@ -418,18 +418,15 @@ START_TEST(test10)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 
 	/* invalid stripe count */
-	errno = 0;
-	rc = llapi_layout_stripe_count_set(layout, LLAPI_LAYOUT_INVALID);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_count(layout, LLAPI_LAYOUT_INVALID);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
-	errno = 0;
-	rc = llapi_layout_stripe_count_set(layout, -1);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_count(layout, -1);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL layout */
-	errno = 0;
-	rc = llapi_layout_stripe_count_set(NULL, 2);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_count(NULL, 2);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL layout */
 	errno = 0;
@@ -442,9 +439,9 @@ START_TEST(test10)
 	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* stripe count too large */
-	errno = 0;
-	rc = llapi_layout_stripe_count_set(layout, LOV_MAX_STRIPE_COUNT + 1);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_count(layout, LOV_MAX_STRIPE_COUNT + 1);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
+
 	lus_layout_free(layout);
 }
 END_TEST
@@ -580,17 +577,16 @@ START_TEST(test13)
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
 	/* Layout not read from file so has no OST data. */
-	errno = 0;
-	rc = llapi_layout_stripe_count_set(layout, T13_STRIPE_COUNT);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_count(layout, T13_STRIPE_COUNT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = llapi_layout_ost_index_get(layout, 0, &idx);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
 	/* n greater than stripe count*/
 	rc = unlink(path);
 	ck_assert_msg(rc >= 0 || errno == ENOENT, "errno = %d", errno);
-	rc = llapi_layout_stripe_count_set(layout, T13_STRIPE_COUNT);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_count(layout, T13_STRIPE_COUNT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	fd = llapi_layout_file_create(path, 0, 0644, layout);
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
 	rc = close(fd);
@@ -645,8 +641,8 @@ START_TEST(test15)
 
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
-	rc = llapi_layout_stripe_count_set(layout, T15_STRIPE_COUNT);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_count(layout, T15_STRIPE_COUNT);
+	ck_assert_msg(rc == 0, "rc = %d");
 
 	errno = 0;
 	fd = llapi_layout_file_create(path, 0, 0640, layout);
@@ -654,7 +650,8 @@ START_TEST(test15)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	rc = llapi_layout_stripe_count_set(layout, T15_STRIPE_COUNT - 1);
+	rc = lus_layout_stripe_set_count(layout, T15_STRIPE_COUNT - 1);
+	ck_assert_msg(rc == 0, "rc = %d");
 	errno = 0;
 	fd = llapi_layout_file_open(path, 0, 0640, layout);
 	ck_assert_msg(fd >= 0, "fd = %d, errno = %d", fd, errno);
@@ -765,8 +762,8 @@ START_TEST(test17)
 	ck_assert_msg(rc == 0 || errno == ENOENT, "errno = %d", errno);
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
-	rc = llapi_layout_stripe_count_set(layout, LLAPI_LAYOUT_WIDE);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_set_count(layout, LLAPI_LAYOUT_WIDE);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	fd = llapi_layout_file_create(path, 0, 0640, layout);
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
 	rc = close(fd);
@@ -883,8 +880,8 @@ START_TEST(test20)
 	rc = llapi_layout_stripe_size_set(filelayout, LLAPI_LAYOUT_DEFAULT);
 	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
 
-	rc = llapi_layout_stripe_count_set(filelayout, LLAPI_LAYOUT_DEFAULT);
-	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_set_count(filelayout, LLAPI_LAYOUT_DEFAULT);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 
 	fd = llapi_layout_file_create(path, 0, 0640, filelayout);
 	ck_assert_msg(fd >= 0, "errno = %d", errno);

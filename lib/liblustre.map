@@ -50,7 +50,7 @@
 		llapi_layout_pool_name_get;
 		llapi_layout_pool_name_set;
 		lus_layout_stripe_get_count;
-		llapi_layout_stripe_count_set;
+		lus_layout_stripe_set_count;
 		llapi_layout_stripe_size_get;
 		llapi_layout_stripe_size_set;
 		lus_log_set_callback;
