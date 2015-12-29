@@ -101,7 +101,7 @@ START_TEST(test0)
 	ck_assert_msg(fd >= 0, "path = %s, errno = %d", path, errno);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -148,7 +148,7 @@ START_TEST(test1)
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	__test1_helper(layout);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -172,7 +172,7 @@ START_TEST(test2)
 	ck_assert_msg(rc == 0, "close(%s): errno = %d", path, errno);
 
 	__test1_helper(layout);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -196,7 +196,7 @@ START_TEST(test3)
 	ck_assert_msg(layout != NULL, "fidstr = %s, rc = %d", fidstr, rc);
 
 	__test1_helper(layout);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -253,7 +253,7 @@ START_TEST(test4)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	ck_assert_msg(ost1 != ost0, "%"PRIu64" == %"PRIu64, ost0, ost1);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -369,7 +369,7 @@ START_TEST(test8)
 	ck_assert_msg(pattern == LLAPI_LAYOUT_DEFAULT, "pattern = %"PRIu64"\n",
 		      pattern);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -401,7 +401,7 @@ START_TEST(test9)
 	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_RAID0);
 	ck_assert_msg(rc == 0, "rc = %d, errno = %d", rc, errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -444,7 +444,7 @@ START_TEST(test10)
 	errno = 0;
 	rc = llapi_layout_stripe_count_set(layout, LOV_MAX_STRIPE_COUNT + 1);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -488,7 +488,7 @@ START_TEST(test11)
 	rc = llapi_layout_stripe_size_get(layout, NULL);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -528,7 +528,7 @@ START_TEST(test12)
 	rc = llapi_layout_pool_name_set(layout, "0123456789abcdef");
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -594,7 +594,7 @@ START_TEST(test13)
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
@@ -602,7 +602,7 @@ START_TEST(test13)
 	rc = llapi_layout_ost_index_get(layout, T13_STRIPE_COUNT + 1, &idx);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -621,7 +621,7 @@ START_TEST(test14)
 	rc = llapi_layout_file_create(NULL, 0, 0, layout);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -659,14 +659,14 @@ START_TEST(test15)
 	ck_assert_msg(fd >= 0, "fd = %d, errno = %d", fd, errno);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ck_assert_msg(rc == 0 && count == T15_STRIPE_COUNT,
 		"rc = %d, %"PRIu64" != %d", rc, count, T15_STRIPE_COUNT);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -708,7 +708,7 @@ START_TEST(test16)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	llapi_layout_free(filelayout);
+	lus_layout_free(filelayout);
 
 	rc = lus_layout_get_by_path(path, 0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
@@ -729,7 +729,7 @@ START_TEST(test16)
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	llapi_layout_free(filelayout);
+	lus_layout_free(filelayout);
 	rc = lus_layout_get_by_path(path, 0, &filelayout);
 	ck_assert_msg(filelayout != NULL, "rc = %d", rc);
 
@@ -740,8 +740,8 @@ START_TEST(test16)
 	ck_assert_msg(fcount == dcount, "%"PRIu64" != %"PRIu64, fcount, dcount);
 	ck_assert_msg(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
 
-	llapi_layout_free(filelayout);
-	llapi_layout_free(deflayout);
+	lus_layout_free(filelayout);
+	lus_layout_free(deflayout);
 }
 END_TEST
 
@@ -770,7 +770,7 @@ START_TEST(test17)
 	ck_assert_msg(fd >= 0, "errno = %d", errno);
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 
 	/* Get number of available OSTs */
 	fd = open(path, O_RDONLY);
@@ -786,7 +786,7 @@ START_TEST(test17)
 	ck_assert_msg(osts_layout == osts_all, "%"PRIu64" != %d", osts_layout,
 		osts_all);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 #endif
@@ -825,7 +825,7 @@ START_TEST(test18)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
@@ -833,7 +833,7 @@ START_TEST(test18)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	rc = strcmp(mypool, poolname);
 	ck_assert_msg(rc == 0, "%s != %s", mypool, poolname);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -852,7 +852,7 @@ START_TEST(test19)
 	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
 	ck_assert_msg(strlen(name) == strlen(mypool), "name = %s, str = %s", name,
 		      mypool);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -890,7 +890,7 @@ START_TEST(test20)
 	rc = close(fd);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 
-	llapi_layout_free(filelayout);
+	lus_layout_free(filelayout);
 
 	rc = lus_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED,
 				    &deflayout);
@@ -911,8 +911,8 @@ START_TEST(test20)
 	ck_assert_msg(rc == 0, "errno = %d", errno);
 	ck_assert_msg(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
 
-	llapi_layout_free(filelayout);
-	llapi_layout_free(deflayout);
+	lus_layout_free(filelayout);
+	lus_layout_free(deflayout);
 }
 END_TEST
 
@@ -938,7 +938,7 @@ START_TEST(test21)
 	fd = llapi_layout_file_create(template, 0, 0640, layout);
 	ck_assert_msg(fd == -1 && errno == ENOTTY,
 		"fd = %d, errno = %d, template = %s", fd, errno, template);
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -1038,7 +1038,7 @@ START_TEST(test24)
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -1078,7 +1078,7 @@ START_TEST(test25)
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -1127,7 +1127,7 @@ START_TEST(test26)
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 
@@ -1179,7 +1179,7 @@ START_TEST(test27)
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
 	ck_assert_msg(pattern != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 #endif
@@ -1218,7 +1218,7 @@ START_TEST(test28)
 	ck_assert_msg(rc == 0, "errno = %d\n", errno);
 	ck_assert_msg(count == LLAPI_LAYOUT_WIDE, "count = %"PRIu64"\n", count);
 
-	llapi_layout_free(layout);
+	lus_layout_free(layout);
 }
 END_TEST
 

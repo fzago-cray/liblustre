@@ -598,7 +598,7 @@ static int layout_expected(const char *path, struct lus_layout **layout)
 	rc = stat(path, &st);
 	if (rc < 0 && errno != ENOENT) {
 		rc = -errno;
-		llapi_layout_free(path_layout);
+		lus_layout_free(path_layout);
 		return rc;
 	}
 
@@ -610,7 +610,7 @@ static int layout_expected(const char *path, struct lus_layout **layout)
 		rc = lus_layout_get_by_path(donor_path, 0, &donor_layout);
 		if (donor_layout != NULL) {
 			inherit_layout_attributes(donor_layout, path_layout);
-			llapi_layout_free(donor_layout);
+			lus_layout_free(donor_layout);
 			if (is_fully_specified(path_layout)) {
 				*layout = path_layout;
 				return 0;
@@ -624,17 +624,17 @@ static int layout_expected(const char *path, struct lus_layout **layout)
 	rc = llapi_search_mounts(path, 0, donor_path, NULL);
 #endif
 	if (rc < 0) {
-		llapi_layout_free(path_layout);
+		lus_layout_free(path_layout);
 		return rc;
 	}
 	rc = lus_layout_get_by_path(donor_path, 0, &donor_layout);
 	if (rc != 0) {
-		llapi_layout_free(path_layout);
+		lus_layout_free(path_layout);
 		return rc;
 	}
 
 	inherit_layout_attributes(donor_layout, path_layout);
-	llapi_layout_free(donor_layout);
+	lus_layout_free(donor_layout);
 
 	*layout = path_layout;
 	return 0;
@@ -703,8 +703,12 @@ int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	return rc;
 }
 
-/** * Free memory allocated for \a layout. */
-void llapi_layout_free(struct lus_layout *layout)
+/**
+ * Free memory allocated for \a layout.
+ *
+ * \param[in] layout	layout to free
+ */
+void lus_layout_free(struct lus_layout *layout)
 {
 	free(layout);
 }

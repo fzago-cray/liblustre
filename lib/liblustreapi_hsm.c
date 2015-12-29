@@ -806,7 +806,7 @@ int lus_hsm_import(const char *dst, int archive, const struct stat *st,
 	}
 
 out:
-	llapi_layout_free(def_layout);
+	lus_layout_free(def_layout);
 
 	if (rc) {
 		if (fd >= 0)
