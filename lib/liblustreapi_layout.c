@@ -791,16 +791,14 @@ int lus_layout_stripe_set_count(struct lus_layout *layout,
  * \param[out] size	integer to store stripe size in
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid
+ * \retval	a negative errno if arguments are invalid
  */
-int llapi_layout_stripe_size_get(const struct lus_layout *layout,
-				 uint64_t *size)
+int lus_layout_stripe_get_size(const struct lus_layout *layout,
+			       uint64_t *size)
 {
 	if (layout == NULL || size == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC) {
-		errno = EINVAL;
-		return -1;
-	}
+	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
+		return -EINVAL;
 
 	*size = layout->llot_stripe_size;
 

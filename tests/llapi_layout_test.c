@@ -80,9 +80,9 @@ START_TEST(test0)
 	/* stripe size */
 	rc = llapi_layout_stripe_size_set(layout, T0_STRIPE_SIZE);
 	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0 && size == T0_STRIPE_SIZE, "%"PRIu64" != %d", size,
-		      T0_STRIPE_SIZE);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0 && size == T0_STRIPE_SIZE, "%"PRIu64" != %d",
+		      size, T0_STRIPE_SIZE);
 
 	/* pool_name */
 	rc = llapi_layout_pool_name_set(layout, poolname);
@@ -119,7 +119,7 @@ static void __test1_helper(struct lus_layout *layout)
 	ck_assert_msg(count == T0_STRIPE_COUNT, "%"PRIu64" != %d", count,
 		      T0_STRIPE_COUNT);
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
+	rc = lus_layout_stripe_get_size(layout, &size);
 	ck_assert_msg(size == T0_STRIPE_SIZE, "%"PRIu64" != %d", size,
 		      T0_STRIPE_SIZE);
 
@@ -239,7 +239,7 @@ START_TEST(test4)
 	ck_assert_msg(count == T4_STRIPE_COUNT, "%"PRIu64" != %d", count,
 		      T4_STRIPE_COUNT);
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
+	rc = lus_layout_stripe_get_size(layout, &size);
 	ck_assert_msg(size == T4_STRIPE_SIZE, "%"PRIu64" != %d", size,
 		      T4_STRIPE_SIZE);
 
@@ -361,8 +361,8 @@ START_TEST(test8)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(count == LLAPI_LAYOUT_DEFAULT, "count = %"PRIu64"\n", count);
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == LLAPI_LAYOUT_DEFAULT, "size = %"PRIu64"\n", size);
 
 	rc = llapi_layout_pattern_get(layout, &pattern);
@@ -477,14 +477,13 @@ START_TEST(test11)
 	rc = llapi_layout_stripe_size_set(NULL, 1048576);
 	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	errno = 0;
-	rc = llapi_layout_stripe_size_get(NULL, &size);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_get_size(NULL, &size);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	/* NULL size */
 	errno = 0;
-	rc = llapi_layout_stripe_size_get(layout, NULL);
-	ck_assert_msg(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
+	rc = lus_layout_stripe_get_size(layout, NULL);
+	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
@@ -691,7 +690,7 @@ START_TEST(test16)
 	rc = lus_layout_get_by_path(lustre_dir, LAYOUT_GET_EXPECTED,
 				    &deflayout);
 	ck_assert_msg(deflayout != NULL, "rc = %d", rc);
-	rc = llapi_layout_stripe_size_get(deflayout, &dsize);
+	rc = lus_layout_stripe_get_size(deflayout, &dsize);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	rc = lus_layout_stripe_get_count(deflayout, &dcount);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
@@ -715,8 +714,8 @@ START_TEST(test16)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(fcount == dcount, "%"PRIu64" != %"PRIu64, fcount, dcount);
 
-	rc = llapi_layout_stripe_size_get(filelayout, &fsize);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_get_size(filelayout, &fsize);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
 
 	/* NULL layout also implies default layout */
@@ -733,7 +732,7 @@ START_TEST(test16)
 
 	rc = lus_layout_stripe_get_count(filelayout, &fcount);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
-	rc = llapi_layout_stripe_size_get(filelayout, &fsize);
+	rc = lus_layout_stripe_get_size(filelayout, &fsize);
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(fcount == dcount, "%"PRIu64" != %"PRIu64, fcount, dcount);
 	ck_assert_msg(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
@@ -904,10 +903,10 @@ START_TEST(test20)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(fcount == dcount, "%"PRIu64" != %"PRIu64, fcount, dcount);
 
-	rc = llapi_layout_stripe_size_get(filelayout, &fsize);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
-	rc = llapi_layout_stripe_size_get(deflayout, &dsize);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	rc = lus_layout_stripe_get_size(filelayout, &fsize);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
+	rc = lus_layout_stripe_get_size(deflayout, &dsize);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
 
 	lus_layout_free(filelayout);
@@ -1029,8 +1028,8 @@ START_TEST(test24)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(count != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	rc = llapi_layout_pattern_get(layout, &pattern);
@@ -1069,8 +1068,8 @@ START_TEST(test25)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(count != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
 	rc = llapi_layout_pattern_get(layout, &pattern);
@@ -1118,8 +1117,8 @@ START_TEST(test26)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(count != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == T26_STRIPE_SIZE, "size = %"PRIu64, size);
 
 	rc = llapi_layout_pattern_get(layout, &pattern);
@@ -1170,8 +1169,8 @@ START_TEST(test27)
 	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(count != LLAPI_LAYOUT_DEFAULT, "expected literal value");
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "errno = %d\n", errno);
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "rc = %d", rc);
 	ck_assert_msg(size == T27_STRIPE_SIZE, "size = %"PRIu64, size);
 
 	rc = llapi_layout_pattern_get(layout, &pattern);
@@ -1281,9 +1280,9 @@ START_TEST(test100)
 	ck_assert(rc == 0);
 	ck_assert_msg(count == 2, "%llu != 2", (unsigned long long)count);
 
-	rc = llapi_layout_stripe_size_get(layout, &size);
-	ck_assert_msg(rc == 0, "llapi_layout_stripe_size_get failed: %s",
-		      strerror(errno));
+	rc = lus_layout_stripe_get_size(layout, &size);
+	ck_assert_msg(rc == 0, "lus_layout_stripe_get_size failed: %s",
+		      strerror(-rc));
 	ck_assert_msg(size == 131072, "%llu != 131072", size);
 
 	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
