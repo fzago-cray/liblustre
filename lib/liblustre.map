@@ -43,24 +43,24 @@
 		lus_layout_get_by_fid;
 		lus_layout_get_by_path;
 		lus_layout_get_ost_index;
-		lus_layout_set_ost_index;
+		lus_layout_get_pool_name;
 		lus_layout_pattern_get;
 		lus_layout_pattern_set;
 		lus_layout_pattern_set_flags;
-		lus_layout_get_pool_name;
+		lus_layout_set_ost_index;
 		lus_layout_set_pool_name;
 		lus_layout_stripe_get_count;
-		lus_layout_stripe_set_count;
 		lus_layout_stripe_get_size;
+		lus_layout_stripe_set_count;
 		lus_layout_stripe_set_size;
 		lus_log_set_callback;
 		lus_log_set_level;
+		lus_lovxattr_to_layout;
 		lus_open_by_fid;
 		lus_open_fs;
 		lus_path2fid;
 		lus_path2parent;
 		lus_stat_by_fid;
-		lus_lovxattr_to_layout;
 
 		# Export the unittest_* functions present in the version
 		# compiled with the unit tests. None of these symbols are
