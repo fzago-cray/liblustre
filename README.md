@@ -138,51 +138,8 @@ TODO
 Changes from liblustreapi
 -------------------------
 
-Some functions have disappeared and other have been renamed. This
-section should help porting.
-
--   The prefix for the functions is lus_ instead of llapi_
--   Every function has been updated to return 0 on success or a negative
-    errno on failure. If the function returns some allocated memory,
-    it is done through a parameter.
--   LPU64 is gone. Use "%llu". Cast if necessary.
--   LPX64 is gone. Use "%\#llx". Cast if necessary.
--   LPX64i is gone. Use "%llx". Cast if necessary.
--   llapi\_file\_open\_pool and llapi\_file\_open\_param are gone. Use
-    llapi\_layout\_file\_open or llapi\_layout\_file\_openat. Careful
-    with the return code. The former function returned negative errno,
-    while the new one returns -1 and sets errno.
--   llapi\_create\_volatile\_idx is gone, and is replaced with
-    llapi\_create\_volatile\_by\_fid and layout parameters.
--   llapi\_chomp\_string is not exported anymore.
--   llapi\_stripe\_limit\_check is gone. Use
-    llapi\_layout\_stripe\_\*\_is\_valid.
--   llapi\_get\_mdt\_index\_by\_fid directly returns the MDT index.
--   dot\_lustre\_name is gone.
--   lus\_fid2path will return an empty string instead of / if the
-    mountpoint is given. recno and linkno can now be NULL.
--   reading an HSM event is non blocking. lus_hsm_copytool_register()
-    can return -EWOULDBLOCK so the caller should handle that
-    condition.
--   llapi_get_data_version is now called lus_data_version_by_fd and
-    the last two parameters are swapped, to put the result last.
--   the gid given to lus_group_lock / lus_group_unlock is now an
-    uint64_t instead of an int.
--   hai_first and hai_next are now functions called lus_hsm_hai_first
-    and lus_hsm_hai_next
--   lus_hsm_import takes its striping information in a layout
-    struture. It now returns a file descriptor which can be used by
-    the caller to set the extended attributes. The fid parameter is no
-    longer needed since it can be retrieved by the caller through the
-    fd.
--   llapi_hsm_user_request_alloc is gone. The caller can replace
-      hur = llapi_hsm_user_request_alloc(x, y)
-    with
-      hur = malloc(lus_hsm_user_request_len(x, y))
-    This is more flexible as the caller can reuse the hur, resetting
-    it between calls to lus_hsm_request.
--   for consistency and to better reflect its role, struct
-    hsm_copyaction_private is now struct lus_hsm_action_handle
+Some functions have disappeared and other have been renamed. See
+README.convert.rst to help porting.
 
 ### logging
 
@@ -199,7 +156,7 @@ its messages on stdout.
 Package dependencies
 --------------------
 
-On Debian/Ubunto, the following packages are needed to build:
+On Debian/Ubuntu, the following packages are needed to build:
 
     check libattr1-dev python-docutils
 
