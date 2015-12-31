@@ -56,7 +56,7 @@ struct lus_layout {
 	/** Indicates if llot_objects array has been initialized. */
 	bool		llot_objects_are_valid;
 	/* Add 1 so user always gets back a null terminated string. */
-	char		llot_pool_name[LOV_MAXPOOLNAME + 1];
+	char		llot_pool_name[LUS_POOL_NAME_LEN];
 	struct		lov_user_ost_data_v1 llot_objects[0];
 };
 
@@ -992,6 +992,7 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 			     const char *pool_name)
 {
 	char *ptr;
+	int rc;
 
 	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
 	    pool_name == NULL)
@@ -1002,13 +1003,10 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 	if (ptr != NULL)
 		pool_name = ptr + 1;
 
-	if (strlen(pool_name) > LOV_MAXPOOLNAME)
-		return -EINVAL;
+	rc = strscpy(layout->llot_pool_name, pool_name,
+		     sizeof(layout->llot_pool_name));
 
-	strncpy(layout->llot_pool_name, pool_name,
-		sizeof(layout->llot_pool_name));
-
-	return 0;
+	return rc < 0 ? -1 : 0;
 }
 
 /* Helper for lus_layout_file_open and lus_layout_file_openat. */

@@ -44,6 +44,10 @@ Some defines are gone::
   LPX64: use "%\#llx". Cast if necessary.
   LPX64i: use "%llx". Cast if necessary.
 
+LOV_MAXPOOLNAME is replaced by LUS_POOL_NAME_LEN, which has an extra
+byte to store the NUL terminator.
+i.e. LUS_POOL_NAME_LEN = LOV_MAXPOOLNAME + 1
+
 Structures
 ~~~~~~~~~~
 

@@ -71,8 +71,6 @@ int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
 #define LOV_PATTERN_F_HOLE	0x40000000
 #define LOV_PATTERN_F_RELEASED  0x80000000
 
-#define LOV_MAXPOOLNAME 15
-
 /* struct stat is used. Make sure we're not on a 32 bits system, where
  * the size of stat is different. The drivers expect a stat64. */
 #if __WORDSIZE != 64
@@ -95,7 +93,7 @@ struct lov_user_md_v3 {
                 __u16 lmm_stripe_offset;
                 __u16 lmm_layout_gen;
         };
-        char  lmm_pool_name[LOV_MAXPOOLNAME + 1];
+	char lmm_pool_name[LUS_POOL_NAME_LEN];
         struct lov_user_ost_data_v1 lmm_objects[0];
 } __attribute__((packed));
 

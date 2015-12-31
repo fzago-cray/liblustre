@@ -60,7 +60,7 @@ START_TEST(test0)
 	uint64_t size;
 	struct lus_layout *layout;
 	char path[PATH_MAX];
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 
 	rc = lus_layout_alloc(T0_STRIPE_COUNT, &layout);
 	ck_assert_msg(layout != NULL, "rc %d", rc);
@@ -112,7 +112,7 @@ static void __test1_helper(struct lus_layout *layout)
 	uint64_t size;
 	uint64_t count;
 	int rc;
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 
 	rc = lus_layout_stripe_get_count(layout, &count);
 	ck_assert(rc == 0);
@@ -212,7 +212,7 @@ START_TEST(test4)
 	uint64_t count;
 	uint64_t size;
 	const char *lfs = getenv("LFS");
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 	char cmd[4096];
 	char path[PATH_MAX];
 	struct lus_layout *layout;
@@ -486,7 +486,7 @@ START_TEST(test12)
 {
 	int rc;
 	struct lus_layout *layout;
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 
 	rc = lus_layout_alloc(0, &layout);
 	ck_assert_msg(layout != NULL, "rc = %d", rc);
@@ -509,7 +509,7 @@ START_TEST(test12)
 
 	/* Pool name too long*/
 	rc = lus_layout_set_pool_name(layout, "0123456789abcdef");
-	ck_assert_msg(rc == -EINVAL, "rc = %d", rc);
+	ck_assert_msg(rc == -1, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }
@@ -780,8 +780,8 @@ START_TEST(test18)
 	int fd;
 	struct lus_layout *layout;
 	char path[PATH_MAX];
-	char pool[LOV_MAXPOOLNAME*2 + 1];
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char pool[LUS_POOL_NAME_LEN * 2];
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 
 	snprintf(pool, sizeof(pool), "lustre.%s", poolname);
 
@@ -822,7 +822,7 @@ START_TEST(test19)
 {
 	struct lus_layout *layout;
 	char *name = "0123456789abcde";
-	char mypool[LOV_MAXPOOLNAME + 1] = { '\0' };
+	char mypool[LUS_POOL_NAME_LEN] = { '\0' };
 	int rc;
 
 	rc = lus_layout_alloc(0, &layout);
@@ -1251,7 +1251,7 @@ START_TEST(test100)
 	struct lus_layout *layout;
 	uint64_t count;
 	uint64_t size;
-	char mypool[LOV_MAXPOOLNAME + 1];
+	char mypool[LUS_POOL_NAME_LEN];
 	uint64_t pattern;
 
 	rc = lus_lovxattr_to_layout(lum, lum_len, &layout);

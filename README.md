@@ -129,11 +129,13 @@ TODO
     if possible.
 -   move the copytool to a different repository. It's in this library
     for convenience only.
--   LOV_MAXPOOLNAME doesn't include the ending NUL. That's a trap for
-    userspace. Should it be 16 instead of 15?
 -   find a better name for llapi_hsm_state_get_fd, as it doesn't return
     a file descriptor. llapi_hsm_state_get_from_fd?
 -   remove all these useless sanity checks in layout code.
+-   pool name given to lus_layout_set_pool_name should not have to strip
+    the prefix.
+-   strscpy and strscat should return a negative errno on failure, not
+    just -1.
 
 Changes from liblustreapi
 -------------------------

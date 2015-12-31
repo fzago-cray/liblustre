@@ -39,9 +39,10 @@ typedef struct lu_fid {
 #define LOV_MAX_STRIPE_COUNT 2000
 #define LOV_V1_INSANE_STRIPE_COUNT 65532
 
-#define LOV_MAXPOOLNAME 15
-
 #define O_LOV_DELAY_CREATE (0100000000 | (O_NOCTTY | FASYNC))
+
+/* same as LOV_MAXPOOLNAME with an extra byte for terminating NUL */
+#define LUS_POOL_NAME_LEN (15 + 1)
 
 #define MAX_OBD_NAME 128
 
