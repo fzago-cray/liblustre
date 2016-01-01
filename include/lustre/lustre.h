@@ -169,14 +169,11 @@ int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 			  struct lus_layout **layout);
 int lus_layout_alloc(unsigned int num_stripes, struct lus_layout **layout);
 void lus_layout_free(struct lus_layout *layout);
-int lus_layout_stripe_get_count(const struct lus_layout *layout,
-				uint64_t *count);
+uint64_t lus_layout_stripe_get_count(const struct lus_layout *layout);
 int lus_layout_stripe_set_count(struct lus_layout *layout, uint64_t count);
-int lus_layout_stripe_get_size(const struct lus_layout *layout,
-			       uint64_t *size);
+uint64_t lus_layout_stripe_get_size(const struct lus_layout *layout);
 int lus_layout_stripe_set_size(struct lus_layout *layout, uint64_t size);
-int lus_layout_pattern_get(const struct lus_layout *layout,
-			   uint64_t *pattern);
+uint64_t lus_layout_pattern_get(const struct lus_layout *layout);
 int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern);
 int lus_layout_pattern_set_flags(struct lus_layout *layout,
 				   uint64_t pattern_flags);

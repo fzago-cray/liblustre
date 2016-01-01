@@ -131,7 +131,6 @@ TODO
     for convenience only.
 -   find a better name for llapi_hsm_state_get_fd, as it doesn't return
     a file descriptor. llapi_hsm_state_get_from_fd?
--   remove all these useless sanity checks in layout code.
 -   pool name given to lus_layout_set_pool_name should not have to strip
     the prefix.
 -   strscpy and strscat should return a negative errno on failure, not

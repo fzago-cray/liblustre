@@ -47,7 +47,6 @@
  * files.
  */
 struct lus_layout {
-	uint32_t	llot_magic;
 	uint64_t	llot_pattern;
 	uint64_t	llot_pattern_flags;
 	uint64_t	llot_stripe_size;
@@ -160,8 +159,6 @@ static int layout_from_lum(const struct lov_user_md *lum,
 	rc = __layout_alloc(object_count, &layout);
 	if (rc)
 		return rc;
-
-	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
 
 	if (lum->lmm_pattern == LOV_PATTERN_RAID0)
 		layout->llot_pattern = LLAPI_LAYOUT_RAID0;
@@ -355,7 +352,6 @@ int lus_layout_alloc(unsigned int num_stripes, struct lus_layout **layout)
 		return rc;
 
 	/* Set defaults. */
-	lo->llot_magic = LLAPI_LAYOUT_MAGIC;
 	lo->llot_pattern = LLAPI_LAYOUT_DEFAULT;
 	lo->llot_stripe_size = LLAPI_LAYOUT_DEFAULT;
 	if (num_stripes == 0) {
@@ -717,21 +713,12 @@ void lus_layout_free(struct lus_layout *layout)
  * Get the stripe count of \a layout.
  *
  * \param[in] layout	layout to get stripe count from
- * \param[out] count	integer to store stripe count in
  *
- * \retval	0 on success
- * \retval	negative errno if arguments are invalid
+ * \retval stripe count
  */
-int lus_layout_stripe_get_count(const struct lus_layout *layout,
-				uint64_t *count)
+uint64_t lus_layout_stripe_get_count(const struct lus_layout *layout)
 {
-	if (layout == NULL || count == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
-		return -EINVAL;
-
-	*count = layout->llot_stripe_count;
-
-	return 0;
+	return layout->llot_stripe_count;
 }
 
 /*
@@ -775,8 +762,7 @@ static bool layout_stripe_index_is_valid(int64_t stripe_index)
 int lus_layout_stripe_set_count(struct lus_layout *layout,
 				uint64_t count)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    !layout_stripe_count_is_valid(count))
+	if (!layout_stripe_count_is_valid(count))
 		return -EINVAL;
 
 	layout->llot_stripe_count = count;
@@ -788,21 +774,12 @@ int lus_layout_stripe_set_count(struct lus_layout *layout,
  * Get the stripe size of \a layout.
  *
  * \param[in] layout	layout to get stripe size from
- * \param[out] size	integer to store stripe size in
  *
- * \retval	0 on success
- * \retval	a negative errno if arguments are invalid
+ * \retval stripe size
  */
-int lus_layout_stripe_get_size(const struct lus_layout *layout,
-			       uint64_t *size)
+uint64_t lus_layout_stripe_get_size(const struct lus_layout *layout)
 {
-	if (layout == NULL || size == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
-		return -EINVAL;
-
-	*size = layout->llot_stripe_size;
-
-	return 0;
+	return layout->llot_stripe_size;
 }
 
 /**
@@ -817,8 +794,7 @@ int lus_layout_stripe_get_size(const struct lus_layout *layout,
 int lus_layout_stripe_set_size(struct lus_layout *layout,
 				 uint64_t size)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    !layout_stripe_size_is_valid(size))
+	if (!layout_stripe_size_is_valid(size))
 		return -EINVAL;
 
 	layout->llot_stripe_size = size;
@@ -830,21 +806,12 @@ int lus_layout_stripe_set_size(struct lus_layout *layout,
  * Get the RAID pattern of \a layout.
  *
  * \param[in] layout	layout to get pattern from
- * \param[out] pattern	integer to store pattern in
  *
- * \retval	0 on success
- * \retval	a negative errno if arguments are invalid
+ * \retval pattern type
  */
-int lus_layout_pattern_get(const struct lus_layout *layout,
-			   uint64_t *pattern)
+uint64_t lus_layout_pattern_get(const struct lus_layout *layout)
 {
-	if (layout == NULL || pattern == NULL ||
-	    layout->llot_magic != LLAPI_LAYOUT_MAGIC)
-		return -EINVAL;
-
-	*pattern = layout->llot_pattern;
-
-	return 0;
+	return layout->llot_pattern;
 }
 
 /**
@@ -855,14 +822,10 @@ int lus_layout_pattern_get(const struct lus_layout *layout,
  *                      LLAPI_LAYOUT_RAID0)
  *
  * \retval	0 on success
- * \retval	-EINVAL if an argument is invalid
  * \retval	-EOPNOTSUPP if the RAID pattern is unsupported
  */
 int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC)
-		return -EINVAL;
-
 	if (pattern != LLAPI_LAYOUT_DEFAULT &&
 	    pattern != LLAPI_LAYOUT_RAID0)
 		return -EOPNOTSUPP;
@@ -880,15 +843,11 @@ int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern)
  *                             LLAPI_LAYOUT_RELEASED is supported.
  *
  * \retval	0 on success
- * \retval	-EINVAL if an argument is invalid
  * \retval	-EOPNOTSUPP if the pattern flag is not supported
  */
 int lus_layout_pattern_set_flags(struct lus_layout *layout,
 				 uint64_t pattern_flags)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC)
-		return -EINVAL;
-
 	/* Reject if an unknown flag is set */
 	if ((pattern_flags & ~(LLAPI_LAYOUT_RELEASED)) != 0)
 		return -EOPNOTSUPP;
@@ -908,14 +867,14 @@ int lus_layout_pattern_set_flags(struct lus_layout *layout,
  * \param[in] ost_index		the index to set
  *
  * \retval	0 on success
- * \retval	-1 if arguments are invalid or an unsupported stripe number
+ * \retval	-EINVAL if an argument is invalid
+ * \retval	-EOPNOTSUPP if an unsupported stripe number
  *		was specified
  */
 int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
 			     uint64_t ost_index)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    !layout_stripe_index_is_valid(ost_index))
+	if (!layout_stripe_index_is_valid(ost_index))
 		return -EINVAL;
 
 	if (stripe_number != 0)
@@ -941,9 +900,8 @@ int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
 int lus_layout_get_ost_index(const struct lus_layout *layout,
 			     uint64_t stripe_number, uint64_t *idx)
 {
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    stripe_number >= layout->llot_stripe_count ||
-	    idx == NULL  || layout->llot_objects_are_valid == false)
+	if (stripe_number >= layout->llot_stripe_count ||
+	    layout->llot_objects_are_valid == false)
 		return -EINVAL;
 
 	if (layout->llot_objects[stripe_number].l_ost_idx == -1)
@@ -962,17 +920,13 @@ int lus_layout_get_ost_index(const struct lus_layout *layout,
  * \param[out] pool_name      buffer to store pool name in
  * \param[in]  pool_name_len  size in bytes of buffer \a dest
  *
- * \retval	0 on success
- * \retval	a negative errno on failure
+ * \retval    0 on success
+ * \retval    a negative errno on failure
  */
 int lus_layout_get_pool_name(const struct lus_layout *layout,
 			     char *pool_name, size_t pool_name_len)
 {
 	int rc;
-
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    pool_name == NULL)
-		return -EINVAL;
 
 	rc = strscpy(pool_name, layout->llot_pool_name, pool_name_len);
 
@@ -994,10 +948,6 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 	char *ptr;
 	int rc;
 
-	if (layout == NULL || layout->llot_magic != LLAPI_LAYOUT_MAGIC ||
-	    pool_name == NULL)
-		return -EINVAL;
-
 	/* Strip off any 'fsname.' portion. */
 	ptr = strchr(pool_name, '.');
 	if (ptr != NULL)
@@ -1018,10 +968,6 @@ static int file_open_internal(int dir_fd, const char *path,
 	int rc;
 	struct lov_user_md *lum;
 	size_t lum_size;
-
-	if (path == NULL ||
-	    (layout != NULL && layout->llot_magic != LLAPI_LAYOUT_MAGIC))
-		return -EINVAL;
 
 	/* Object creation must be postponed until after layout attributes
 	 * have been applied. */
