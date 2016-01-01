@@ -858,6 +858,18 @@ int lus_layout_pattern_set_flags(struct lus_layout *layout,
 }
 
 /**
+ * Get the extra pattern flag of \a layout.
+ *
+ * \param[in] layout	       layout to set pattern in
+ *
+ * \retval 0 or more or'ed pattern flags (such as LLAPI_LAYOUT_RELEASED).
+ */
+uint64_t lus_layout_pattern_get_flags(const struct lus_layout *layout)
+{
+	return layout->llot_pattern_flags;
+}
+
+/**
  * Set the OST index of stripe number \a stripe_number to \a ost_index.
  *
  * The index may only be set for stripe number 0 for now.

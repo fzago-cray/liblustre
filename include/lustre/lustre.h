@@ -177,6 +177,7 @@ uint64_t lus_layout_pattern_get(const struct lus_layout *layout);
 int lus_layout_pattern_set(struct lus_layout *layout, uint64_t pattern);
 int lus_layout_pattern_set_flags(struct lus_layout *layout,
 				   uint64_t pattern_flags);
+uint64_t lus_layout_pattern_get_flags(const struct lus_layout *layout);
 int lus_layout_get_ost_index(const struct lus_layout *layout,
 			     uint64_t stripe_number, uint64_t *index);
 int lus_layout_set_ost_index(struct lus_layout *layout, int stripe_number,
