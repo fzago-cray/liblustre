@@ -135,6 +135,8 @@ TODO
     the prefix.
 -   strscpy and strscat should return a negative errno on failure, not
     just -1.
+-   add API for IOC_MDC_GETFILEINFO (hsm) and
+    IOC_MDC_GETFILESTRIPE (robinhood).
 
 Changes from liblustreapi
 -------------------------
