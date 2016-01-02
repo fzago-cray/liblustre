@@ -88,6 +88,7 @@ llapi_fd2parent                | lus_fd2parent
 llapi_fid2path                 | lus_fid2path                 | will return an empty string instead of / if the
                                                               | mountpoint is given. recno and linkno can now be NULL.
 llapi_file_open_pool           | lus_layout_file_open or lus_layout_file_openat
+llapi_file_create_pool         | lus_layout_file_create
 llapi_file_open_param          | lus_layout_file_open or lus_layout_file_openat
 llapi_fswap_layouts            | lus_fswap_layouts
 llapi_get_data_version         | lus_data_version_by_fd       | the last two parameters are swapped
