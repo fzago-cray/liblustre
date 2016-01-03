@@ -411,55 +411,6 @@ out_err:
 }
 
 /**
- * Get metadata attributes of file by FID.
- *
- * Use the IOC_MDC_GETFILEINFO ioctl (to send a MDS_GETATTR_NAME RPC)
- * to get the attributes of the file identified by \a fid. This
- * returns only the attributes stored on the MDT and avoids taking
- * layout locks or accessing OST objects. It also bypasses the inode
- * cache. Attributes are returned in \a st.
- */
-/* TODO: move to liblustre_ioctls.c */
-static int ct_md_getattr(const struct lustre_fs_h *lfsh,
-			 const struct lu_fid *fid,
-			 struct stat *st)
-{
-	struct lov_user_mds_data *lmd;
-	size_t lmd_size;
-	int rc;
-
-	lmd_size = sizeof(lmd->lmd_st) +
-		lov_user_md_size(LOV_MAX_STRIPE_COUNT, LOV_USER_MAGIC_V3);
-
-	if (lmd_size < sizeof(lmd->lmd_st) + XATTR_SIZE_MAX)
-		lmd_size = sizeof(lmd->lmd_st) + XATTR_SIZE_MAX;
-
-	if (lmd_size < FID_NOBRACE_LEN + 1)
-		lmd_size = FID_NOBRACE_LEN + 1;
-
-	lmd = malloc(lmd_size);
-	if (lmd == NULL)
-		return -ENOMEM;
-
-	snprintf((char *)lmd, lmd_size, DFID_NOBRACE, PFID(fid));
-
-	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, lmd);
-	if (rc != 0) {
-		rc = -errno;
-		log_msg(LUS_LOG_ERROR, rc,
-			    "cannot get metadata attributes of "DFID" in '%s'",
-			    PFID(fid), lfsh->mount_path);
-		goto out;
-	}
-
-	*st = lmd->lmd_st;
-out:
-	free(lmd);
-
-	return rc;
-}
-
-/**
  * Create the destination volatile file for a restore operation.
  *
  * \param hcp         Private copyaction handle.
@@ -557,9 +508,14 @@ int lus_hsm_action_begin(struct lus_hsm_action_handle **phcp,
 		goto ok_out;
 
 	if (hai->hai_action == HSMA_RESTORE) {
-		rc = ct_md_getattr(ct->lfsh, &hai->hai_fid, &hcp->stat);
-		if (rc < 0)
+		rc = lus_mdt_stat_by_fid(ct->lfsh, &hai->hai_fid, &hcp->stat);
+		if (rc < 0) {
+			log_msg(LUS_LOG_ERROR, rc,
+				"cannot get metadata attributes of "DFID
+				" in '%s'",
+				PFID(&hai->hai_fid), ct->lfsh->mount_path);
 			goto err_out;
+		}
 
 		rc = create_restore_volatile(hcp, restore_mdt_index,
 					     restore_open_flags);

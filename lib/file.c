@@ -516,3 +516,36 @@ int lus_group_unlock(int fd, uint64_t gid)
 
 	return 0;
 }
+
+/**
+ * Query the MDT to get some file information, given a file's FID. The
+ * data is returned in a structure similar to that of stat(2). The
+ * OSTs are not queried so times or file sizes may not be accurate.
+ *
+ * \param[in]  lfsh        An opened Lustre fs opaque handle
+ * \param[in]  fid         The FID of the file to stat
+ * \param[out] st
+ *
+ * \retval   0 on success
+ * \retval   a negative errno on error
+ */
+int lus_mdt_stat_by_fid(const struct lustre_fs_h *lfsh,
+			const struct lu_fid *fid,
+			struct stat *st)
+{
+	union {
+		char fidstr[FID_LEN];
+		struct lov_user_mds_data lmd;
+	} x;
+	int rc;
+
+	snprintf(x.fidstr, FID_LEN, DFID_NOBRACE, PFID(fid));
+
+	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, &x);
+	if (rc == 0)
+		*st = x.lmd.lmd_st;
+	else
+		rc = -errno;
+
+	return rc;
+}

@@ -14,7 +14,8 @@ nodist_man_MANS = \
 	lus_create_volatile_by_fid.3 \
 	lus_hsm_action_begin.3 \
 	lus_hsm_copytool_register.3 \
-	lus_stat_by_fid.3
+	lus_stat_by_fid.3 \
+	lus_mdt_stat_by_fid.3
 
 # Generated man pages
 
@@ -31,6 +32,7 @@ EXTRA_DIST = \
 	lus_create_volatile_by_fid.rst \
 	lus_hsm_action_begin.rst \
 	lus_hsm_copytool_register.rst \
-	lus_stat_by_fid.rst
+	lus_stat_by_fid.rst \
+	lus_mdt_stat_by_fid
 
 CLEANFILES = $(nodist_man_MANS)

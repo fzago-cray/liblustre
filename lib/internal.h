@@ -279,5 +279,6 @@ void unittest_strscpy(void);
 void unittest_strscat(void);
 void unittest_lus_fid2path(void);
 void unittest_lus_data_version_by_fd(void);
+void unittest_lus_mdt_stat_by_fid(void);
 
 #endif /* _LIBLUSTRE_INTERNAL_H_ */

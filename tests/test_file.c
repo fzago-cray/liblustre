@@ -344,3 +344,52 @@ void unittest_lus_data_version_by_fd(void)
 	ck_assert_int_eq(rc, -ENOTTY);
 	close(fd);
 }
+
+/* Test lus_mdt_stat_by_fid */
+void unittest_lus_mdt_stat_by_fid(void)
+{
+	struct lustre_fs_h *lfsh;
+	int fd;
+	int rc;
+	char fname[PATH_MAX];
+	struct stat buf1;
+	struct stat buf2;
+	lustre_fid fid;
+
+	rc = snprintf(fname, sizeof(fname), "%s/aunittest_fid", lustre_dir);
+	ck_assert_msg(rc > 0 && rc < sizeof(fname), "snprintf failed: %d", rc);
+
+	/* Try stat and lus_mdt_stat_by_fid */
+	rc = lus_open_fs(lustre_dir, &lfsh);
+	ck_assert_int_eq(rc, 0);
+
+	fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
+	ck_assert_int_gt(fd, 0);
+
+	rc = write(fd, fname, 100);
+	ck_assert_int_eq(rc, 100);
+
+	rc = fstat(fd, &buf1);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_int_eq(buf1.st_size, 100);
+
+	rc = lus_fd2fid(fd, &fid);
+	ck_assert_int_eq(rc, 0);
+
+	fsync(fd);
+	close(fd);
+
+	rc = lus_mdt_stat_by_fid(lfsh, &fid, &buf2);
+	ck_assert_int_eq(rc, 0);
+	ck_assert_int_eq(buf2.st_size, 100);
+
+	lus_close_fs(lfsh);
+
+	/* Compare both stat info */
+	ck_assert_int_eq(buf1.st_dev, buf2.st_dev);
+	ck_assert_int_eq(buf1.st_ino, buf2.st_ino);
+	ck_assert_int_eq(buf1.st_mode, buf2.st_mode);
+	ck_assert_int_eq(buf1.st_nlink, buf2.st_nlink);
+	ck_assert_int_eq(buf1.st_uid, buf2.st_uid);
+	ck_assert_int_eq(buf1.st_gid, buf2.st_gid);
+}

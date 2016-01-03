@@ -228,6 +228,9 @@ int lus_path2parent(const char *path, unsigned int linkno,
 int lus_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
 int lus_group_lock(int fd, uint64_t gid);
 int lus_group_unlock(int fd, uint64_t gid);
+int lus_mdt_stat_by_fid(const struct lustre_fs_h *lfsh,
+			const struct lu_fid *fid,
+			struct stat *st);
 
 /* Library initialization */
 bool lus_initialized;

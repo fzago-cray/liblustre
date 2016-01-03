@@ -57,6 +57,7 @@
 		lus_log_set_callback;
 		lus_log_set_level;
 		lus_lovxattr_to_layout;
+		lus_mdt_stat_by_fid;
 		lus_open_by_fid;
 		lus_open_fs;
 		lus_path2fid;

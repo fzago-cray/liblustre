@@ -79,6 +79,7 @@ OLD                              NEW                            COMMENTS
 dot_lustre_name                | removed
 hai_first                      | lus_hsm_hai_first
 hai_next                       | lus_hsm_hai_next
+ioctl IOC_MDC_GETFILEINFO      | lus_mdt_stat_by_fid
 llapi_chomp_string             | removed
 llapi_create_volatile_idx      | lus_create_volatile_by_fid
 llapi_error                    |                              | The library doesn't provide logging facilities for the
