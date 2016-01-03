@@ -221,7 +221,7 @@ void unittest_strscpy(void)
 /* Test strscat */
 void unittest_strscat(void)
 {
-	char dst[100];
+	char dst[10];
 	size_t rc;
 
 	dst[0] = 0;
@@ -250,4 +250,11 @@ void unittest_strscat(void)
 	rc = strscat(dst, " me", sizeof(dst));
 	ck_assert_int_eq(rc, 8);
 	ck_assert_str_eq(dst, "hello me");
+
+	rc = strscat(dst, "!", sizeof(dst));
+	ck_assert_int_eq(rc, 9);
+	ck_assert_str_eq(dst, "hello me!");
+
+	rc = strscat(dst, "!", sizeof(dst));
+	ck_assert_int_eq(rc, -ENOSPC);
 }
