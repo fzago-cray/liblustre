@@ -189,7 +189,7 @@ void unittest_strscpy(void)
 	size_t rc;
 
 	rc = strscpy(dst, "", 0);
-	ck_assert_int_eq(rc, -1);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = strscpy(dst, "", 1);
 	ck_assert_int_eq(rc, 0);
@@ -208,10 +208,10 @@ void unittest_strscpy(void)
 	ck_assert_str_eq(dst, "hello");
 
 	rc = strscpy(dst, "hello", 4);
-	ck_assert_int_eq(rc, -1);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = strscpy(dst, "hello", 5);
-	ck_assert_int_eq(rc, -1);
+	ck_assert_int_eq(rc, -ENOSPC);
 
 	rc = strscpy(dst, "hello", 6);
 	ck_assert_int_eq(rc, 5);

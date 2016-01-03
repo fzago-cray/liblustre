@@ -102,9 +102,7 @@ int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		if (parent_name) {
 			rc = strscpy(parent_name, x.gp.gp_name,
 				     parent_name_len);
-			if (rc == -1)
-				rc = -ENOSPC;
-			else
+			if (rc >= 0)
 				rc = 0;
 		}
 	} else {
@@ -308,9 +306,7 @@ int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
 	rc = ioctl(lfsh->mount_fd, OBD_IOC_FID2PATH, &x.gf);
 	if (rc == 0) {
 		rc = strscpy(path, x.gf.gf_path, path_len);
-		if (rc == -1) {
-			rc = -ENOSPC;
-		} else {
+		if (rc >= 0) {
 			rc = 0;
 			if (recno != NULL)
 				*recno = x.gf.gf_recno;

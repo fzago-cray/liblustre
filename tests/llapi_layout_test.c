@@ -455,7 +455,7 @@ START_TEST(test12)
 
 	/* Pool name too long*/
 	rc = lus_layout_set_pool_name(layout, "0123456789abcdef");
-	ck_assert_msg(rc == -1, "rc = %d", rc);
+	ck_assert_msg(rc == -ENOSPC, "rc = %d", rc);
 
 	lus_layout_free(layout);
 }

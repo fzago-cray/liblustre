@@ -1805,7 +1805,7 @@ static int ct_max_sequence(void)
 	ssize_t len;
 
 	len = strscpy(path, opt.o_hsm_root, sizeof(path));
-	if (len == -1)
+	if (len < 0)
 		return -EINVAL;
 
 	/* FID sequence is stored in top-level directory names:
@@ -1980,7 +1980,7 @@ int main(int argc, char **argv)
 	ssize_t len;
 
 	len = strscpy(cmd_name, basename(argv[0]), sizeof(cmd_name));
-	if (len == -1)
+	if (len < 0)
 		return EINVAL;
 
 	rc = ct_parseopts(argc, argv);

@@ -942,7 +942,7 @@ int lus_layout_get_pool_name(const struct lus_layout *layout,
 
 	rc = strscpy(pool_name, layout->llot_pool_name, pool_name_len);
 
-	return rc >= 0 ? 0 : -ENOSPC;
+	return rc >= 0 ? 0 : rc;
 }
 
 /**
@@ -968,7 +968,7 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 	rc = strscpy(layout->llot_pool_name, pool_name,
 		     sizeof(layout->llot_pool_name));
 
-	return rc < 0 ? -1 : 0;
+	return rc >= 0 ? 0 : rc;
 }
 
 /* Helper for lus_layout_file_open and lus_layout_file_openat. */
