@@ -125,8 +125,6 @@ TODO
     of the work done by the caller could be done inside, like bound
     checking. Return the hai or NULL if no more hais are available in
     that hal.
--   inspect strcpy/strncpy/strcat/... and replace with strscpy/strscat
-    if possible.
 -   move the copytool to a different repository. It's in this library
     for convenience only.
 -   find a better name for llapi_hsm_state_get_fd, as it doesn't return

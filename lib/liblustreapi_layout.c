@@ -270,9 +270,14 @@ static struct lov_user_md *layout_to_lum(const struct lus_layout *layout)
 
 	if (lum->lmm_magic != LOV_USER_MAGIC_V1) {
 		struct lov_user_md_v3 *lumv3 = (struct lov_user_md_v3 *)lum;
+		int rc;
 
-		strncpy(lumv3->lmm_pool_name, layout->llot_pool_name,
-			sizeof(lumv3->lmm_pool_name));
+		rc = strscpy(lumv3->lmm_pool_name, layout->llot_pool_name,
+			     sizeof(lumv3->lmm_pool_name));
+		if (rc < 0) {
+			free(lum);
+			return NULL;
+		}
 	}
 
 	return lum;
@@ -285,17 +290,23 @@ static struct lov_user_md *layout_to_lum(const struct lus_layout *layout)
  * \param[out] buf	buffer in which to store parent path
  * \param[in] size	size in bytes of buffer \a buf
  */
-static void get_parent_dir(const char *path, char *buf, size_t size)
+/* TODO: fix caller to check result. Add test. */
+static int get_parent_dir(const char *path, char *buf, size_t size)
 {
-	char *p;
+	int rc;
 
-	strncpy(buf, path, size);
-	p = strrchr(buf, '/');
+	rc = strscpy(buf, path, size);
+	if (rc >= 0) {
+		char *p;
 
-	if (p != NULL)
-		*p = '\0';
-	else if (size >= 2)
-		strncpy(buf, ".", 2);
+		p = strrchr(buf, '/');
+		if (p != NULL)
+			*p = '\0';
+		else if (size >= 2)
+			rc = strscpy(buf, ".", 2);
+	}
+
+	return rc >= 0 ? 0 : rc;
 }
 
 /**
