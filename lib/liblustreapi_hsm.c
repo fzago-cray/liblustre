@@ -65,7 +65,7 @@
 
 /****** HSM Copytool API ********/
 struct lus_hsm_ct_handle {
-	const struct lustre_fs_h *lfsh;
+	const struct lus_fs_handle *lfsh;
 	int			 channel_rfd;
 	__u32			 archives;
 
@@ -259,7 +259,7 @@ static int get_hsm_comm(struct lus_hsm_ct_handle *ct,
  * \retval 0 on success.
  * \retval negative errno on error, with priv set to NULL.
  */
-int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
+int lus_hsm_copytool_register(const struct lus_fs_handle *lfsh,
 			      unsigned int archive_count, int *archives,
 			      struct lus_hsm_ct_handle **priv)
 {
@@ -424,7 +424,7 @@ static int create_restore_volatile(struct lus_hsm_action_handle *hcp,
 {
 	int			 rc;
 	int			 fd;
-	const struct lustre_fs_h *lfsh = hcp->ct_priv->lfsh;
+	const struct lus_fs_handle *lfsh = hcp->ct_priv->lfsh;
 	const char		*mnt = lfsh->mount_path;
 	struct hsm_action_item	*hai = &hcp->copy.hc_hai;
 	lustre_fid		parent_fid;
@@ -910,7 +910,7 @@ int lus_hsm_current_action(const char *path, struct hsm_current_action *hca)
  *
  * \return 0 on success, or a negative errno on error.
  */
-int lus_hsm_request(const struct lustre_fs_h *lfsh,
+int lus_hsm_request(const struct lus_fs_handle *lfsh,
 		    const struct hsm_user_request *request)
 {
 	int rc;

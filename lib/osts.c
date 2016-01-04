@@ -35,7 +35,7 @@
  * \retval 0 on success
  * \retval -EINVAL if the path doesn't exist
  */
-static int find_poolpath(const struct lustre_fs_h *lfsh, const char *poolname,
+static int find_poolpath(const struct lus_fs_handle *lfsh, const char *poolname,
 			 char *path, size_t pathlen)
 {
 	glob_t globbuf;
@@ -85,7 +85,7 @@ void free_ost_info(struct lustre_ost_info **info)
 /**
  * Retrieve the list of OSTs in a pool from /proc
  */
-int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
+int open_pool_info(const struct lus_fs_handle *lfsh, const char *poolname,
 		   struct lustre_ost_info **info)
 {
 	char poolpath[PATH_MAX];

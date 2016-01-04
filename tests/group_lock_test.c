@@ -44,7 +44,7 @@
 static char mainpath[PATH_MAX];
 static const char *maindir = "group_lock_test_name_9585766";
 static char *lustre_dir;	/* Test directory inside Lustre */
-struct lustre_fs_h *lfsh;
+struct lus_fs_handle *lfsh;
 
 /* Cleanup our test file. */
 static void cleanup(void)

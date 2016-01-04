@@ -34,7 +34,7 @@
  * \retval   a 0 or positive file descriptor on success
  * \retval   a negative errno on error
  */
-int lus_open_by_fid(const struct lustre_fs_h *lfsh,
+int lus_open_by_fid(const struct lus_fs_handle *lfsh,
 		    const lustre_fid *fid, int open_flags)
 {
 	char fidstr[FID_NOBRACE_LEN + 1];
@@ -56,7 +56,7 @@ int lus_open_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   a 0 or positive file descriptor on success
  * \retval   a negative errno on error
  */
-int lus_stat_by_fid(const struct lustre_fs_h *lfsh,
+int lus_stat_by_fid(const struct lus_fs_handle *lfsh,
 		    const lustre_fid *fid, struct stat *stbuf)
 {
 	char fidstr[FID_NOBRACE_LEN + 1];
@@ -128,7 +128,7 @@ int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int lus_fid2parent(const struct lustre_fs_h *lfsh,
+int lus_fid2parent(const struct lus_fs_handle *lfsh,
 		     const lustre_fid *fid,
 		     unsigned int linkno,
 		     lustre_fid *parent_fid,
@@ -282,7 +282,7 @@ int lus_path2fid(const char *path, lustre_fid *fid)
  * \retval    0 on success
  * \retval    a negative errno on error.
  */
-int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+int lus_fid2path(const struct lus_fs_handle *lfsh, const lustre_fid *fid,
 		 char *path, size_t path_len,
 		 long long *recno, unsigned int *linkno)
 {
@@ -337,7 +337,7 @@ int lus_fid2path(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+int lus_create_volatile_by_fid(const struct lus_fs_handle *lfsh,
 			       const lustre_fid *parent_fid,
 			       int mdt_idx, int open_flags, mode_t mode,
 			       const struct lus_layout *layout)
@@ -396,7 +396,7 @@ int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
  * \retval   0 or a positive MDT index
  * \retval   a negative errno on error
  */
-int lus_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
+int lus_get_mdt_index_by_fid(const struct lus_fs_handle *lfsh,
 			     const struct lu_fid *fid)
 {
 	int rc;
@@ -525,7 +525,7 @@ int lus_group_unlock(int fd, uint64_t gid)
  * \retval   0 on success
  * \retval   a negative errno on error
  */
-int lus_mdt_stat_by_fid(const struct lustre_fs_h *lfsh,
+int lus_mdt_stat_by_fid(const struct lus_fs_handle *lfsh,
 			const struct lu_fid *fid,
 			struct stat *st)
 {

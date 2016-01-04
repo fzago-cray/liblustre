@@ -52,19 +52,19 @@ This is a new structure meant to keep the information of an existing
 filesystem (mountpoint, name, ...) so the information doesn't have to be
 retrieved more than once. Thus we open and close a filesystem with:
 
-    int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
-    void lus_close_fs(struct lustre_fs_h *lfsh)
+    int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh)
+    void lus_close_fs(struct lus_fs_handle *lfsh)
 
 lfsh is an opaque handle that can then be passed to various functions:
 
-    int lus_fid2path(const struct lustre_fs_h *lfsh, const struct
+    int lus_fid2path(const struct lus_fs_handle *lfsh, const struct
     lu_fid *fid, char *path, int path_len, long long *recno, int
     *linkno)
 
-    int lus_open_by_fid(const struct lustre_fs_h *lfsh, const
+    int lus_open_by_fid(const struct lus_fs_handle *lfsh, const
     lustre_fid *fid, int open_flags)
 
-    int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh, int
+    int lus_hsm_copytool_register(const struct lus_fs_handle *lfsh, int
     archive_count, int *archives, struct lus_hsm_ct_handle **priv)
 
 ### posix copytool

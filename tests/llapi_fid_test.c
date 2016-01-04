@@ -39,7 +39,7 @@ static const char *maindir = "llapi_fid_test_name_9585766";
 
 static char *lustre_dir;		/* Test directory inside Lustre */
 
-struct lustre_fs_h *lfsh;
+struct lus_fs_handle *lfsh;
 
 /* Cleanup our test directory. */
 static void cleanup(void)

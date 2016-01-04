@@ -692,7 +692,8 @@ int lus_layout_get_by_path(const char *path, uint32_t flags,
  * \retval 0 on success
  * \retval a negative errno on failure, with layout set to NULL.
  */
-int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+int lus_layout_get_by_fid(const struct lus_fs_handle *lfsh,
+			  const lustre_fid *fid,
 			  struct lus_layout **layout)
 {
 	int fd;

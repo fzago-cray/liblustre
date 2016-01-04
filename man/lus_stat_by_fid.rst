@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int lus_stat_by_fid(const struct lustre_fs_h \***\ lfsh\ **,
+**int lus_stat_by_fid(const struct lus_fs_handle \***\ lfsh\ **,
 const lustre_fid \***\ fid\ **, struct stat \***\ stbuf\ **)**
 
 

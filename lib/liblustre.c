@@ -33,7 +33,7 @@
  *
  * \param lfsh	An opaque handle returned by lus_open_fs()
  */
-void lus_close_fs(struct lustre_fs_h *lfsh)
+void lus_close_fs(struct lus_fs_handle *lfsh)
 {
 	if (lfsh == NULL)
 		return;
@@ -56,9 +56,9 @@ void lus_close_fs(struct lustre_fs_h *lfsh)
  *
  * \retval     An opaque handle, or NULL if an error occurred.
  */
-int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh)
+int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh)
 {
-	struct lustre_fs_h *mylfsh;
+	struct lus_fs_handle *mylfsh;
 	int rc;
 	FILE *f = NULL;
 	struct mntent *ent;
@@ -170,7 +170,7 @@ fail:
  *
  * \retval      The Lustre filesystem name. Cannot be NULL.
  */
-const char *lus_get_fsname(const struct lustre_fs_h *lfsh)
+const char *lus_get_fsname(const struct lus_fs_handle *lfsh)
 {
 	return lfsh->fs_name;
 }
@@ -183,7 +183,7 @@ const char *lus_get_fsname(const struct lustre_fs_h *lfsh)
  *
  * \retval    the mountpoint
  */
-const char *lus_get_mountpoint(const struct lustre_fs_h *lfsh)
+const char *lus_get_mountpoint(const struct lus_fs_handle *lfsh)
 {
 	return lfsh->mount_path;
 }

@@ -32,7 +32,7 @@
 /* Test FID functions. */
 void unittest_fid1(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	int fd;
 	lustre_fid fid;
 	int rc;
@@ -84,7 +84,7 @@ void unittest_fid1(void)
 /* Test lus_fid2parent */
 void unittest_fid2(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	int fd;
 	lustre_fid mnt_fid;
 	lustre_fid fid;
@@ -200,7 +200,7 @@ void unittest_fid2(void)
 /* Test lus_fid2path. */
 void unittest_lus_fid2path(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	lustre_fid fid;
 	int rc;
 	char path[2*PATH_MAX];
@@ -262,7 +262,7 @@ void unittest_lus_fid2path(void)
 /* Test lus_get_mdt_index_by_fid */
 void unittest_mdt_index(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	lustre_fid fid;
 	int rc;
 	int fd;
@@ -292,7 +292,7 @@ void unittest_mdt_index(void)
 /* Test lus_data_version_by_fd */
 void unittest_lus_data_version_by_fd(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	int fd;
 	int rc;
 	ssize_t sret;
@@ -348,7 +348,7 @@ void unittest_lus_data_version_by_fd(void)
 /* Test lus_mdt_stat_by_fid */
 void unittest_lus_mdt_stat_by_fid(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	int fd;
 	int rc;
 	char fname[PATH_MAX];

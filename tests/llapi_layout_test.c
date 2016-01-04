@@ -41,7 +41,7 @@
 
 #include <lustre/lustre.h>
 
-struct lustre_fs_h *lfsh;
+struct lus_fs_handle *lfsh;
 
 static char *lustre_dir;
 static char *poolname;

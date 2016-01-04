@@ -17,7 +17,7 @@ SYNOPSIS
 
 **#include <lustre/lustre.h>**
 
-**int lus_hsm_copytool_register(const struct lustre_fs_h \***\ lfsh\ **,
+**int lus_hsm_copytool_register(const struct lus_fs_handle \***\ lfsh\ **,
 unsigned int** archive_count\ **,
 int \***\ archives\ **struct lus_hsm_ct_handle \*\***\ priv\ **)**
 

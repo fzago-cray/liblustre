@@ -121,11 +121,11 @@ void lus_log_set_callback(lus_log_callback_t cb);
 /*
  * Open / close a filesystem
  */
-struct lustre_fs_h;
-void lus_close_fs(struct lustre_fs_h *lfsh);
-int lus_open_fs(const char *mount_path, struct lustre_fs_h **lfsh);
-const char *lus_get_fsname(const struct lustre_fs_h *lfsh);
-const char *lus_get_mountpoint(const struct lustre_fs_h *lfsh);
+struct lus_fs_handle;
+void lus_close_fs(struct lus_fs_handle *lfsh);
+int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh);
+const char *lus_get_fsname(const struct lus_fs_handle *lfsh);
+const char *lus_get_mountpoint(const struct lus_fs_handle *lfsh);
 
 /*
  * LOV
@@ -165,7 +165,8 @@ struct lus_layout;
 int lus_layout_get_by_path(const char *path, uint32_t flags,
 			   struct lus_layout **layout);
 int lus_layout_get_by_fd(int fd, struct lus_layout **layout);
-int lus_layout_get_by_fid(const struct lustre_fs_h *lfsh, const lustre_fid *fid,
+int lus_layout_get_by_fid(const struct lus_fs_handle *lfsh,
+			  const lustre_fid *fid,
 			  struct lus_layout **layout);
 int lus_layout_alloc(unsigned int num_stripes, struct lus_layout **layout);
 void lus_layout_free(struct lus_layout *layout);
@@ -200,24 +201,24 @@ int lus_lovxattr_to_layout(struct lov_user_md *lum, size_t lum_len,
 /*
  * Misc
  */
-int lus_fid2path(const struct lustre_fs_h *lfsh, const struct lu_fid *fid,
+int lus_fid2path(const struct lus_fs_handle *lfsh, const struct lu_fid *fid,
 		 char *path, size_t path_len, long long *recno,
 		 unsigned int *linkno);
 int lus_fd2fid(int fd, lustre_fid *fid);
 int lus_path2fid(const char *path, lustre_fid *fid);
-int lus_open_by_fid(const struct lustre_fs_h *lfsh,
+int lus_open_by_fid(const struct lus_fs_handle *lfsh,
 		    const lustre_fid *fid, int open_flags);
-int lus_stat_by_fid(const struct lustre_fs_h *lfsh,
+int lus_stat_by_fid(const struct lus_fs_handle *lfsh,
 		    const lustre_fid *fid, struct stat *stbuf);
-int lus_get_mdt_index_by_fid(const struct lustre_fs_h *lfsh,
+int lus_get_mdt_index_by_fid(const struct lus_fs_handle *lfsh,
 			     const struct lu_fid *fid);
-int lus_create_volatile_by_fid(const struct lustre_fs_h *lfsh,
+int lus_create_volatile_by_fid(const struct lus_fs_handle *lfsh,
 			       const lustre_fid *parent_fid,
 			       int mdt_idx, int open_flags, mode_t mode,
 			       const struct lus_layout *layout);
 int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 		  char *parent_name, size_t parent_name_len);
-int lus_fid2parent(const struct lustre_fs_h *lfsh,
+int lus_fid2parent(const struct lus_fs_handle *lfsh,
 		   const lustre_fid *fid,
 		   unsigned int linkno,
 		   lustre_fid *parent_fid,
@@ -228,7 +229,7 @@ int lus_path2parent(const char *path, unsigned int linkno,
 int lus_data_version_by_fd(int fd, uint64_t flags, uint64_t *dv);
 int lus_group_lock(int fd, uint64_t gid);
 int lus_group_unlock(int fd, uint64_t gid);
-int lus_mdt_stat_by_fid(const struct lustre_fs_h *lfsh,
+int lus_mdt_stat_by_fid(const struct lus_fs_handle *lfsh,
 			const struct lu_fid *fid,
 			struct stat *st);
 
@@ -341,7 +342,7 @@ struct hsm_action_item {
 	char       hai_data[0];
 } __attribute__((packed));
 
-int lus_hsm_request(const struct lustre_fs_h *lfsh,
+int lus_hsm_request(const struct lus_fs_handle *lfsh,
 		    const struct hsm_user_request *request);
 int lus_hsm_current_action(const char *path,
 			   struct hsm_current_action *hca);
@@ -375,7 +376,7 @@ static inline size_t lus_hsm_user_request_len(unsigned int itemcount,
 struct lus_hsm_ct_handle;
 struct lus_hsm_action_handle;
 
-int lus_hsm_copytool_register(const struct lustre_fs_h *lfsh,
+int lus_hsm_copytool_register(const struct lus_fs_handle *lfsh,
 			      unsigned int archive_count, int *archives,
 			      struct lus_hsm_ct_handle **priv);
 int lus_hsm_copytool_unregister(struct lus_hsm_ct_handle **priv);

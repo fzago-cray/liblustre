@@ -52,7 +52,7 @@ struct lustre_ost_info {
 };
 
 void free_ost_info(struct lustre_ost_info **info);
-int open_pool_info(const struct lustre_fs_h *lfsh, const char *poolname,
+int open_pool_info(const struct lus_fs_handle *lfsh, const char *poolname,
 		   struct lustre_ost_info **info);
 
 /*
@@ -116,7 +116,7 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
 #define LUSTRE_VOLATILE_HDR ".\x0c\x13\x14\x12:VOLATILE"
 #define LUSTRE_VOLATILE_HDR_LEN     14
 
-struct lustre_fs_h {
+struct lus_fs_handle {
 	/* Lustre mountpoint, as given to lus_open_fs. */
 	char *mount_path;
 	char fs_name[8 + 1];	/* filesystem name */

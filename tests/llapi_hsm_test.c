@@ -46,7 +46,7 @@
 
 static char *lustre_dir;               /* Test directory inside Lustre */
 
-struct lustre_fs_h *lfsh;
+struct lus_fs_handle *lfsh;
 
 /* Register and unregister 2000 times. Ensures there is no fd leak
  * since there is usually 1024 fd per process. */

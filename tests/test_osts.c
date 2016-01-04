@@ -32,7 +32,7 @@
 /* Test find_poolpath */
 void unittest_ost1(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	char poolpath[PATH_MAX];
 	int rc;
 
@@ -61,7 +61,7 @@ void unittest_ost1(void)
 /* Test for open_pool_info */
 void unittest_ost2(void)
 {
-	struct lustre_fs_h *lfsh;
+	struct lus_fs_handle *lfsh;
 	int rc;
 	struct lustre_ost_info *info;
 	char ostuuid[1000];

@@ -134,7 +134,7 @@ struct options {
 };
 
 /* Lustre filesystem being watched. */
-struct lustre_fs_h *lfsh;
+struct lus_fs_handle *lfsh;
 
 /* everything else is zeroed */
 struct options opt = {
