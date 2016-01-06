@@ -6,7 +6,8 @@ dist_man_MANS = \
 	lus_hsm_action_end.3 \
 	lus_hsm_copytool_unregister.3 \
 	lus_hsm_copytool_recv.3 \
-	lus_hsm_copytool_get_fd.3
+	lus_hsm_copytool_get_fd.3 \
+	lus_close_fs.3
 
 # Generated man pages. The RST is distributed instead.
 nodist_man_MANS = \
@@ -15,7 +16,8 @@ nodist_man_MANS = \
 	lus_hsm_action_begin.3 \
 	lus_hsm_copytool_register.3 \
 	lus_stat_by_fid.3 \
-	lus_mdt_stat_by_fid.3
+	lus_mdt_stat_by_fid.3 \
+	lus_open_fs.3
 
 # Generated man pages
 
