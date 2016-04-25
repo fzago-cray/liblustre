@@ -62,6 +62,7 @@
 		lus_open_fs;
 		lus_path2fid;
 		lus_path2parent;
+		lus_set_lov_layout;
 		lus_stat_by_fid;
 
 		# Export the unittest_* functions present in the version

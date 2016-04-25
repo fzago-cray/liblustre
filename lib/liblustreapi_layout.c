@@ -988,6 +988,43 @@ int lus_layout_set_pool_name(struct lus_layout *layout,
 	return rc >= 0 ? 0 : rc;
 }
 
+/**
+ * Set a layout given a struct lov_user_md
+ *
+ * \param[in]   fd    an opened file descriptor for a file
+ *                    in a Lustre filesystem
+ * \param[in] lum     A layout, which could come from the Lustre's
+ *                    extended attribute lustre.lov
+ *
+ * The caller should make sure that LOV_PATTERN_F_RELEASED is not set
+ * in tlum->lmm_pattern. otherwise writing to the new file will fail.
+ */
+int lus_set_lov_layout(int fd, const struct lov_user_md *lum)
+{
+	int rc;
+
+#if 0
+	size_t lum_size;
+
+	/* This doesn't work well. Files are created with a stat'
+	 * block of 0. Their hsm_state is correct (released) but
+	 * reading from them will not start an HSM restore
+	 * operation. Instead it is treated as a sparse file, leading
+	 * to data corruption. If restoration is forced by an lfs
+	 * hsm_restore, then all is good.
+	 *
+	 * It is possible the Lustre client should update its layout
+	 * when the XATTR_LUSTRE_LOV is set. It does it for the ioctl
+	 * with ll_layout_refresh. */
+	lum_size = lov_user_md_size(0, lum->lmm_magic);
+	rc = fsetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_size, 0);
+#else
+	rc = ioctl(fd, LL_IOC_LOV_SETSTRIPE, lum);
+#endif
+
+	return rc;
+}
+
 /* Helper for lus_layout_file_open and lus_layout_file_openat. */
 static int file_open_internal(int dir_fd, const char *path,
 			      int open_flags, mode_t mode,
@@ -996,9 +1033,6 @@ static int file_open_internal(int dir_fd, const char *path,
 	int fd;
 	int rc;
 	struct lov_user_md *lum;
-#if 0
-	size_t lum_size;
-#endif
 
 	/* Object creation must be postponed until after layout attributes
 	 * have been applied. */
@@ -1023,22 +1057,7 @@ static int file_open_internal(int dir_fd, const char *path,
 		return -EINVAL;
 	}
 
-#if 0
-	/* This doesn't work well. Files are created with a stat'
-	 * block of 0. Their hsm_state is correct (released) but
-	 * reading from them will not start an HSM restore
-	 * operation. Instead it is treated as a sparse file, leading
-	 * to data corruption. If restoration is forced by an lfs
-	 * hsm_restore, then all is good.
-	 *
-	 * It is possible the Lustre client should update its layout
-	 * when the XATTR_LUSTRE_LOV is set. It does it for the ioctl
-	 * with ll_layout_refresh. */
-	lum_size = lov_user_md_size(0, lum->lmm_magic);
-	rc = fsetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_size, 0);
-#else
-	rc = ioctl(fd, LL_IOC_LOV_SETSTRIPE, lum);
-#endif
+	rc = lus_set_lov_layout(fd, lum);
 	if (rc < 0) {
 		rc = errno;
 		close(fd);

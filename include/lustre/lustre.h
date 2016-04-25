@@ -192,6 +192,7 @@ int lus_layout_get_pool_name(const struct lus_layout *layout,
 			     char *pool_name, size_t pool_name_len);
 int lus_layout_set_pool_name(struct lus_layout *layout,
 			     const char *pool_name);
+int lus_set_lov_layout(int fd, const struct lov_user_md *lum);
 int lus_layout_file_open(const char *path, int open_flags, mode_t mode,
 			 const struct lus_layout *layout);
 int lus_layout_file_openat(int dir_fd, const char *path, int open_flags,
