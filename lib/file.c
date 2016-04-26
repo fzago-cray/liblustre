@@ -536,7 +536,7 @@ int lus_mdt_stat_by_fid(const struct lus_fs_handle *lfsh,
 {
 	union {
 		/* Input */
-		char fidstr[FID_LEN];
+		char fidstr[FID_NOBRACE_LEN + 1];
 
 		/* Output */
 		struct {
@@ -546,7 +546,7 @@ int lus_mdt_stat_by_fid(const struct lus_fs_handle *lfsh,
 	} x;
 	int rc;
 
-	snprintf(x.fidstr, FID_LEN, DFID_NOBRACE, PFID(fid));
+	snprintf(x.fidstr, FID_NOBRACE_LEN + 1, DFID_NOBRACE, PFID(fid));
 
 	rc = ioctl(lfsh->fid_fd, IOC_MDC_GETFILEINFO, &x);
 	if (rc == 0)
