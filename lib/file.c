@@ -525,7 +525,7 @@ int lus_group_unlock(int fd, uint64_t gid)
  *
  * \param[in]  lfsh        An opened Lustre fs opaque handle
  * \param[in]  fid         The FID of the file to stat
- * \param[out] st
+ * \param[out] st          Caller allocated stat structure
  *
  * \retval   0 on success
  * \retval   a negative errno on error
@@ -535,8 +535,14 @@ int lus_mdt_stat_by_fid(const struct lus_fs_handle *lfsh,
 			struct stat *st)
 {
 	union {
+		/* Input */
 		char fidstr[FID_LEN];
-		struct lov_user_mds_data lmd;
+
+		/* Output */
+		struct {
+			struct lov_user_mds_data lmd;
+			char buf[XATTR_SIZE_MAX];
+		};
 	} x;
 	int rc;
 
