@@ -295,6 +295,11 @@ START_TEST(test20)
 
 		len += 2;
 
+		/* Lustre 2.5 fails earlier when creating the
+		 * directory. */
+		if (lus_get_client_version(lfsh) < 20700 && len > 4062)
+			return;
+
 		rc = mkdir(testpath, S_IRWXU);
 		ck_assert_int_eq(rc, 0);
 
@@ -444,6 +449,12 @@ static void help_test40(void)
 	ck_assert_int_eq(rc, 0);
 	ck_assert_int_eq(memcmp(&parent_fid, &fid2, sizeof(fid2)), 0);
 
+	if (lus_get_client_version(lfsh) < 20700) {
+		/* lus_path2parent is not supported before 2.7, and
+		 * not emulated. */
+		return;
+	}
+
 	/* Name too short */
 	rc = lus_path2parent(mainpath, 0, &parent_fid, buf, 0);
 	ck_assert_int_eq(rc, -ENOSPC);
@@ -492,6 +503,12 @@ START_TEST(test41)
 	lustre_fid parent_fid;
 	char name[PATH_MAX];
 
+	if (lus_get_client_version(lfsh) < 20700) {
+		/* lus_path2parent is not supported before 2.7, and
+		 * not emulated. */
+		return;
+	}
+
         /* Against a regular file */
         fd = creat(mainpath, 0);
         ck_assert_int_ge(fd, 0);
@@ -528,6 +545,12 @@ START_TEST(test42)
 	int fd;
 	int linkno;
 	lustre_fid parent_fid;
+
+	if (lus_get_client_version(lfsh) < 20700) {
+		/* lus_path2parent is not supported before 2.7, and
+		 * not emulated. */
+		return;
+	}
 
 	/* Create the containing directory. */
 	rc = mkdir(mainpath, 0);
