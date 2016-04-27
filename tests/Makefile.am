@@ -4,11 +4,13 @@ check_PROGRAMS=lib_test llapi_fid_test group_lock_test llapi_hsm_test \
 noinst_PROGRAMS=posixct
 noinst_LTLIBRARIES = liblustre_support.la
 
-TESTS = lib_test llapi_fid_test group_lock_test llapi_hsm_test \
-	llapi_layout_test
+TESTS = \
+	lib_test.sh llapi_fid_test.sh group_lock_test.sh \
+	llapi_hsm_test.sh llapi_layout_test.sh
 
 testsdir=@datarootdir@/@PACKAGE_NAME@/tests
 tests_PROGRAMS=$(check_PROGRAMS)
+tests_SCRIPTS=$(check_SCRIPTS)
 
 # Support library - Not exported
 liblustre_support_la_SOURCES = support.c support.h

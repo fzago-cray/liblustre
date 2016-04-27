@@ -3,7 +3,14 @@ Tests for liblustre
 
 The tests expect that a Lustre filesystem be mounted. By default the
 Lustre filesystem is mounted under '/mnt/lustre'. That setting can be
-changed with -d option in the tests.
+changed with -d option in the tests. When running "make check", MOUNT
+and FSNAME can be used to overwrite it too::
+
+  MOUNT=/mnt/lustre2 make check
+
+or::
+
+  FSNAME=lustre2 make check
 
 The tests are running under the 'check' test framework. See
 http://check.sourceforge.net/ for its documentation.
