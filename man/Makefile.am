@@ -35,6 +35,7 @@ EXTRA_DIST = \
 	lus_hsm_action_begin.rst \
 	lus_hsm_copytool_register.rst \
 	lus_stat_by_fid.rst \
-	lus_mdt_stat_by_fid.rst
+	lus_mdt_stat_by_fid.rst \
+	lus_open_fs.rst
 
 CLEANFILES = $(nodist_man_MANS)
