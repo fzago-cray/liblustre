@@ -118,6 +118,60 @@ int lus_fd2parent(int fd, unsigned int linkno, lustre_fid *parent_fid,
 }
 
 /**
+ * Minimal compatibility function for lus_fid2parent() on Lustre 2.5
+ * so that create_restore_volatile() is happy.
+ */
+static int lus_fid2parent_25(const struct lus_fs_handle *lfsh,
+			     const lustre_fid *fid,
+			     lustre_fid *parent_fid,
+			     char *parent_name, size_t parent_name_len)
+{
+	char path_[2 * PATH_MAX];
+	size_t ret_path_len = PATH_MAX;
+	char *path = path_;
+	char *ret_path;
+	char *p;
+	int rc;
+
+	/* Add the mountpoint to the path. */
+	rc = snprintf(path, ret_path_len, "%s/", lfsh->mount_path);
+	if (rc < 0 || rc >= ret_path_len)
+		return -ENOSPC;
+
+	ret_path = path + rc;
+
+	/* Get the relative path. */
+	rc = lus_fid2path(lfsh, fid, ret_path, ret_path_len, NULL, NULL);
+	if (rc)
+		return rc;
+
+	if (ret_path[0] == 0) {
+		/* Was called on the mountpoint */
+		return -ENODATA;
+	}
+
+	/* Remove last component. p can't be NULL since we added a
+	 * slash. */
+	p = strrchr(path, '/');
+	*p = 0;
+
+	if (parent_fid) {
+		rc = lus_path2fid(path, parent_fid);
+		if (rc)
+			return rc;
+	}
+
+	if (parent_name) {
+		if (strlen(ret_path) >= parent_name_len)
+			return -ENOSPC;
+
+		strcpy(parent_name, ret_path);
+	}
+
+	return 0;
+}
+
+/**
  * Returns the parent path and FID from a FID.
  * Note: this will fail for a symlink or a non-existent device
  *
@@ -141,6 +195,11 @@ int lus_fid2parent(const struct lus_fs_handle *lfsh,
 {
 	int fd;
 	int rc;
+
+	/* Older Lustre don't have LL_IOC_GETPARENT. */
+	if (lfsh->client_version < 20700)
+		return lus_fid2parent_25(lfsh, fid, parent_fid,
+					 parent_name, parent_name_len);
 
 	fd = lus_open_by_fid(lfsh, fid, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
 	if (fd < 0)
