@@ -12,6 +12,7 @@
 		lus_get_fsname;
 		lus_get_mdt_index_by_fid;
 		lus_get_mountpoint;
+		lus_get_client_version;
 		lus_group_lock;
 		lus_group_unlock;
 		lus_hsm_action_begin;

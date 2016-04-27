@@ -25,6 +25,8 @@ SYNOPSIS
 
 **const char \*\ lus_get_mountpoint(const struct lus_fs_handle \***\ lfsh\ **)**
 
+**const char \*\ lus_get_client_version(const struct lus_fs_handle \***\ lfsh\ **)**
+
 DESCRIPTION
 ===========
 
@@ -38,6 +40,10 @@ Once the filesystem has been opened, **lus_get_fsname** can be used to
 retrieve the filesystem name, and **lus_get_mountpoint** can get its
 mountpoint. Neither function can fail, and a read-only valid string is
 returned.
+
+**lus_get_client_version** is used to retrieve the version of the
+local Lustre client. The number returned is major * 10000 + minor *
+100 + patch. This function cannot fail.
 
 **lus_close_fs** can be called safely several times. The opaque handle
 *lfsh* will be set to NULL the first time.

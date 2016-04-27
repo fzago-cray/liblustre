@@ -246,3 +246,16 @@ const char *lus_get_mountpoint(const struct lus_fs_handle *lfsh)
 {
 	return lfsh->mount_path;
 }
+
+/**
+ * Accessor to return the Lustre client version running locally.
+ *
+ * The number returned is major * 10000 + minor * 100 + patch For
+ * instance Lustre 2.5.3 will return 20503.
+ *
+ * \param lfsh	An opaque handle returned by lus_open_fs()
+ */
+unsigned int lus_get_client_version(const struct lus_fs_handle *lfsh)
+{
+	return lfsh->client_version;
+}

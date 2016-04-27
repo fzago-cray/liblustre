@@ -131,6 +131,7 @@ void lus_close_fs(struct lus_fs_handle *lfsh);
 int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh);
 const char *lus_get_fsname(const struct lus_fs_handle *lfsh);
 const char *lus_get_mountpoint(const struct lus_fs_handle *lfsh);
+unsigned int lus_get_client_version(const struct lus_fs_handle *lfsh);
 
 /*
  * LOV
