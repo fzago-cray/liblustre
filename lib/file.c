@@ -458,6 +458,7 @@ int lus_create_volatile_by_fid(const struct lus_fs_handle *lfsh,
  * \param[in]   fid           the FID of which to find the parent
  *
  * \retval   0 or a positive MDT index
+ * \retval   -ENOTTY if Lustre doesn't support that functionnality
  * \retval   a negative errno on error
  */
 int lus_get_mdt_index_by_fid(const struct lus_fs_handle *lfsh,

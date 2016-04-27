@@ -284,7 +284,12 @@ void unittest_mdt_index(void)
 	unlink(fname);
 
 	rc = lus_get_mdt_index_by_fid(lfsh, &fid);
-	ck_assert_int_eq(rc, 0);
+	if (rc == -ENOTTY) {
+		/* Not present on older versions of Lustre */
+		ck_assert_int_lt(lus_get_client_version(lfsh), 20700);
+	} else {
+		ck_assert_int_eq(rc, 0);
+	}
 
 	lus_close_fs(lfsh);
 }

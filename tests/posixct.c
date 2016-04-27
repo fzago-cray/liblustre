@@ -1171,7 +1171,9 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 	ct_path_archive(src, sizeof(src), opt.o_hsm_root, &hai->hai_fid);
 
 	mdt_index = lus_get_mdt_index_by_fid(lfsh, &hai->hai_fid);
-	if (mdt_index < 0) {
+	if (mdt_index == -ENOTTY) {
+		mdt_index = -1;
+	} else if (mdt_index < 0) {
 		CT_ERROR(mdt_index, "cannot get mdt index "DFID"",
 			 PFID(&hai->hai_fid));
 		return mdt_index;
