@@ -125,6 +125,13 @@ int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh)
 	if (rc)
 		goto fail;
 
+	/* Refuse to run on old versions of Lustre. Must be at least
+	 * 2.5. */
+	if (mylfsh->client_version < 20500) {
+		rc = -EINVAL;
+		goto fail;
+	}
+
 	mylfsh->mount_fd = -1;
 	mylfsh->fid_fd = -1;
 
