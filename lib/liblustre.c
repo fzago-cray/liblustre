@@ -53,6 +53,49 @@ void lus_close_fs(struct lus_fs_handle *lfsh)
 	free(lfsh);
 }
 
+/* Retrieve the Lustre client version from /proc/fs/lustre/version,
+ * and store the result in the handle. */
+static int get_client_version(struct lus_fs_handle *lfsh)
+{
+	FILE *fp = NULL;
+	char *line = NULL;
+	int rc;
+	size_t line_len;
+	unsigned int major;
+	unsigned int minor;
+	unsigned int build;
+
+	fp = fopen("/proc/fs/lustre/version", "r");
+	if (fp == NULL) {
+		rc = -ENOENT;
+		goto out;
+	}
+
+	line_len = getline(&line, &line_len, fp);
+	if (line_len == -1) {
+		rc = -EINVAL;
+		goto out;
+	}
+
+	rc = sscanf(line, "lustre: %u.%u.%u", &major, &minor, &build);
+	if (rc != 3) {
+		rc = -EINVAL;
+		goto out;
+	}
+
+	lfsh->client_version = major * 10000 + minor * 100 + build;
+
+	rc = 0;
+
+out:
+	free(line);
+
+	if (fp != NULL)
+		fclose(fp);
+
+	return rc;
+}
+
 /**
  * Register a new Lustre filesystem
  *
@@ -77,6 +120,10 @@ int lus_open_fs(const char *mount_path, struct lus_fs_handle **lfsh)
 		rc = -errno;
 		goto fail;
 	}
+
+	rc = get_client_version(mylfsh);
+	if (rc)
+		goto fail;
 
 	mylfsh->mount_fd = -1;
 	mylfsh->fid_fd = -1;

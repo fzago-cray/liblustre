@@ -122,6 +122,11 @@ struct lus_fs_handle {
 	char fs_name[8 + 1];	/* filesystem name */
 	int mount_fd;
 	int fid_fd;
+
+	/* Lustre client version, as reported by
+	 * /proc/fs/lustre/version, and converted to a single
+	 * number. e.g. Lustre 2.5.3 is 20503. */
+	unsigned int client_version;
 };
 
 /* File data version */
