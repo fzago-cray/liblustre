@@ -574,9 +574,7 @@ START_TEST(test15)
 	ck_assert_msg(rc == 0, "rc = %d");
 
 	fd = lus_layout_file_open(path, 0, 0640, layout);
-	ck_assert_msg(fd >= 0, "fd = %d", fd);
-	rc = close(fd);
-	ck_assert_msg(rc == 0, "errno = %d", errno);
+	ck_assert_msg(fd < 0, "fd = %d", fd);
 	lus_layout_free(layout);
 
 	rc = lus_layout_get_by_path(path, 0, &layout);
