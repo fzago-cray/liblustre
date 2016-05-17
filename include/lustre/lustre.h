@@ -252,6 +252,7 @@ void lus_init(void);
 #define LL_HSM_MAX_ARCHIVE (sizeof(__u32) * 8)
 
 enum hsm_states {
+	HS_NONE		= 0x00000000,
 	HS_EXISTS	= 0x00000001,
 	HS_DIRTY	= 0x00000002,
 	HS_RELEASED	= 0x00000004,
